@@ -1,17 +1,20 @@
 package tac.android.de.truckcompanion;
 
-import android.content.Context;
 import android.graphics.Color;
-import android.graphics.Point;
+import android.graphics.PointF;
+import android.support.design.widget.NavigationView;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
+import android.view.MenuItem;
 import android.view.MotionEvent;
-import android.view.ScaleGestureDetector;
-import android.widget.LinearLayout;
+import android.view.View;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.Toast;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -20,54 +23,162 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-
+import com.github.mikephil.charting.utils.PointD;
+import com.github.mikephil.charting.utils.Utils;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Logger;
 
 public class MainActivity extends AppCompatActivity implements OnChartGestureListener, OnChartValueSelectedListener {
 
+    // View references
+    private DrawerLayout mDrawerLayout;
+    private NavigationView mNavigationView;
+    private ActionBarDrawerToggle mDrawerToggle;
+    private Toolbar toolbar;
+
+    private RelativeLayout mRelativeLayout;
     private PieChart mChart;
-    private TextView textView;
-    private RelativeLayout relativeLayout;
+
+
+    // Resources
+    private CharSequence mDrawerTitle;
+    private CharSequence mTitle;
+
+
+    private float mStartAngle = 0;
+    private ArrayList<ImageView> symbols = new ArrayList<>();
+    private PointF mTouchStartPoint = new PointF();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Initializing Toolbar and settring it as the action bar
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
-        mChart = (PieChart) findViewById(R.id.chart);
-        textView = (TextView) findViewById(R.id.text);
-        relativeLayout = (RelativeLayout) findViewById(R.id.rLayout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
+        mTitle = mDrawerTitle = getTitle();
 
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-                width,
-//                (int) (height * .5)
-                0
-        );
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-                width,
-//                (int) (height * 1.5)
-                height
-        );
+        // Set drawer toggle
+        // TODO: Set drawer icon (ic_drawer.png)
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
-        textView.setLayoutParams(params1);
-        relativeLayout.setLayoutParams(params2);
+            // Called when a drawer has settled in a completely open state
+            @Override
+            public void onDrawerOpened(View drawerView) {
+                super.onDrawerOpened(drawerView);
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu();
+            }
+
+            // Called when a drawer has settled in a completely closed state
+            @Override
+            public void onDrawerClosed(View view) {
+                super.onDrawerClosed(view);
+                getSupportActionBar().setTitle(mDrawerTitle);
+                invalidateOptionsMenu();
+            }
+        };
+
+        // Set the drawer toggle as the DrawerListener
+        mDrawerLayout.addDrawerListener(mDrawerToggle);
+        mDrawerToggle.syncState();
+
+        // Set the navigation's list click listener
+        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(MenuItem menuItem) {
+                //Checking if the item is in checked state or not, if not make it in checked state
+                if (menuItem.isChecked()) {
+                    menuItem.setChecked(false);
+                } else {
+                    menuItem.setChecked(true);
+                }
+
+                //Closing drawer on item click
+                mDrawerLayout.closeDrawers();
+
+                //Check to see which item was being clicked and perform appropriate action
+                switch (menuItem.getItemId()) {
+                    //Replacing the main content with ContentFragment Which is our Inbox View;
+                    case R.id.main_view:
+                        Toast.makeText(getApplicationContext(), "Main View Selected", Toast.LENGTH_SHORT).show();
+                        //                        ContentFragment fragment = new ContentFragment();
+                        //                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+                        //                        fragmentTransaction.replace(R.id.frame, fragment);
+                        //                        fragmentTransaction.commit();
+                        return true;
+
+                    // For rest of the options we just show a toast on click
+                    default:
+                        Toast.makeText(getApplicationContext(), "Item Selected", Toast.LENGTH_SHORT).show();
+                        return true;
+                }
+            }
+        });
+
+
+        mChart = (PieChart)
+
+                findViewById(R.id.chart);
+
+        mRelativeLayout = (RelativeLayout)
+
+                findViewById(R.id.rLayout);
+
+//        Display display = getWindowManager().getDefaultDisplay();
+//        Point size = new Point();
+//        display.getSize(size);
+//        int width = size.x;
+//        int height = size.y;
+//        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+//                width,
+////                (int) (height * .5)
+//                0
+//        );
+//        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+//                width,
+////                (int) (height * 1.5)
+//                height
+//        );
+//
+//        textView.setLayoutParams(params1);
+//        relativeLayout.setLayoutParams(params2);
 
         ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-        yVals1.add(new Entry((float) (450 / 24), 0));
-        yVals1.add(new Entry((float) (75 / 24), 1));
-        yVals1.add(new Entry((float) (450 / 24), 2));
-        yVals1.add(new Entry((float) (75 / 24), 3));
-        yVals1.add(new Entry((float) (100 / 24), 4));
-        yVals1.add(new Entry((float) (1250 / 24), 5));
+        yVals1.add(new
+
+                Entry((float)
+
+                (450 / 24), 0));
+        yVals1.add(new
+
+                Entry((float)
+
+                (75 / 24), 1));
+        yVals1.add(new
+
+                Entry((float)
+
+                (450 / 24), 2));
+        yVals1.add(new
+
+                Entry((float)
+
+                (75 / 24), 3));
+        yVals1.add(new
+
+                Entry((float)
+
+                (100 / 24), 4));
+        yVals1.add(new
+
+                Entry((float)
+
+                (1250 / 24), 5));
 
         PieDataSet dataSet = new PieDataSet(yVals1, "Fahrtzeiten");
 
