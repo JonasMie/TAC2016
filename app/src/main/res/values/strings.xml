@@ -5,4 +5,7 @@
     <string name="main_view">Start</string>
     <string name="settings">Einstellungen</string>
     <string name="profile">Profil</string>
+    <string name="map">Karte</string>
+    <string name="stats">Statistiken</string>
+    <string name="loading_journey_data_title">Laden der Fahrtendaten</string>
 </resources>
