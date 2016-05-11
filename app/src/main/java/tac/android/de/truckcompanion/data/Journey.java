@@ -42,12 +42,11 @@ public class Journey {
         this.startPoint = new DispoInformation.StartPoint(journeyObj.getJSONObject("start"));
 
         JSONArray stopsObjs = journeyObj.getJSONArray("stops");
+
+        this.destinationPoints = new ArrayList<>();
         for(int i = 0; i<stopsObjs.length(); i++){
             this.destinationPoints.add(new DispoInformation.DestinationPoint(stopsObjs.getJSONObject(i)));
         }
-
-
-
     }
 
     public static String getJourneys(Context context){
@@ -84,10 +83,10 @@ public class Journey {
             JSONArray journeys= null;
             try {
                 journeys = new JSONArray(getJourneys(context));
-                return new Journey(journeys.getJSONObject(params[1]));
+                return new Journey(journeys.getJSONObject(params[0]-1));
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
-                return new Journey();
+                return null;
             }
         }
 
@@ -96,6 +95,7 @@ public class Journey {
             super.onPreExecute();
             mProgressDialog = new ProgressDialog(context);
             mProgressDialog.setTitle(R.string.loading_journey_data_title);
+            mProgressDialog.setMessage(context.getString(R.string.loading_journey_data_msg));
             mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
             mProgressDialog.show();
         }

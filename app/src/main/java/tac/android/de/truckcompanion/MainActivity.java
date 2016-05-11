@@ -150,8 +150,12 @@ public class MainActivity extends AppCompatActivity {
         new Journey.LoadJourneyData(this, mProgressDialog, new AsyncResponse<Journey>() {
             @Override
             public void processFinish(Journey journey) {
-                mCurrentJourney = journey;
-                Log.d("TAC", journey.toString());
+                if (journey == null) {
+                    Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
+                } else {
+                    mCurrentJourney = journey;
+                    Log.d("TAC", journey.toString());
+                }
             }
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }

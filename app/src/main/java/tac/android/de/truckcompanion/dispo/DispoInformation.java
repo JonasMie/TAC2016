@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Jonas Miederer.
@@ -19,9 +20,9 @@ import java.util.Locale;
  */
 public abstract class DispoInformation extends Point {
 
-    private static final DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy", Locale.GERMAN);
+    private static final DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.ENGLISH);
 
-    public static class StartPoint extends Point{
+    public static class StartPoint extends Point {
         protected Date date;
 
         public StartPoint(JSONObject start) throws JSONException, ParseException {
@@ -37,7 +38,11 @@ public abstract class DispoInformation extends Point {
         public DestinationPoint(JSONObject dest) throws JSONException {
             this.lat = dest.getDouble("lat");
             this.lng = dest.getDouble("lng");
-            this.time = dest.getInt("time");
+            try {
+                this.time = dest.getInt("time");
+            } catch (JSONException e) {
+                // no time means driver finished journey
+            }
         }
     }
 
