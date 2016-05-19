@@ -1,5 +1,7 @@
 package tac.android.de.truckcompanion.logic;
 
+import android.app.Activity;
+
 import java.util.Vector;
 
 /**
@@ -22,59 +24,122 @@ public class LogicHelper {
     public static final int MIN_WEEK_REST_MINUTES = 2700 ;            // 45 hours
     public static final int MIN_WEEK_REST_MINUTES_EXCEPTION = 1440 ;    // 24 hours
     public static final int MIN_SESSION_REST_MINUTES = 45 ;                    // 0.75 hours
+    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P1 = 15 ;                    // 0.25 hours
+    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P2 = 30 ;                    // 0.5 hours
     public static final int MIN_DAY_REST_MINUTES = 660 ;                    // 11 hours
 
 
     //not a 24h day. values are set to MIN and are decreased. example: if drivingMinutes is zero, driver has no driving time left for this day (only twice a week 10hours)
-    public class Day
-    {
+    public class Day {
         //session related
-     private  float maxSessionDriveMinutes;
-     private  float minSessionRestTime;
-     private  boolean splitSessionRestTime;
+        private float maxSessionDriveMinutes;
+        private float minSessionRestTime;
+        private boolean splitSessionRestTime;
+        private boolean splitSessionP1Done;
+        //day related
+        private float maxDriveMinutes;
+        private float maxWorkMinutes;
+        private float minRestMinutes;
+        private boolean splitRestTime;
+        private DriverActivity lastActivity;
 
-       //day related
-     private  float maxDriveMinutes;
-     private  float maxWorkMinutes;
-     private  float minRestMinutes;
-     private  boolean splitRestTime;
-
-        public Day()
-        {
+        public Day() {
             maxSessionDriveMinutes = MAX_SESSION_DRIVE_MINUTES;
             minSessionRestTime = MIN_SESSION_REST_MINUTES;
             splitSessionRestTime = false;
+            splitSessionP1Done = false;
 
             maxDriveMinutes = MAX_DAY_DRIVE_MINUTES;
             maxWorkMinutes = MAX_DAY_WORK_MINUTES;
             minRestMinutes = MIN_DAY_REST_MINUTES;
             splitRestTime = false;
+
+            lastActivity = DriverActivity.RESTING;
         }
 
-        public void UpdateDrivingTime(float elapsedTime)
-        {
-             maxSessionDriveMinutes -= elapsedTime;
+        public void UpdateActivity(float elapsedTime, DriverActivity currActivity) {
 
-            if(maxSessionDriveMinutes <= 0)
+            if (lastActivity != currActivity) {
+
+                if (currActivity == DriverActivity.DRIVING) {
+                    
+                    if (minSessionRestTime >= 0) {
+                        // notify view
+                        //"Du hast zu wenig pause zwischen den Arbeitsschichten gemacht!"
+                    }
+
+                    minSessionRestTime = splitSessionRestTime ? MIN_SESSION_REST_MINUTES_SPLIT_P2 : MIN_SESSION_REST_MINUTES;
+                    splitSessionRestTime = false;
+                    lastActivity = currActivity;
+
+                    UpdateDrivingTime(elapsedTime);
+                }
+
+
+                //set new session drive minutes
+                if (currActivity == DriverActivity.RESTING) {
+                    //session rest timt split start
+                    if (maxSessionDriveMinutes > 10 && !splitSessionRestTime) {
+                        splitSessionRestTime = true;
+                        minSessionRestTime = MIN_SESSION_REST_MINUTES_SPLIT_P1;
+                    }
+
+                    maxSessionDriveMinutes = splitSessionRestTime ? maxSessionDriveMinutes : MAX_SESSION_DRIVE_MINUTES;
+                    lastActivity = currActivity;
+
+                    UpdateSessionRestingTime(elapsedTime);
+                }
+
+            } else {
+            switch (lastActivity)
             {
+                case WORKING:
+                    UpdateWorkingTime(elapsedTime);
+                    break;
+                case DRIVING:
+                    UpdateDrivingTime(elapsedTime);
+                    break;
+                case RESTING:
+                    UpdateSessionRestingTime(elapsedTime);
+                    break;
 
 
             }
 
+            }
         }
-        public void UpdateWorkingTime(float elapsedTime)
-        {
+
+
+        public void UpdateDrivingTime(float elapsedTime) {
+            maxSessionDriveMinutes -= elapsedTime;
+
+            if (maxSessionDriveMinutes < 0) {
+
+                // send notification to viewmodel and display warning ?
+                // "Du musst Pause machen"
+
+            }
+
+
+        }
+
+        public void UpdateWorkingTime(float elapsedTime) {
             maxWorkMinutes -= elapsedTime;
         }
 
-        public void UpdateSessionRestingTime(float elapsedTime)
-        {
+        public void UpdateSessionRestingTime(float elapsedTime) {
+
+            if (minSessionRestTime <= 0) {
+                // send notification to viewmodel
+                // "Du kannst weiterfahren"
+
+            }
             minSessionRestTime -= elapsedTime;
+
         }
 
-        public void UpdateDayRestingTime(float elapsedTime)
-        {
-            minRestMinutes -=elapsedTime;
+        public void UpdateDayRestingTime(float elapsedTime) {
+            minRestMinutes -= elapsedTime;
         }
 
     }
@@ -83,7 +148,7 @@ public class LogicHelper {
 
     public  enum DriverActivity
     {
-        WORKING,DRIVING,RESTING,END;
+        WORKING,DRIVING,RESTING,LAST;
 
     }
 
@@ -101,22 +166,7 @@ public class LogicHelper {
     //elapsed time since this functions was called the last time
     public void UpdateElapsedTime(float elapsedTime,DriverActivity currActivity)
     {
-        switch (currActivity)
-        {
-            case WORKING:
-                currDay.UpdateWorkingTime((elapsedTime));
-                break;
-            case DRIVING:
-                currDay.UpdateDrivingTime(elapsedTime);
-                break;
-            case RESTING:
-                currDay.UpdateDayRestingTime(elapsedTime);
-                break;
-
-        }
-
-
-
+        currDay.UpdateActivity(elapsedTime,currActivity);
 
     }
 
