@@ -8,13 +8,13 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
-import tac.android.de.truckcompanion.geo.Point;
+import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
-
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.List;
+
+import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets;
 
 /**
  * Created by Jonas Miederer.
@@ -25,65 +25,53 @@ import java.util.ArrayList;
  */
 public class Journey {
 
+    private static DataCollector dataCollector;
+
     private int id;
     private int driver_id;
     private int truck_id;
     private DispoInformation.StartPoint startPoint;
     private ArrayList<DispoInformation.DestinationPoint> destinationPoints;
+    private Route route;
 
-    public Journey() {
 
-    }
-
-    public Journey(JSONObject journeyObj) throws JSONException, ParseException {
+    public Journey(JSONObject journeyObj, DataCollector dataCollector) throws JSONException, ParseException {
         this.id = journeyObj.getInt("id");
         this.driver_id = journeyObj.getInt("driver_id");
-        this.truck_id= journeyObj.getInt("truck_id");
+        this.truck_id = journeyObj.getInt("truck_id");
         this.startPoint = new DispoInformation.StartPoint(journeyObj.getJSONObject("start"));
 
         JSONArray stopsObjs = journeyObj.getJSONArray("stops");
 
         this.destinationPoints = new ArrayList<>();
-        for(int i = 0; i<stopsObjs.length(); i++){
+        for (int i = 0; i < stopsObjs.length(); i++) {
             this.destinationPoints.add(new DispoInformation.DestinationPoint(stopsObjs.getJSONObject(i)));
         }
-    }
 
-    public static String getJourneys(Context context){
-        String json = null;
-        try{
-            InputStream is = context.getAssets().open("dispo.json");
-            int size = is.available();
-            byte[] buffer = new byte[size];
-            is.read(buffer);
-            is.close();
-            json = new String(buffer, "UTF-8");
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        return json;
+        this.route = new Route(this.startPoint, this.destinationPoints, dataCollector);
     }
 
 
     public static class LoadJourneyData extends AsyncTask<Integer, Void, Journey> {
 
+        private final DataCollector dataCollector;
         private Context context;
         private ProgressDialog mProgressDialog;
         public AsyncResponse<Journey> callback = null;
 
-        public LoadJourneyData(Context context, ProgressDialog mProgressDialog, AsyncResponse<Journey> callback) {
+        public LoadJourneyData(Context context, ProgressDialog mProgressDialog, AsyncResponse<Journey> callback, DataCollector dataCollector) {
             this.context = context;
             this.mProgressDialog = mProgressDialog;
             this.callback = callback;
+            this.dataCollector = dataCollector;
         }
 
         @Override
         protected Journey doInBackground(Integer... params) {
-            JSONArray journeys= null;
+            JSONArray journeys = null;
             try {
-                journeys = new JSONArray(getJourneys(context));
-                return new Journey(journeys.getJSONObject(params[0]-1));
+                journeys = new JSONArray(getJsonStringFromAssets(context, "dispo.json"));
+                return new Journey(journeys.getJSONObject(params[0] - 1), dataCollector);
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
                 return null;

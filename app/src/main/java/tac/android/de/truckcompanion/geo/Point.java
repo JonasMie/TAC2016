@@ -10,6 +10,22 @@ import java.util.Date;
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
 public class Point {
+    public double getLat() {
+        return lat;
+    }
+
+    public void setLat(double lat) {
+        this.lat = lat;
+    }
+
+    public double getLng() {
+        return lng;
+    }
+
+    public void setLng(double lng) {
+        this.lng = lng;
+    }
+
     protected double lat;
     protected double lng;
 }

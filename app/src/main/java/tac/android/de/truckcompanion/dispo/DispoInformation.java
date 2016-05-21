@@ -25,6 +25,14 @@ public abstract class DispoInformation extends Point {
     public static class StartPoint extends Point {
         protected Date date;
 
+        public Date getDate() {
+            return date;
+        }
+
+        public void setDate(Date date) {
+            this.date = date;
+        }
+
         public StartPoint(JSONObject start) throws JSONException, ParseException {
             this.lat = start.getDouble("lat");
             this.lng = start.getDouble("lng");
@@ -34,6 +42,14 @@ public abstract class DispoInformation extends Point {
 
     public static class DestinationPoint extends Point {
         protected int time;
+
+        public int getTime() {
+            return time;
+        }
+
+        public void setTime(int time) {
+            this.time = time;
+        }
 
         public DestinationPoint(JSONObject dest) throws JSONException {
             this.lat = dest.getDouble("lat");
