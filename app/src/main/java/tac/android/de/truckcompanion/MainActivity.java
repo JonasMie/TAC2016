@@ -16,17 +16,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 import org.json.JSONException;
-import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
-import tac.android.de.truckcompanion.data.JourneyEventListener;
-import tac.android.de.truckcompanion.data.JourneyState;
-import tac.android.de.truckcompanion.simulator.JourneySimulation;
-import tac.android.de.truckcompanion.simulator.SimulationEventListener;
+import tac.android.de.truckcompanion.data.TruckState;
+import tac.android.de.truckcompanion.data.TruckStateEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
-public class MainActivity extends AppCompatActivity implements  JourneyEventListener{
+public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
@@ -49,7 +46,7 @@ public class MainActivity extends AppCompatActivity implements  JourneyEventList
 
     // Data
     private Journey mCurrentJourney;
-    private JourneyState mCurrentJourneyState;
+    private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
 
     @Override
@@ -200,8 +197,8 @@ public class MainActivity extends AppCompatActivity implements  JourneyEventList
 //                    simulation.startSimulation();
 
                     // add journey event listener
-                    mCurrentJourneyState = new JourneyState(this);
-                    mCurrentJourneyState.addJourneyEventListener(this);
+                    mCurrentTruckState = new TruckState(this);
+                    mCurrentTruckState.addTruckStateEventListener(this);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }

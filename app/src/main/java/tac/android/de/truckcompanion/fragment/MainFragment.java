@@ -27,6 +27,7 @@ import com.github.mikephil.charting.utils.Utils;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Places;
 import org.json.JSONObject;
+import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
@@ -60,27 +61,20 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart = (PieChart) view.findViewById(R.id.chart);
         textView = (TextView) view.findViewById(R.id.testView);
 
-        DataCollector dataCollector = new DataCollector(getContext());
-        dataCollector.getPlacesNearby(48.7473363, 9.1024129, 20, new ResponseCallback() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                textView.setText(result.toString());
-            }
+//        ((MainActivity)getActivity()).dataCollector.getPlacesNearby(48.7473363, 9.1024129, 20, new ResponseCallback() {
+//            @Override
+//            public void onSuccess(JSONObject result) {
+//                textView.setText(result.toString());
+//            }
+//
+//            @Override
+//            public void onError(VolleyError error) {
+//                // TODO handle error
+//                Log.e("TAC", error.getMessage());
+//                textView.setText(error.toString());
+//            }
+//        });
 
-            @Override
-            public void onError(VolleyError error) {
-                // TODO handle error
-                Log.e("TAC", error.getMessage());
-                textView.setText(error.toString());
-            }
-        });
-
-//        // Google Stuff
-//        mGoogleApiClient = new GoogleApiClient.Builder(getContext())
-//                .addApi(Places.GEO_DATA_API)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .build();
 
 
 //        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.rLayout);
@@ -130,11 +124,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 Entry((float)
 
                 (100 / 24), 4));
-        yVals1.add(new
-
-                Entry((float)
-
-                (1250 / 24), 5));
+//        yVals1.add(new
+//
+//                Entry((float)
+//
+//                (1250 / 24), 5));
 
         PieDataSet dataSet = new PieDataSet(yVals1, "Fahrtzeiten");
 
