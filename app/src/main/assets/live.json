@@ -1,0 +1,1743 @@
+[
+  {
+    "lat": 48.793764,
+    "lng": 9.033862,
+    "speed": 0,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0,
+    "motorOn": false
+  },
+  {
+    "lat": 48.793764,
+    "lng": 9.033862,
+    "speed": 0,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0,
+    "motorOn": false
+  },
+  {
+    "lat": 48.793764,
+    "lng": 9.033862,
+    "speed": 0,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0,
+    "motorOn": true
+  },
+  {
+    "lat": 48.793764,
+    "lng": 9.033862,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0,
+    "motorOn": true
+  },
+  {
+    "lat": 48.920836,
+    "lng": 9.163672,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.059416,
+    "lng": 9.270647,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.173596,
+    "lng": 9.385694,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.211102,
+    "lng": 9.612939,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.179743,
+    "lng": 9.846375,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.189994,
+    "lng": 10.083036,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.230204,
+    "lng": 10.305039,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.25837,
+    "lng": 10.539215,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.299374,
+    "lng": 10.758358,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.31562,
+    "lng": 10.991104,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.39405,
+    "lng": 11.199102,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.531344,
+    "lng": 11.313755,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.657915,
+    "lng": 11.450471,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.80049,
+    "lng": 11.493812,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.923576,
+    "lng": 11.60046,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.075058,
+    "lng": 11.637973,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.197861,
+    "lng": 11.773632,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.350849,
+    "lng": 11.794676,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.496729,
+    "lng": 11.799414,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.649074,
+    "lng": 11.804553,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.796565,
+    "lng": 11.888053,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.945708,
+    "lng": 11.834695,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.080173,
+    "lng": 11.949432,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.223455,
+    "lng": 12.046416,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.353935,
+    "lng": 12.178417,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.506529,
+    "lng": 12.200193,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.6624,
+    "lng": 12.203862,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.806699,
+    "lng": 12.288469,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.932315,
+    "lng": 12.438759,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.041873,
+    "lng": 12.615347,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.154437,
+    "lng": 12.79292,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.282756,
+    "lng": 12.905076,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.402398,
+    "lng": 12.8769,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.528035,
+    "lng": 12.993597,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.535597,
+    "lng": 13.037122,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.657947,
+    "lng": 13.001747,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.761299,
+    "lng": 12.859538,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.8899,
+    "lng": 12.731785,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.018841,
+    "lng": 12.583273,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.144087,
+    "lng": 12.43126,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.22935,
+    "lng": 12.212777,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.298767,
+    "lng": 11.981492,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.352479,
+    "lng": 11.734567,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.42171,
+    "lng": 11.503099,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.480601,
+    "lng": 11.26025,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.507605,
+    "lng": 11.001473,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.538001,
+    "lng": 10.742557,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.558894,
+    "lng": 10.48138,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.557646,
+    "lng": 10.217545,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.518889,
+    "lng": 9.98275,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.543095,
+    "lng": 9.733744,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.480015,
+    "lng": 9.595575,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.334588,
+    "lng": 9.54717,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.228107,
+    "lng": 9.356958,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.109387,
+    "lng": 9.191514,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.037337,
+    "lng": 8.966609,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.00746,
+    "lng": 8.712532,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.930785,
+    "lng": 8.486151,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.866634,
+    "lng": 8.252257,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.720873,
+    "lng": 8.171353,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.568071,
+    "lng": 8.115639,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.420588,
+    "lng": 8.036047,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.286919,
+    "lng": 7.940176,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.167892,
+    "lng": 7.774693,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.045248,
+    "lng": 7.616757,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.898896,
+    "lng": 7.564573,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.751539,
+    "lng": 7.64581,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.598144,
+    "lng": 7.681274,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.459129,
+    "lng": 7.57836,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.36128,
+    "lng": 7.382304,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.243675,
+    "lng": 7.226926,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.10653,
+    "lng": 7.148268,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.022302,
+    "lng": 6.942855,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.906446,
+    "lng": 6.834876,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.762125,
+    "lng": 6.833953,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.633228,
+    "lng": 6.974726,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.545523,
+    "lng": 7.166474,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.400248,
+    "lng": 7.243997,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.361742,
+    "lng": 7.475878,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.226627,
+    "lng": 7.542601,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.079866,
+    "lng": 7.624803,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.958682,
+    "lng": 7.766181,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.891596,
+    "lng": 7.960028,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.772637,
+    "lng": 8.106969,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.661058,
+    "lng": 8.260782,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.514823,
+    "lng": 8.313614,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.371335,
+    "lng": 8.369999,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.308082,
+    "lng": 8.58182,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.164068,
+    "lng": 8.567864,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.022182,
+    "lng": 8.467018,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.927748,
+    "lng": 8.584727,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.883651,
+    "lng": 8.792922,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.793339,
+    "lng": 8.974982,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.715247,
+    "lng": 9.153812,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.793764,
+    "lng": 9.033862,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.920836,
+    "lng": 9.163672,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.059416,
+    "lng": 9.270647,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.173596,
+    "lng": 9.385694,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.211102,
+    "lng": 9.612939,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.179743,
+    "lng": 9.846375,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.189994,
+    "lng": 10.083036,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.230204,
+    "lng": 10.305039,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.25837,
+    "lng": 10.539215,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.299374,
+    "lng": 10.758358,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.31562,
+    "lng": 10.991104,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.39405,
+    "lng": 11.199102,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.531344,
+    "lng": 11.313755,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.657915,
+    "lng": 11.450471,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.80049,
+    "lng": 11.493812,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.923576,
+    "lng": 11.60046,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.075058,
+    "lng": 11.637973,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.197861,
+    "lng": 11.773632,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.350849,
+    "lng": 11.794676,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.496729,
+    "lng": 11.799414,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.649074,
+    "lng": 11.804553,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.796565,
+    "lng": 11.888053,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.945708,
+    "lng": 11.834695,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.080173,
+    "lng": 11.949432,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.223455,
+    "lng": 12.046416,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.353935,
+    "lng": 12.178417,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.506529,
+    "lng": 12.200193,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.6624,
+    "lng": 12.203862,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.806699,
+    "lng": 12.288469,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.932315,
+    "lng": 12.438759,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.041873,
+    "lng": 12.615347,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.154437,
+    "lng": 12.79292,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.282756,
+    "lng": 12.905076,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.402398,
+    "lng": 12.8769,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.528035,
+    "lng": 12.993597,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.535597,
+    "lng": 13.037122,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.657947,
+    "lng": 13.001747,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.761299,
+    "lng": 12.859538,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.8899,
+    "lng": 12.731785,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.018841,
+    "lng": 12.583273,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.144087,
+    "lng": 12.43126,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.22935,
+    "lng": 12.212777,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.298767,
+    "lng": 11.981492,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.352479,
+    "lng": 11.734567,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.42171,
+    "lng": 11.503099,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.480601,
+    "lng": 11.26025,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.507605,
+    "lng": 11.001473,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.538001,
+    "lng": 10.742557,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.558894,
+    "lng": 10.48138,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.557646,
+    "lng": 10.217545,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.518889,
+    "lng": 9.98275,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.543095,
+    "lng": 9.733744,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.480015,
+    "lng": 9.595575,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.334588,
+    "lng": 9.54717,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.228107,
+    "lng": 9.356958,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.109387,
+    "lng": 9.191514,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.037337,
+    "lng": 8.966609,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 53.00746,
+    "lng": 8.712532,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.930785,
+    "lng": 8.486151,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.866634,
+    "lng": 8.252257,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.720873,
+    "lng": 8.171353,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.568071,
+    "lng": 8.115639,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.420588,
+    "lng": 8.036047,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.286919,
+    "lng": 7.940176,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.167892,
+    "lng": 7.774693,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 52.045248,
+    "lng": 7.616757,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.898896,
+    "lng": 7.564573,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.751539,
+    "lng": 7.64581,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.598144,
+    "lng": 7.681274,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.459129,
+    "lng": 7.57836,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.36128,
+    "lng": 7.382304,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.243675,
+    "lng": 7.226926,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.10653,
+    "lng": 7.148268,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 51.022302,
+    "lng": 6.942855,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.906446,
+    "lng": 6.834876,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.762125,
+    "lng": 6.833953,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.633228,
+    "lng": 6.974726,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.545523,
+    "lng": 7.166474,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.400248,
+    "lng": 7.243997,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.361742,
+    "lng": 7.475878,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.226627,
+    "lng": 7.542601,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 50.079866,
+    "lng": 7.624803,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.958682,
+    "lng": 7.766181,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.891596,
+    "lng": 7.960028,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.772637,
+    "lng": 8.106969,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.661058,
+    "lng": 8.260782,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.514823,
+    "lng": 8.313614,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.371335,
+    "lng": 8.369999,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.308082,
+    "lng": 8.58182,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.164068,
+    "lng": 8.567864,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 49.022182,
+    "lng": 8.467018,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.927748,
+    "lng": 8.584727,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.883651,
+    "lng": 8.792922,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.793339,
+    "lng": 8.974982,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  },
+  {
+    "lat": 48.715247,
+    "lng": 9.153812,
+    "speed": 80,
+    "embarkation": 0,
+    "stationarySince": 0,
+    "heading": 3600,
+    "driveDirection": 0
+  }
+]

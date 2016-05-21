@@ -11,14 +11,22 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import org.json.JSONException;
+import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
+import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
+import tac.android.de.truckcompanion.data.JourneyEventListener;
+import tac.android.de.truckcompanion.data.JourneyState;
+import tac.android.de.truckcompanion.simulator.JourneySimulation;
+import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements  JourneyEventListener{
 
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
@@ -41,11 +49,15 @@ public class MainActivity extends AppCompatActivity {
 
     // Data
     private Journey mCurrentJourney;
+    private JourneyState mCurrentJourneyState;
+    public DataCollector dataCollector;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        dataCollector = new DataCollector(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
@@ -157,22 +169,50 @@ public class MainActivity extends AppCompatActivity {
                     Log.d("TAC", journey.toString());
                 }
             }
-        }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
+        }, dataCollector).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
 
 //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu. This adds items to the action bar if it is present
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
+//    public void onSimulationEvent(JSONObject event) {
+//        try {
+//            Log.d("TACSimulation", "New event: " + event.getDouble("lat") + ", " + event.getDouble("lng") + ", Speed: " + event.getInt("speed"));
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 //    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        /* Handle action bar item clicks here. The action bar will
-//            automatically handle clicks on the Home/Up button,
-//            so long as we specify a parent activity in AndroidManifest.xml
-//         */
-//        return item.getItemId() == R.id.action_settings || super.onOptionsItemSelected(item);
-//
-//    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu. This adds items to the action bar if it is present
+        getMenuInflater().inflate(R.menu.main_options, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle item selection
+        switch (item.getItemId()) {
+            case R.id.start_simulation_menu_item:
+                // Start simulation
+                try {
+//                    JourneySimulation simulation = JourneySimulation.Builder(this);
+//                    simulation.addOnSimulationEventListener(this);
+//                    simulation.startSimulation();
+
+                    // add journey event listener
+                    mCurrentJourneyState = new JourneyState(this);
+                    mCurrentJourneyState.addJourneyEventListener(this);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public void onTruckStationaryStateChange(int state) {
+        Log.d("TAC", "State changed: " + state);
+    }
 }
