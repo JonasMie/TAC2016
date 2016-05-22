@@ -21,9 +21,14 @@ import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.fragment.StatsFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
+
+    public static FragmentManager fm;
 
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
@@ -32,7 +37,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     // View references
     private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
-    private ViewPager mViewPger;
+    private ViewPager mViewPager;
     private ViewPagerAdapter mViewPagerAdapter;
 
     private DrawerLayout mDrawerLayout;
@@ -58,40 +63,43 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPger = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
 
-        /*
-        ViewPager / Tabs related stuff starts here
-         */
-        // Creating adapter and setting that adapter to the viewPager
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mViewPger.setAdapter(mViewPagerAdapter);
-
+        fm = getSupportFragmentManager();
         setSupportActionBar(toolbar);
 
-        // Create the tabs
-        final TabLayout.Tab home = mTabLayout.newTab();
-        final TabLayout.Tab map = mTabLayout.newTab();
-        final TabLayout.Tab stats = mTabLayout.newTab();
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.stats));
 
-        // Set the tab titles
-        home.setText(R.string.main_view);
-        map.setText(R.string.map);
-        stats.setText(R.string.stats);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        // Add the tabs to the layout
-        mTabLayout.addTab(home, 0);
-        mTabLayout.addTab(map, 1);
-        mTabLayout.addTab(stats, 2);
+        // Creating adapter and setting that adapter to the viewPager
+        mViewPagerAdapter = new ViewPagerAdapter(fm);
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         // Set tab text colors
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
         mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
-
-        // Add the onPageChangeListener to the view pager
-        mViewPger.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
         /*
         Drawer related stuff starts here
