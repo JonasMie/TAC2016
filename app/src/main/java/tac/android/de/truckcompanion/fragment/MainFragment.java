@@ -1,19 +1,14 @@
 package tac.android.de.truckcompanion.fragment;
 
 import android.graphics.Color;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.DefaultItemAnimator;
 import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
-import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -25,15 +20,8 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.PointD;
 import com.github.mikephil.charting.utils.Utils;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.places.Places;
-import org.json.JSONObject;
-import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
-import tac.android.de.truckcompanion.data.DataCollector;
-import tac.android.de.truckcompanion.utils.ResponseCallback;
-
 import java.util.ArrayList;
-import java.util.logging.Logger;
 
 
 /**
@@ -45,21 +33,16 @@ import java.util.logging.Logger;
  */
 public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, GoogleApiClient.ConnectionCallbacks {
 
-    private TextView textView;
-    private RelativeLayout mRelativeLayout;
     private PieChart mChart;
     private float mStartAngle = 0;
     private ArrayList<ImageView> symbols = new ArrayList<>();
     private PointF mTouchStartPoint = new PointF();
-
-    private GoogleApiClient.Builder mGoogleApiClient;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
-        textView = (TextView) view.findViewById(R.id.testView);
 
 //        ((MainActivity)getActivity()).dataCollector.getPlacesNearby(48.7473363, 9.1024129, 20, new ResponseCallback() {
 //            @Override
@@ -245,7 +228,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         params.topMargin = (int) (point.y);
         icon.setLayoutParams(params);
         icon.setImageResource(R.drawable.fuel);
-        mRelativeLayout.addView(icon);
+//        mRelativeLayout.addView(icon);
 
         symbols.add(icon);
 

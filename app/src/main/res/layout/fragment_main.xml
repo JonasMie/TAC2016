@@ -11,12 +11,31 @@
             android:layout_width="match_parent"
             android:orientation="vertical">
 
-        <TextView
-                android:id="@+id/testView"
+        <LinearLayout
+                android:id="@+id/top_recommendations"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1"
-        />
+                android:orientation="horizontal"
+                android:layout_weight="1">
+
+            <TextView
+                    android:id="@+id/top_recommendations_main"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Main recommendation"
+                    android:background="@android:color/holo_green_light"
+            />
+            <TextView
+                    android:id="@+id/top_recommendations_alt"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:text="Alternative recommendations"
+                    android:background="@android:color/holo_red_light"
+
+            />
+        </LinearLayout>
 
         <RelativeLayout
                 android:id="@+id/rLayout"
