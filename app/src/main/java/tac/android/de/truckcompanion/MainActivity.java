@@ -3,6 +3,7 @@ package tac.android.de.truckcompanion;
 import android.app.ProgressDialog;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -21,9 +22,6 @@ import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
-import tac.android.de.truckcompanion.fragment.MainFragment;
-import tac.android.de.truckcompanion.fragment.MapFragment;
-import tac.android.de.truckcompanion.fragment.StatsFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
@@ -198,13 +196,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.start_simulation_menu_item:
-                // Start simulation
+                // add journey event listener
                 try {
-//                    JourneySimulation simulation = JourneySimulation.Builder(this);
-//                    simulation.addOnSimulationEventListener(this);
-//                    simulation.startSimulation();
-
-                    // add journey event listener
                     mCurrentTruckState = new TruckState(this);
                     mCurrentTruckState.addTruckStateEventListener(this);
                 } catch (JSONException e) {
