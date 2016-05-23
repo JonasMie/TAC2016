@@ -1,32 +1,44 @@
 package tac.android.de.truckcompanion.logic;
 
 import android.app.Activity;
+import org.json.JSONObject;
+import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 
 import java.util.Vector;
 
 /**
  * Created by Michael on 19.05.2016.
- Oh my gawd.
+ * Oh my gawd.
  */
 //in minutes
 
 
-
-public class LogicHelper {
+public class LogicHelper implements TruckStateEventListener, SimulationEventListener {
 
     public static final int MAX_WEEK_DRIVE_MINUTES = 3360;        // 56 hours
     public static final int MAX_DAY_DRIVE_MINUTES = 540;           // 9 hours
-    public static final int MAX_DAY_DRIVE_MINUTES_EXCEPTION = 600 ;  // 10 hours
+    public static final int MAX_DAY_DRIVE_MINUTES_EXCEPTION = 600;  // 10 hours
     public static final int MAX_SESSION_DRIVE_MINUTES = 270;             // 4.5 hours
     public static final int MAX_SESSION_WORK_MINUTES_COMBINED = 360;      // 6 hours
     public static final int MAX_DAY_WORK_MINUTES = 480;                   // 8 hours
 
-    public static final int MIN_WEEK_REST_MINUTES = 2700 ;            // 45 hours
-    public static final int MIN_WEEK_REST_MINUTES_EXCEPTION = 1440 ;    // 24 hours
-    public static final int MIN_SESSION_REST_MINUTES = 45 ;                    // 0.75 hours
-    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P1 = 15 ;                    // 0.25 hours
-    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P2 = 30 ;                    // 0.5 hours
-    public static final int MIN_DAY_REST_MINUTES = 660 ;                    // 11 hours
+    public static final int MIN_WEEK_REST_MINUTES = 2700;            // 45 hours
+    public static final int MIN_WEEK_REST_MINUTES_EXCEPTION = 1440;    // 24 hours
+    public static final int MIN_SESSION_REST_MINUTES = 45;                    // 0.75 hours
+    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P1 = 15;                    // 0.25 hours
+    public static final int MIN_SESSION_REST_MINUTES_SPLIT_P2 = 30;                    // 0.5 hours
+    public static final int MIN_DAY_REST_MINUTES = 660;                    // 11 hours
+
+    @Override
+    public void onTruckStationaryStateChange(int state) {
+
+    }
+
+    @Override
+    public void onSimulationEvent(JSONObject event) {
+
+    }
 
 
     //not a 24h day. values are set to MIN and are decreased. example: if drivingMinutes is zero, driver has no driving time left for this day (only twice a week 10hours)
@@ -62,7 +74,7 @@ public class LogicHelper {
             if (lastActivity != currActivity) {
 
                 if (currActivity == DriverActivity.DRIVING) {
-                    
+
                     if (minSessionRestTime >= 0) {
                         // notify view
                         //"Du hast zu wenig pause zwischen den Arbeitsschichten gemacht!"
@@ -91,20 +103,19 @@ public class LogicHelper {
                 }
 
             } else {
-            switch (lastActivity)
-            {
-                case WORKING:
-                    UpdateWorkingTime(elapsedTime);
-                    break;
-                case DRIVING:
-                    UpdateDrivingTime(elapsedTime);
-                    break;
-                case RESTING:
-                    UpdateSessionRestingTime(elapsedTime);
-                    break;
+                switch (lastActivity) {
+                    case WORKING:
+                        UpdateWorkingTime(elapsedTime);
+                        break;
+                    case DRIVING:
+                        UpdateDrivingTime(elapsedTime);
+                        break;
+                    case RESTING:
+                        UpdateSessionRestingTime(elapsedTime);
+                        break;
 
 
-            }
+                }
 
             }
         }
@@ -145,18 +156,15 @@ public class LogicHelper {
     }
 
 
-
-    public  enum DriverActivity
-    {
-        WORKING,DRIVING,RESTING,LAST;
+    public enum DriverActivity {
+        WORKING, DRIVING, RESTING, LAST;
 
     }
 
     private Day currDay;
     public Vector<Day> workingDays;
 
-    public LogicHelper()
-    {
+    public LogicHelper() {
 
         workingDays = new Vector<Day>();
         currDay = new Day();
@@ -164,11 +172,10 @@ public class LogicHelper {
 
 
     //elapsed time since this functions was called the last time
-    public void UpdateElapsedTime(float elapsedTime,DriverActivity currActivity)
-    {
-        currDay.UpdateActivity(elapsedTime,currActivity);
+    public void UpdateElapsedTime(float elapsedTime, DriverActivity currActivity) {
+        currDay.UpdateActivity(elapsedTime, currActivity);
 
     }
 
-    
+
 }
