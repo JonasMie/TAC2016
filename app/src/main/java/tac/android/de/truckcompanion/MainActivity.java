@@ -22,9 +22,6 @@ import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
-import tac.android.de.truckcompanion.fragment.MainFragment;
-import tac.android.de.truckcompanion.fragment.MapFragment;
-import tac.android.de.truckcompanion.fragment.StatsFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
