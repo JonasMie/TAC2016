@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -52,10 +53,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
 
+    public static Context context;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
 
         dataCollector = new DataCollector(this);
 
@@ -169,20 +173,12 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
                     mCurrentJourney = journey;
-                    Log.d("TAC", journey.toString());
+                    mCurrentJourney.getRoute().requestRoute(mCurrentJourney.getStartPoint(),mCurrentJourney.getDestinationPoints(), dataCollector, mProgressDialog);
+                    Log.d("TAC", "Standort in 80km:  " + mCurrentJourney.getPositionOnRouteByDistance(80));
                 }
             }
         }, dataCollector).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
-
-//    @Override
-//    public void onSimulationEvent(JSONObject event) {
-//        try {
-//            Log.d("TACSimulation", "New event: " + event.getDouble("lat") + ", " + event.getDouble("lng") + ", Speed: " + event.getInt("speed"));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

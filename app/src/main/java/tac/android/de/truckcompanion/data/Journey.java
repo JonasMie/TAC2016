@@ -3,6 +3,7 @@ package tac.android.de.truckcompanion.data;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
+import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -12,7 +13,6 @@ import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.List;
 
 import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets;
 
@@ -32,10 +32,39 @@ public class Journey {
     private int truck_id;
     private DispoInformation.StartPoint startPoint;
     private ArrayList<DispoInformation.DestinationPoint> destinationPoints;
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public static DataCollector getDataCollector() {
+        return dataCollector;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getDriver_id() {
+        return driver_id;
+    }
+
+    public int getTruck_id() {
+        return truck_id;
+    }
+
+    public DispoInformation.StartPoint getStartPoint() {
+        return startPoint;
+    }
+
+    public ArrayList<DispoInformation.DestinationPoint> getDestinationPoints() {
+        return destinationPoints;
+    }
+
     private Route route;
 
 
-    public Journey(JSONObject journeyObj, DataCollector dataCollector) throws JSONException, ParseException {
+    public Journey(JSONObject journeyObj, DataCollector dataCollector, ProgressDialog mProgressDialog) throws JSONException, ParseException {
         this.id = journeyObj.getInt("id");
         this.driver_id = journeyObj.getInt("driver_id");
         this.truck_id = journeyObj.getInt("truck_id");
@@ -48,7 +77,7 @@ public class Journey {
             this.destinationPoints.add(new DispoInformation.DestinationPoint(stopsObjs.getJSONObject(i)));
         }
 
-        this.route = new Route(this.startPoint, this.destinationPoints, dataCollector);
+        this.route = new Route();
     }
 
 
@@ -71,7 +100,7 @@ public class Journey {
             JSONArray journeys = null;
             try {
                 journeys = new JSONArray(getJsonStringFromAssets(context, "dispo.json"));
-                return new Journey(journeys.getJSONObject(params[0] - 1), dataCollector);
+                return new Journey(journeys.getJSONObject(params[0] - 1), dataCollector, mProgressDialog);
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -93,5 +122,39 @@ public class Journey {
             mProgressDialog.dismiss();
             callback.processFinish(journey);
         }
+    }
+
+    /**
+     * Get travelled distance int.
+     *
+     * @return the int
+     */
+    public int getTravelledDistance() {
+        // TODO implement getTravelledDistance
+        return 0;
+    }
+
+    /**
+     * Get travelled duration int.
+     *
+     * @return the int
+     */
+    public int getTravelledDuration() {
+        // TODO implement getTravelledDuration
+        return 0;
+    }
+
+    public LatLng getPositionOnRouteByDistance(int distance) {
+        if (distance > route.getDistance() - getTravelledDistance()) {
+            // Chosen distance exceeds distance of remaining route.
+            // set it to the total route distance
+            distance = route.getDistance() - getTravelledDistance();
+        }
+        return route.getWaypoints().get(distance / Route.DISTANCE_INTERVAL);
+    }
+
+    public LatLng getPositionOnRouteByTime(int time) {
+        // TODO implement getPositionOnRouteByTime
+        return null;
     }
 }
