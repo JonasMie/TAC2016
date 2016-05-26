@@ -35,31 +35,15 @@ public class Route {
 
     }
 
-    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, DataCollector dataCollector, final ProgressDialog mProgressDialog){
-        mProgressDialog.setMessage(MainActivity.context.getString(R.string.loading_route_data_msg));
-        dataCollector.getRoute(startPoint, destinationPoints, new ResponseCallback() {
-            @Override
-            public void onSuccess(JSONObject result) {
-                try {
-                    googleRoute = result.getJSONArray("routes").getJSONObject(0);
-                    waypoints = getWaypoints(new JSONArray(Helper.getJsonStringFromAssets(MainActivity.context, "live.json")));
-                    duration = getRouteDuration(googleRoute);
-                    distance = getRouteDistance(googleRoute);
-                    if(mProgressDialog.isShowing()){
-                        mProgressDialog.dismiss();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-                Log.e("TAC", error.getMessage());
-            }
-        });
+    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, DataCollector dataCollector, ResponseCallback callback){
+        dataCollector.getRoute(startPoint, destinationPoints, callback);
     }
-
+    public void setup(JSONObject result) throws JSONException {
+        googleRoute = result.getJSONArray("routes").getJSONObject(0);
+        waypoints = getWaypoints(new JSONArray(Helper.getJsonStringFromAssets(MainActivity.context, "live.json")));
+        duration = getRouteDuration(googleRoute);
+        distance = getRouteDistance(googleRoute);
+    }
     private int getRouteDuration(JSONObject googleRoute) throws JSONException {
         int duration = 0;
         JSONArray legs = googleRoute.getJSONArray("legs");

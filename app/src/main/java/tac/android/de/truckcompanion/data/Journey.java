@@ -1,13 +1,11 @@
 package tac.android.de.truckcompanion.data;
 
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.AsyncTask;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
@@ -28,16 +26,15 @@ public class Journey {
     private static DataCollector dataCollector;
 
     private int id;
-    private int driver_id;
     private int truck_id;
+    private Driver driver;
     private DispoInformation.StartPoint startPoint;
     private ArrayList<DispoInformation.DestinationPoint> destinationPoints;
+    private Route route;
+    private int travelledDistance;
+    private int travelledDuration;
 
-    public Route getRoute() {
-        return route;
-    }
-
-    public static DataCollector getDataCollector() {
+    private static DataCollector getDataCollector() {
         return dataCollector;
     }
 
@@ -45,8 +42,8 @@ public class Journey {
         return id;
     }
 
-    public int getDriver_id() {
-        return driver_id;
+    public Driver getDriver() {
+        return driver;
     }
 
     public int getTruck_id() {
@@ -61,14 +58,17 @@ public class Journey {
         return destinationPoints;
     }
 
-    private Route route;
+    public Route getRoute() {
+        return route;
+    }
 
-
-    public Journey(JSONObject journeyObj, DataCollector dataCollector, ProgressDialog mProgressDialog) throws JSONException, ParseException {
+    public Journey(JSONObject journeyObj) throws JSONException, ParseException {
         this.id = journeyObj.getInt("id");
-        this.driver_id = journeyObj.getInt("driver_id");
+        this.driver = new Driver(journeyObj.getInt("driver_id"));
         this.truck_id = journeyObj.getInt("truck_id");
         this.startPoint = new DispoInformation.StartPoint(journeyObj.getJSONObject("start"));
+        travelledDistance = 0;
+        travelledDuration = 0;
 
         JSONArray stopsObjs = journeyObj.getJSONArray("stops");
 
@@ -82,17 +82,12 @@ public class Journey {
 
 
     public static class LoadJourneyData extends AsyncTask<Integer, Void, Journey> {
-
-        private final DataCollector dataCollector;
         private Context context;
-        private ProgressDialog mProgressDialog;
         public AsyncResponse<Journey> callback = null;
 
-        public LoadJourneyData(Context context, ProgressDialog mProgressDialog, AsyncResponse<Journey> callback, DataCollector dataCollector) {
+        public LoadJourneyData(Context context, AsyncResponse<Journey> callback) {
             this.context = context;
-            this.mProgressDialog = mProgressDialog;
             this.callback = callback;
-            this.dataCollector = dataCollector;
         }
 
         @Override
@@ -100,7 +95,7 @@ public class Journey {
             JSONArray journeys = null;
             try {
                 journeys = new JSONArray(getJsonStringFromAssets(context, "dispo.json"));
-                return new Journey(journeys.getJSONObject(params[0] - 1), dataCollector, mProgressDialog);
+                return new Journey(journeys.getJSONObject(params[0] - 1));
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -110,16 +105,10 @@ public class Journey {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            mProgressDialog = new ProgressDialog(context);
-            mProgressDialog.setTitle(R.string.loading_journey_data_title);
-            mProgressDialog.setMessage(context.getString(R.string.loading_journey_data_msg));
-            mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            mProgressDialog.show();
         }
 
         @Override
         protected void onPostExecute(Journey journey) {
-            mProgressDialog.dismiss();
             callback.processFinish(journey);
         }
     }
@@ -130,8 +119,7 @@ public class Journey {
      * @return the int
      */
     public int getTravelledDistance() {
-        // TODO implement getTravelledDistance
-        return 0;
+        return travelledDistance;
     }
 
     /**
@@ -140,8 +128,7 @@ public class Journey {
      * @return the int
      */
     public int getTravelledDuration() {
-        // TODO implement getTravelledDuration
-        return 0;
+        return travelledDuration;
     }
 
     public LatLng getPositionOnRouteByDistance(int distance) {
@@ -150,7 +137,7 @@ public class Journey {
             // set it to the total route distance
             distance = route.getDistance() - getTravelledDistance();
         }
-        return route.getWaypoints().get(distance / Route.DISTANCE_INTERVAL);
+        return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
     }
 
     public LatLng getPositionOnRouteByTime(int time) {

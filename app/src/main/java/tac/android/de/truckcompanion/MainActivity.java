@@ -17,13 +17,16 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.android.volley.VolleyError;
 import org.json.JSONException;
+import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.ResponseCallback;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
@@ -166,18 +169,44 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         });
 
         // Setup/load journey data
-        new Journey.LoadJourneyData(this, mProgressDialog, new AsyncResponse<Journey>() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(R.string.loading_journey_data_title);
+        mProgressDialog.setMessage(getString(R.string.loading_journey_data_msg));
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.show();
+        new Journey.LoadJourneyData(this, new AsyncResponse<Journey>() {
             @Override
             public void processFinish(Journey journey) {
                 if (journey == null) {
+                    mProgressDialog.dismiss();
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
                     mCurrentJourney = journey;
-                    mCurrentJourney.getRoute().requestRoute(mCurrentJourney.getStartPoint(),mCurrentJourney.getDestinationPoints(), dataCollector, mProgressDialog);
-                    Log.d("TAC", "Standort in 80km:  " + mCurrentJourney.getPositionOnRouteByDistance(80));
+                    mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
+                    mCurrentJourney.getRoute().requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), dataCollector, new ResponseCallback() {
+                        @Override
+                        public void onSuccess(JSONObject result) {
+                            try {
+                                mCurrentJourney.getRoute().setup(result);
+                                if (mProgressDialog.isShowing()) {
+                                    mProgressDialog.dismiss();
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        @Override
+                        public void onError(VolleyError error) {
+                            Log.e("TAC", error.getMessage());
+                            if (mProgressDialog.isShowing()) {
+                                mProgressDialog.dismiss();
+                            }
+                        }
+                    });
                 }
             }
-        }, dataCollector).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
+        }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
 
     @Override
