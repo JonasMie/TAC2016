@@ -1,14 +1,18 @@
 package tac.android.de.truckcompanion.data;
 
 import android.content.Context;
+import android.location.Location;
 import android.os.AsyncTask;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.Route;
+import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 
@@ -21,7 +25,7 @@ import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class Journey {
+public class Journey implements SimulationEventListener {
 
     private static DataCollector dataCollector;
 
@@ -78,6 +82,21 @@ public class Journey {
         }
 
         this.route = new Route();
+    }
+
+    @Override
+    public void onSimulationEvent(JSONObject event) {
+        /**
+         * When a new event is received, the journey-related data needs to be updated
+         */
+        try {
+            JSONObject prevEvent = event.getJSONObject("prev");
+            JSONObject newEvent = event.getJSONObject("new");
+            travelledDistance += GeoHelper.getLocation("prev", prevEvent.getDouble("lat"), prevEvent.getDouble("lng")).distanceTo(GeoHelper.getLocation("new", newEvent.getDouble("lat"), newEvent.getDouble("lng")));
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 
