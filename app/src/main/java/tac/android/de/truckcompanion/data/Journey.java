@@ -1,7 +1,6 @@
 package tac.android.de.truckcompanion.data;
 
 import android.content.Context;
-import android.location.Location;
 import android.os.AsyncTask;
 import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
@@ -27,8 +26,6 @@ import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets
  */
 public class Journey implements SimulationEventListener {
 
-    private static DataCollector dataCollector;
-
     private int id;
     private int truck_id;
     private Driver driver;
@@ -37,10 +34,6 @@ public class Journey implements SimulationEventListener {
     private Route route;
     private int travelledDistance;
     private int travelledDuration;
-
-    private static DataCollector getDataCollector() {
-        return dataCollector;
-    }
 
     public int getId() {
         return id;
@@ -93,7 +86,7 @@ public class Journey implements SimulationEventListener {
             JSONObject prevEvent = event.getJSONObject("prev");
             JSONObject newEvent = event.getJSONObject("new");
             travelledDistance += GeoHelper.getLocation("prev", prevEvent.getDouble("lat"), prevEvent.getDouble("lng")).distanceTo(GeoHelper.getLocation("new", newEvent.getDouble("lat"), newEvent.getDouble("lng")));
-
+            //travelledDuration ++;
         } catch (JSONException e) {
             e.printStackTrace();
         }
