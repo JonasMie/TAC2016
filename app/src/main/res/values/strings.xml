@@ -11,5 +11,6 @@
     <string name="loading_journey_data_title">Laden der Fahrtendaten</string>
     <string name="no_journey_found_toast">Keine Touren gefunden.</string>
     <string name="loading_journey_data_msg">Aktuelle Fahrtdaten werden abgerufen.</string>
+    <string name="loading_route_data_msg">Route wird abgerufen.</string>
     <string name="start_simulation_menu_item">Simulation starten</string>
 </resources>

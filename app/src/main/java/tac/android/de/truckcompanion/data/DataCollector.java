@@ -187,16 +187,16 @@ public class DataCollector {
         String waypointsString = "";
         DispoInformation.DestinationPoint destinationPoint = destinationPoints.remove(destinationPoints.size() - 1);
         for (DispoInformation.DestinationPoint wayPoint : destinationPoints) {
-            waypointsString += wayPoint.getLat() + "," + wayPoint.getLng() + "|";
+            waypointsString += wayPoint.getCoordinate().latitude + "," + wayPoint.getCoordinate().longitude + "|";
         }
-        if(waypointsString.length()>0){
-            waypointsString = waypointsString.substring(0,waypointsString.length() - 1);
+        if (waypointsString.length() > 0) {
+            waypointsString = waypointsString.substring(0, waypointsString.length() - 1);
         }
         String url = GOOGLE_DIRECTIONS_API_BASE_URL +
-                "?origin=" + startPoint.getLat() + "," + startPoint.getLng() +
-                "&destination=" + destinationPoint.getLat() + "," + destinationPoint.getLng() +
+                "?origin=" + startPoint.getCoordinate().latitude + "," + startPoint.getCoordinate().longitude +
+                "&destination=" + destinationPoint.getCoordinate().latitude + "," + destinationPoint.getCoordinate().longitude +
                 "&waypoints=" + waypointsString +
-                "&departure_time=" +startPoint.getDate().getTime()/1000 +
+                "&departure_time=" + startPoint.getDate().getTime() / 1000 +
                 "&key=" + GOOGLE_PLACES_API_KEY;
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
