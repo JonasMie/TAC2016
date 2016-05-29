@@ -6,7 +6,10 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.*;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -15,11 +18,10 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.PointD;
 import com.github.mikephil.charting.utils.Utils;
-import com.google.android.gms.common.api.GoogleApiClient;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
+
 import java.util.ArrayList;
 
 
@@ -30,7 +32,7 @@ import java.util.ArrayList;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, GoogleApiClient.ConnectionCallbacks {
+public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener {
 
     // Chart-related members
     private PieChart mChart;
@@ -40,6 +42,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     // Logic data
     private WheelEntry selectedEntry;
+
+    // Constants
+    private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
 
 
     @Nullable
@@ -79,6 +84,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         xVals.add("2. Lenkzeit");
         xVals.add("2. Pausenzeit");
         xVals.add("3. Lenkzeit");
+        xVals.add("3. Lenkzeit");
+        xVals.add("3. Lenkzeit");
         xVals.add("Ruhezeit");
 
         PieData data = new PieData(xVals, dataSet);
@@ -94,7 +101,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setHoleRadius(80f);
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
-        dataSet.setColors( WheelEntry.getColors(entries));
+        dataSet.setColors(WheelEntry.getColors(entries));
 
         // Listener
         mChart.setOnChartGestureListener(this);
@@ -123,8 +130,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         }
         // un-highlight values after the gesture is finished and no single-tap
-        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP) {
-            mChart.highlightValues(null); // or highlightTouch(null) for callback to onNothingSelected(...)
+        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
+            mChart.highlightValues(null);
+            mChart.setRotationEnabled(true);
+            if (selectedEntry != null) {
+                selectedEntry.setEditModeActive(false);
+                selectedEntry = null;
+            }
         }
     }
 
@@ -144,26 +156,62 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     @Override
     public void onChartLongPressed(MotionEvent me) {
+        /*
+        The Longpress-event for the chart.
+        Problem: The longpress-event does exist for the whole chart exclusively, there is no built-in function to
+        detect longpresses on single wheel entries.
+        So that's basically covered here.
+         */
+
         Log.i("LongPress", "Chart longpressed.");
+        PointF center = mChart.getCenter();
+        float radius = mChart.getRadius();
+
+        // Get coordinates of longpress-event
         float x = me.getX();
         float y = me.getY();
 
+        // Get the angle of these coordinates according to the wheel
         float angle = mChart.getAngleForPoint(x, y);
+
+        // Get the index belonging to the corresponding wheel entry at this angle
         int index = mChart.getIndexForAngle(angle);
+        // Finally get the entry
         WheelEntry longPressedEntry = (WheelEntry) mChart.getEntriesAtIndex(index).get(0);
-        dataSet.getColors().set(index, Color.BLUE);
 
-        PointF center = mChart.getCenter();
-        PointD point = getPoint(center, mChart.getRadius(), angle);
+        // If another element is still selected, deselect it
+//        this.onNothingSelected();
 
-//        ImageView icon = new ImageView(getContext());
-//        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(30, 30);
-//        params.leftMargin = (int) (point.x);
-//        params.topMargin = (int) (point.y);
-//        icon.setLayoutParams(params);
-//        icon.setImageResource(R.drawable.fuel);
-//        symbols.add(icon);
+        // The user can only modify entries, which represent a pause. Modifying a driving period is not possible.
+        if (!(longPressedEntry.getEntryType() == WheelEntry.PAUSE_ENTRY)) {
+            return;
+        }
+        /*
+         Since the listener listens for events on the whole chart, it is possible, to select the entries within a much
+         larger radius. But this is not desired, it would confuse the user and lead to user-unexpected behaviour.
+         So the longpress-event is limited to the dimensions of the entry plus a tolerance of eg 10%
+         */
+        if (!isInToleratedDistance(x, y, center, radius, angle)) {
+            return;
+        }
 
+        // Since the pause-entry is now selected, set it as current selected element (same behaviour as single-tap)
+        WheelEntry prevActiveEntry = WheelEntry.getActiveEntry();
+        if (prevActiveEntry != null) {
+            prevActiveEntry.setEditModeActive(false);
+        }
+        selectedEntry = longPressedEntry;
+        longPressedEntry.setEditModeActive(true);
+        mChart.highlightValue(index, 0);
+        mChart.setRotationEnabled(false);
+
+        /*
+        Visuals: Indicate, that the user can actually modify this entry.
+        TODO: how to visualize the selected entry, so that the user understands he can modify it (intuitively)
+        e.g.
+        Animation shake = AnimationUtils.loadAnimation(this.getContext(), R.anim.shake);
+        mChart.setAnimation(shake);
+         */
 
         mChart.notifyDataSetChanged();
     }
@@ -197,7 +245,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
         mChart.setRotationEnabled(false);
-        selectedEntry = (WheelEntry) mChart.getEntriesAtIndex(dataSetIndex);
+        selectedEntry = (WheelEntry) mChart.getEntriesAtIndex(dataSetIndex).get(0);
     }
 
     @Override
@@ -206,28 +254,25 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setRotationEnabled(true);
     }
 
-    public PointD getPoint(PointF origin, float radius, float angle) {
-        double angle_ = (angle * Math.PI / 180) + 270;
-        radius += 50;
-        double x = origin.x + radius * Math.cos(angle_);
-        double y = origin.y + radius * Math.sin(angle_);
+    private boolean isInToleratedDistance(float x, float y, PointF center, float radius, float angle) {
+        float holeRadius = mChart.getHoleRadius();
+        // Compute actual angle (in radian, considering MPAndroidChart begins drawing charts at 90°)
+        //double angle_ = (angle * Math.PI / 180) + 270;
 
-        return new PointD(x, y);
+        radius *= (holeRadius + (100 - mChart.getHoleRadius()) / 2) / 100;
+        // Add touch tolerance
+        double innerRadius = radius * (1 - ENTRY_LONGPRESS_TOLERANCE);
+        double outerRadius = radius * (1 + ENTRY_LONGPRESS_TOLERANCE);
+
+        // Get distance of touched point to center with pythagoras
+        double dist = Math.sqrt(Math.pow(center.x - x, 2) + Math.pow(center.y - y, 2));
+
+        return dist >= innerRadius && dist <= outerRadius;
     }
 
-    protected static float distance(float eventX, float startX, float eventY, float startY) {
+    private static float distance(float eventX, float startX, float eventY, float startY) {
         float dx = eventX - startX;
         float dy = eventY - startY;
         return (float) Math.sqrt(dx * dx + dy * dy);
-    }
-
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-
     }
 }

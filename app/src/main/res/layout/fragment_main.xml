@@ -16,7 +16,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:orientation="horizontal"
-                android:layout_weight="1">
+                android:layout_weight="0">
 
             <TextView
                     android:id="@+id/top_recommendations_main"
