@@ -22,12 +22,14 @@ public class WheelEntry extends Entry {
     public static final int DRIVE_ENTRY = 0;
     public static final int PAUSE_ENTRY = 1;
     public static final int RECOVERY_ENTRY = 2;
+    public static final int BUFFER_ENTRY = 3;
 
     public static final ArrayList<Integer> COLORS = new ArrayList<Integer>() {
         {
             add(ContextCompat.getColor(MainActivity.context, R.color.wheelDriveEntry));
             add(ContextCompat.getColor(MainActivity.context, R.color.wheelPauseEntry));
             add(ContextCompat.getColor(MainActivity.context, R.color.wheelRecoveryEntry));
+            add(ContextCompat.getColor(MainActivity.context, R.color.wheelDriveEntry));
         }
     };
 
@@ -68,11 +70,13 @@ public class WheelEntry extends Entry {
             {
                 add(new WheelEntry(270, 0, DRIVE_ENTRY));
                 add(new WheelEntry(45, 1, PAUSE_ENTRY));
-                add(new WheelEntry(200, 2, DRIVE_ENTRY));
-                add(new WheelEntry(15, 3, PAUSE_ENTRY));
-                add(new WheelEntry(70, 4, DRIVE_ENTRY));
-                add(new WheelEntry(30, 5, PAUSE_ENTRY));
-                add(new WheelEntry(90, 6, RECOVERY_ENTRY));
+                add(new WheelEntry(0, 2, BUFFER_ENTRY));
+                add(new WheelEntry(270, 3, DRIVE_ENTRY));
+                add(new WheelEntry(45, 4, PAUSE_ENTRY));
+                add(new WheelEntry(0, 5, BUFFER_ENTRY));
+                add(new WheelEntry(60, 6, DRIVE_ENTRY));
+//                add(new WheelEntry(30, 5, PAUSE_ENTRY));
+                add(new WheelEntry(30, 7, RECOVERY_ENTRY));
             }
         };
     }
