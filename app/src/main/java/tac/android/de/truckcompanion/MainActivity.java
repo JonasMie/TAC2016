@@ -2,6 +2,7 @@ package tac.android.de.truckcompanion;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
@@ -10,7 +11,6 @@ import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -21,12 +21,11 @@ import com.android.volley.VolleyError;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
-import tac.android.de.truckcompanion.data.DataCollector;
-import tac.android.de.truckcompanion.data.Journey;
-import tac.android.de.truckcompanion.data.TruckState;
-import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
@@ -55,6 +54,9 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private Journey mCurrentJourney;
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
+
+    private Roadhouse mainRoadhouse;
+    private List<Roadhouse> alternativesRoadhouse;
 
     public static Context context;
 
@@ -238,4 +240,22 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
     }
+
+    public List<Roadhouse> getAlternativesRoadhouse() {
+        return alternativesRoadhouse;
+    }
+
+    public void setAlternativesRoadhouse(List<Roadhouse> alternativesRoadhouse) {
+        this.alternativesRoadhouse = alternativesRoadhouse;
+    }
+
+    public Roadhouse getMainRoadhouse() {
+        return mainRoadhouse;
+    }
+
+    public void setMainRoadhouse(Roadhouse mainRoadhouse) {
+        this.mainRoadhouse = mainRoadhouse;
+    }
+
+
 }
