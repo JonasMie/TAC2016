@@ -25,6 +25,8 @@ import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 
+import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
+
 
 /**
  * Created by Jonas Miederer.
@@ -39,6 +41,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private PieChart mChart;
     private PieDataSet dataSet;
     private PieData data;
+    private ArrayList<Entry> entries;
     private float mStartAngle = 0;
     private PointF mTouchStartPoint = new PointF();
 
@@ -48,6 +51,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     // Constants
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
     private static final float MINUTES_PER_DAY = 24 * 60;
+    private static final int MIN_TIME_BETWEEN_BREAKS = 10;
 
     @Nullable
     @Override
@@ -55,40 +59,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
 
-
-//        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.rLayout);
-
-//        Display display =  getActivity().getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        int width = size.x;
-//        int height = size.y;
-//        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-//                width,
-////                (int) (height * .5)
-//                0
-//        );
-//        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-//                width,
-////                (int) (height * 1.5)
-//                height
-//        );
-//
-//        textView.setLayoutParams(params1);
-//        mRelativeLayout.setLayoutParams(params2);
-
-        ArrayList<Entry> entries = WheelEntry.getEntries();
+        entries = WheelEntry.getEntries();
         dataSet = new PieDataSet(entries, "Fahrtzeiten");
 
         ArrayList<String> xVals = new ArrayList<String>();
-        xVals.add("1. Lenkzeit");
-        xVals.add("1. Pausenzeit");
-        xVals.add("Buffer");
-        xVals.add("2. Lenkzeit");
-        xVals.add("2. Pausenzeit");
-        xVals.add("Buffer");
-        xVals.add("3. Lenkzeit");
-        xVals.add("Ruhezeit");
+
+        for(int i=0; i<11; i++){
+            xVals.add("");
+        }
 
         data = new PieData(xVals, dataSet);
         mChart.setData(data);
@@ -108,7 +86,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         // Listener
         mChart.setOnChartGestureListener(this);
         mChart.setOnChartValueSelectedListener(this);
-//mChart.setRotationEnabled(false);
+
+        // Hide Lables, Legend, ...
+        mChart.setDescription("");
+        mChart.setDrawSliceText(false);
+        data.setDrawValues(false);
+        mChart.getLegend().setEnabled(false);
+
         return view;
     }
 
@@ -296,9 +280,23 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         WheelEntry entry = WheelEntry.getActiveEntry();
         float maxBufferVal = 270;
         float maxDriveVal = 270;
+
         if (entry != null) {
             int nEntries = mChart.getXValCount();
             int entryIndex = entry.getXIndex();
+
+            // split the break
+            if (entry.getVal() == 45.0 ) {
+                if(diffAngle< 0) {
+                    addEntry(entryIndex, 15, WheelEntry.PAUSE_ENTRY);
+                    ((WheelEntry) (mChart.getEntriesAtIndex(entryIndex).get(0))).setEditModeActive(true);
+                    mChart.highlightValue(entryIndex, 0);
+                    entry.setVal(30);
+                    addEntry(entryIndex+1, 0, WheelEntry.BUFFER_ENTRY);
+                } else {
+                    return;
+                }
+            }
 
             WheelEntry bufferEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex + 1).get(0);
             WheelEntry driveEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex - 1).get(0);
@@ -316,14 +314,21 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 bufferEntry.setVal(newBufferVal);
             }
 
-            if (newDriveVal < 0) {
-                driveEntry.setVal(0);
+            if (newDriveVal <= MIN_TIME_BETWEEN_BREAKS) {
+                driveEntry.setVal(MIN_TIME_BETWEEN_BREAKS);
             } else if (newDriveVal > maxDriveVal) {
                 driveEntry.setVal(maxDriveVal);
             } else {
                 driveEntry.setVal(newDriveVal);
             }
-            
+
+            //  merge the breaks
+            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == maxDriveVal && entry.getVal() == 15) {
+                entry.setVal(45);
+                removeEntry(entryIndex + 1);
+                removeEntry(entryIndex + 1);
+            }
+
             mChart.notifyDataSetChanged();
             mChart.invalidate();
         }
@@ -336,5 +341,24 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public void onEntryResized(MotionEvent me) {
 
+    }
+
+    private void addEntry(int index, int size, int type) {
+        for (int i = index; i < entries.size(); i++) {
+            entries.get(i).setXIndex(i + 1);
+        }
+        entries.add(index, new WheelEntry(size, index, type));
+        dataSet.getColors().add(index, COLORS.get(type));
+        data.notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+    }
+
+    private void removeEntry(int index) {
+        data.removeEntry(mChart.getEntriesAtIndex(index).get(0), 0);
+        dataSet.getColors().remove(index);
+        data.notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
     }
 }

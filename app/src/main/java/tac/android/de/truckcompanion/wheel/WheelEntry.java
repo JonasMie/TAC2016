@@ -70,12 +70,9 @@ public class WheelEntry extends Entry {
             {
                 add(new WheelEntry(270, 0, DRIVE_ENTRY));
                 add(new WheelEntry(45, 1, PAUSE_ENTRY));
-                add(new WheelEntry(0, 2, BUFFER_ENTRY));
-                add(new WheelEntry(270, 3, DRIVE_ENTRY));
-                add(new WheelEntry(45, 4, PAUSE_ENTRY));
-                add(new WheelEntry(0, 5, BUFFER_ENTRY));
+                add(new WheelEntry(270, 2, DRIVE_ENTRY));
+                add(new WheelEntry(45, 3, PAUSE_ENTRY));
                 add(new WheelEntry(60, 6, DRIVE_ENTRY));
-//                add(new WheelEntry(30, 5, PAUSE_ENTRY));
                 add(new WheelEntry(30, 7, RECOVERY_ENTRY));
             }
         };
