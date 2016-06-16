@@ -13,14 +13,13 @@
         android:orientation="vertical">
 
         <LinearLayout
+            android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="240dp"
             android:weightSum="1"
+            android:padding="36dp"
             android:showDividers="end"
-            android:divider="#000000"
-            android:paddingBottom="0dp"
-            android:paddingTop="28dp"
-            android:paddingLeft="36dp">
+            android:divider="#000000">
 
             <LinearLayout
                 android:orientation="vertical"
@@ -45,11 +44,11 @@
                     android:weightSum="1">
 
                     <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="0.73"
+                        android:layout_width="190dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="0.82"
                         android:orientation="vertical"
-                        android:paddingRight="18dp">
+                        android:paddingRight="8dp">
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -77,7 +76,7 @@
                                 android:id="@+id/ratingNumber"
                                 android:layout_gravity="center_vertical|right"
                                 android:textAlignment="gravity"
-                                android:paddingLeft="16dp" />
+                                android:gravity="right" />
                         </LinearLayout>
 
                         <LinearLayout
@@ -127,7 +126,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/ankunft"
+                                android:text="Ankunft"
                                 android:id="@+id/labelArrive"
                                 android:layout_weight="1"
                                 android:textAlignment="center" />
@@ -136,7 +135,7 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/entfernung"
+                                android:text="Entfernung"
                                 android:id="@+id/labelDistance"
                                 android:layout_weight="1"
                                 android:textAlignment="center" />
@@ -145,102 +144,48 @@
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="@string/pausendauer"
+                                android:text="Pausendauer"
                                 android:id="@+id/labelBreak"
                                 android:layout_weight="1"
                                 android:textAlignment="center" />
                         </LinearLayout>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:orientation="vertical"
+                        android:layout_width="212dp"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="15dp"
+                        android:gravity="center_horizontal">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Small Text"
+                            android:id="@+id/textView3" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="Small Text"
+                            android:id="@+id/textView" />
 
                         <Button
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Details"
                             android:id="@+id/buttonDetails"
-                            android:foregroundGravity="bottom"
-                            android:background="@color/colorPrimaryDark"
-                            android:textColor="#ffffff" />
-
+                            android:foregroundGravity="bottom" />
                     </LinearLayout>
-
-                    <TableLayout
-                        android:layout_width="110dp"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:layout_marginLeft="10dp"
-                        android:layout_weight="0.08"
-                        android:paddingLeft="12dp">
-
-                        <TableRow
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Small Text"
-                                android:id="@+id/textView"
-                                android:layout_column="0" />
-
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:text="•"
-                                android:id="@+id/textView8"
-                                android:layout_column="1"
-                                android:paddingLeft="14dp" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Small Text"
-                                android:id="@+id/textView3"
-                                android:layout_column="0" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Small Text"
-                                android:id="@+id/textView4"
-                                android:layout_column="0" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Small Text"
-                                android:id="@+id/textView6"
-                                android:layout_column="0" />
-                        </TableRow>
-
-                        <TableRow
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <TextView
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Small Text"
-                                android:id="@+id/textView7"
-                                android:layout_column="0" />
-                        </TableRow>
-                    </TableLayout>
-
                 </LinearLayout>
 
             </LinearLayout>
 
             <LinearLayout
-                android:orientation="vertical"
+                android:orientation="horizontal"
                 android:layout_width="353dp"
                 android:layout_height="match_parent">
 
@@ -248,8 +193,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="@string/alternative"
+                    android:text="Small Text"
                     android:id="@+id/textView2" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Small Text"
+                    android:id="@+id/textView4" />
 
             </LinearLayout>
         </LinearLayout>
@@ -262,8 +214,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
-            android:autoText="true" />
+            />
 
         <RelativeLayout
             android:id="@+id/rLayout"
