@@ -57,7 +57,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_main, container, false);
+        View view = inflater.inflate(R.layout.fragment_main2, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
         textView = (TextView) view.findViewById(R.id.testView);
 

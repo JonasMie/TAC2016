@@ -19,7 +19,7 @@
             android:showDividers="end"
             android:divider="#000000"
             android:paddingBottom="0dp"
-            android:paddingTop="36dp"
+            android:paddingTop="28dp"
             android:paddingLeft="36dp">
 
             <LinearLayout
@@ -262,7 +262,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:background="colorPrimaryDark"
+            android:background="@color/colorPrimaryDark"
             android:autoText="true" />
 
         <RelativeLayout
