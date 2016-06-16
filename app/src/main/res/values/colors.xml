@@ -8,4 +8,8 @@
     <color name="colorAccent">#ff4081</color>
     <color name="indicator">#ECD95A</color>
     <color name="tabInactive">#D1C9C9</color>
+
+    <color name="wheelDriveEntry">#303f9f</color>
+    <color name="wheelPauseEntry">#ff4081</color>
+    <color name="wheelRecoveryEntry">#ECD95A</color>
 </resources>

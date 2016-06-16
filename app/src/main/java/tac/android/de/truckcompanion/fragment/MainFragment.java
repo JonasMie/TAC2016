@@ -6,9 +6,11 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
-import android.view.*;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
+import android.view.LayoutInflater;
+import android.view.MotionEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -17,11 +19,13 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.PointD;
-import com.github.mikephil.charting.utils.Utils;
-import com.google.android.gms.common.api.GoogleApiClient;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
+import tac.android.de.truckcompanion.wheel.WheelEntry;
+
 import java.util.ArrayList;
+
+import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
 
 
 /**
@@ -31,12 +35,23 @@ import java.util.ArrayList;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, GoogleApiClient.ConnectionCallbacks {
+public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, OnEntryGestureListener {
 
+    // Chart-related members
     private PieChart mChart;
+    private PieDataSet dataSet;
+    private PieData data;
+    private ArrayList<Entry> entries;
     private float mStartAngle = 0;
-    private ArrayList<ImageView> symbols = new ArrayList<>();
     private PointF mTouchStartPoint = new PointF();
+
+    // Logic data
+    private WheelEntry selectedEntry;
+
+    // Constants
+    private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
+    private static final float MINUTES_PER_DAY = 24 * 60;
+    private static final int MIN_TIME_BETWEEN_BREAKS = 10;
 
     @Nullable
     @Override
@@ -44,88 +59,19 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
 
-//        ((MainActivity)getActivity()).dataCollector.getPlacesNearby(48.7473363, 9.1024129, 20, new ResponseCallback() {
-//            @Override
-//            public void onSuccess(JSONObject result) {
-//                textView.setText(result.toString());
-//            }
-//
-//            @Override
-//            public void onError(VolleyError error) {
-//                // TODO handle error
-//                Log.e("TAC", error.getMessage());
-//                textView.setText(error.toString());
-//            }
-//        });
-
-
-
-//        mRelativeLayout = (RelativeLayout) view.findViewById(R.id.rLayout);
-
-//        Display display =  getActivity().getWindowManager().getDefaultDisplay();
-//        Point size = new Point();
-//        display.getSize(size);
-//        int width = size.x;
-//        int height = size.y;
-//        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-//                width,
-////                (int) (height * .5)
-//                0
-//        );
-//        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-//                width,
-////                (int) (height * 1.5)
-//                height
-//        );
-//
-//        textView.setLayoutParams(params1);
-//        mRelativeLayout.setLayoutParams(params2);
-
-        ArrayList<Entry> yVals1 = new ArrayList<Entry>();
-        yVals1.add(new
-
-                Entry((float)
-
-                (450 / 24), 0));
-        yVals1.add(new
-
-                Entry((float)
-
-                (75 / 24), 1));
-        yVals1.add(new
-
-                Entry((float)
-
-                (450 / 24), 2));
-        yVals1.add(new
-
-                Entry((float)
-
-                (75 / 24), 3));
-        yVals1.add(new
-
-                Entry((float)
-
-                (100 / 24), 4));
-//        yVals1.add(new
-//
-//                Entry((float)
-//
-//                (1250 / 24), 5));
-
-        PieDataSet dataSet = new PieDataSet(yVals1, "Fahrtzeiten");
+        entries = WheelEntry.getEntries();
+        dataSet = new PieDataSet(entries, "Fahrtzeiten");
 
         ArrayList<String> xVals = new ArrayList<String>();
-        xVals.add("1. Lenkzeit");
-        xVals.add("1. Pausenzeit");
-        xVals.add("2. Lenkzeit");
-        xVals.add("2. Pausenzeit");
-        xVals.add("3. Lenkzeit");
-        xVals.add("Ruhezeit");
 
-        PieData data = new PieData(xVals, dataSet);
+        for(int i=0; i<11; i++){
+            xVals.add("");
+        }
+
+        data = new PieData(xVals, dataSet);
         mChart.setData(data);
 
+        // Layout + appearance
         mChart.setDrawHoleEnabled(true);
         mChart.setHoleColor(Color.WHITE);
 
@@ -135,37 +81,17 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setHoleRadius(80f);
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
-//        mChart.setMaxAngle(270f);
-
-        ArrayList<Integer> colors = new ArrayList<Integer>();
-        colors.add(Color.GREEN);
-        colors.add(Color.RED);
-        colors.add(Color.GREEN);
-        colors.add(Color.RED);
-        colors.add(Color.GREEN);
-        colors.add(Color.BLACK);
-        dataSet.setColors(colors);
+        dataSet.setColors(WheelEntry.getColors(entries));
 
         // Listener
         mChart.setOnChartGestureListener(this);
         mChart.setOnChartValueSelectedListener(this);
 
-//        mChart.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent mv) {
-//                int action = MotionEventCompat.getActionMasked(mv);
-//
-//                switch (action) {
-//                    case (MotionEvent.ACTION_MOVE):
-//                        if (mChart.getHighlighted() != null) {
-//                            Log.i("test", "move");
-//                        }
-//                        return true;
-//                }
-//                return true;
-//            }
-//        });
-
+        // Hide Lables, Legend, ...
+        mChart.setDescription("");
+        mChart.setDrawSliceText(false);
+        data.setDrawValues(false);
+        mChart.getLegend().setEnabled(false);
 
         return view;
     }
@@ -173,7 +99,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
         Log.i("Gesture", "START, x: " + me.getX() + ", y: " + me.getY());
-        mStartAngle = mChart.getRawRotationAngle();
+        mStartAngle = mChart.getAngleForPoint(me.getX(), me.getY());
         mTouchStartPoint.x = me.getX();
         mTouchStartPoint.y = me.getY();
     }
@@ -183,57 +109,108 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         Log.i("Gesture", "END, lastGesture: " + lastPerformedGesture);
 
         if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
-            if (distance(me.getX(), mTouchStartPoint.x, me.getY(), mTouchStartPoint.y)
-                    > Utils.convertDpToPixel(8f)) {
-                rotateIcons(me.getX(), me.getY());
+//            if (distance(me.getX(), mTouchStartPoint.x, me.getY(), mTouchStartPoint.y)
+//                    > Utils.convertDpToPixel(8f)) {
+//                rotateIcons(me.getX(), me.getY());
+//            }
+            float diffAngle = mChart.getAngleForPoint(me.getX(), me.getY()) - mStartAngle;
+
+            if (mChart.isEditModeEnabled()) {
+                if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
+                    onEntryDragged(me, diffAngle);
+                }
             }
+            // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
+            mStartAngle += diffAngle;
 
         }
         // un-highlight values after the gesture is finished and no single-tap
-        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP) {
-            mChart.highlightValues(null); // or highlightTouch(null) for callback to onNothingSelected(...)
+        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
+            if (!mChart.isEditModeEnabled()) {
+                mChart.highlightValues(null);
+                mChart.setRotationEnabled(true);
+                if (selectedEntry != null) {
+                    selectedEntry.setEditModeActive(false);
+                    selectedEntry = null;
+                }
+            }
         }
     }
 
     public void rotateIcons(float x, float y) {
-        float dif = mChart.getAngleForPoint(x, y) - mStartAngle;
-        mStartAngle = mChart.getAngleForPoint(x, y);
-        for (ImageView icon : symbols) {
-            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) icon.getLayoutParams();
-            float oldAngle = mChart.getAngleForPoint(icon.getX(), icon.getY());
-            float newAngle = oldAngle + dif;
-            PointD point = getPoint(mChart.getCenter(), mChart.getRadius(), newAngle);
-            params.leftMargin = (int) (point.x);
-            params.topMargin = (int) (point.y);
-            icon.setLayoutParams(params);
-        }
+//        float dif = mChart.getAngleForPoint(x, y) - mStartAngle;
+//        mStartAngle = mChart.getAngleForPoint(x, y);
+//        for (ImageView icon : symbols) {
+//            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) icon.getLayoutParams();
+//            float oldAngle = mChart.getAngleForPoint(icon.getX(), icon.getY());
+//            float newAngle = oldAngle + dif;
+//            PointD point = getPoint(mChart.getCenter(), mChart.getRadius(), newAngle);
+//            params.leftMargin = (int) (point.x);
+//            params.topMargin = (int) (point.y);
+//            icon.setLayoutParams(params);
+//        }
     }
 
     @Override
     public void onChartLongPressed(MotionEvent me) {
+        /*
+        The Longpress-event for the chart.
+        Problem: The longpress-event does exist for the whole chart exclusively, there is no built-in function to
+        detect longpresses on single wheel entries.
+        So that's basically covered here.
+         */
+
         Log.i("LongPress", "Chart longpressed.");
+        PointF center = mChart.getCenter();
+        float radius = mChart.getRadius();
+
+        // Get coordinates of longpress-event
         float x = me.getX();
         float y = me.getY();
 
+        // Get the angle of these coordinates according to the wheel
         float angle = mChart.getAngleForPoint(x, y);
+
+        // Get the index belonging to the corresponding wheel entry at this angle
         int index = mChart.getIndexForAngle(angle);
-        Entry longPressedEntry = mChart.getEntriesAtIndex(index).get(0);
-//        longPressedEntry.setVal(50f);
-        PointF center = mChart.getCenter();
-        PointD point = getPoint(center, mChart.getRadius(), angle);
+        // Finally get the entry
+        WheelEntry longPressedEntry = (WheelEntry) mChart.getEntriesAtIndex(index).get(0);
 
-        ImageView icon = new ImageView(getContext());
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(30, 30);
-        params.leftMargin = (int) (point.x);
-        params.topMargin = (int) (point.y);
-        icon.setLayoutParams(params);
-        icon.setImageResource(R.drawable.fuel);
-//        mRelativeLayout.addView(icon);
+        // If another element is still selected, deselect it
+//        this.onNothingSelected();
 
-        symbols.add(icon);
+        // The user can only modify entries, which represent a pause. Modifying a driving period is not possible.
+        if (!(longPressedEntry.getEntryType() == WheelEntry.PAUSE_ENTRY)) {
+            return;
+        }
+        /*
+         Since the listener listens for events on the whole chart, it is possible, to select the entries within a much
+         larger radius. But this is not desired, it would confuse the user and lead to user-unexpected behaviour.
+         So the longpress-event is limited to the dimensions of the entry plus a tolerance of eg 10%
+         */
+        if (!isInToleratedDistance(x, y, center, radius)) {
+            return;
+        }
 
+        // Since the pause-entry is now selected, set it as current selected element (same behaviour as single-tap)
+        WheelEntry prevActiveEntry = WheelEntry.getActiveEntry();
+        if (prevActiveEntry != null) {
+            prevActiveEntry.setEditModeActive(false);
+        }
+        selectedEntry = longPressedEntry;
+        longPressedEntry.setEditModeActive(true);
+        mChart.highlightValue(index, 0);
+        mChart.setRotationEnabled(false);
+        mChart.setEditModeEnabled(true);
+        /*
+        Visuals: Indicate, that the user can actually modify this entry.
+        TODO: how to visualize the selected entry, so that the user understands he can modify it (intuitively)
+        e.g.
+        Animation shake = AnimationUtils.loadAnimation(this.getContext(), R.anim.shake);
+        mChart.setAnimation(shake);
+         */
 
-//        mChart.notifyDataSetChanged();
+        mChart.notifyDataSetChanged();
     }
 
     @Override
@@ -265,38 +242,123 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
         mChart.setRotationEnabled(false);
-//        Log.i("LOWHIGH", "low: " + mChart.getLowestVisibleXIndex() + ", high: " + mChart.getHighestVisibleXIndex());
-//        Log.i("MIN MAX", "xmin: " + mChart.getXChartMin() + ", xmax: " + mChart.getXChartMax() + ", ymin: " + mChart.getYChartMin() + ", ymax: " + mChart.getYChartMax());
+        selectedEntry = (WheelEntry) mChart.getEntriesAtIndex(dataSetIndex).get(0);
     }
 
     @Override
     public void onNothingSelected() {
         Log.i("Nothing selected", "Nothing selected.");
         mChart.setRotationEnabled(true);
+        mChart.setEditModeEnabled(true);
     }
 
-    public PointD getPoint(PointF origin, float radius, float angle) {
-        double angle_ = (angle * Math.PI / 180) + 270;
-        radius += 50;
-        double x = origin.x + radius * Math.cos(angle_);
-        double y = origin.y + radius * Math.sin(angle_);
+    private boolean isInToleratedDistance(float x, float y, PointF center, float radius) {
+        float holeRadius = mChart.getHoleRadius();
+        // Compute actual angle (in radian, considering MPAndroidChart begins drawing charts at 90°)
+        //double angle_ = (angle * Math.PI / 180) + 270;
 
-        return new PointD(x, y);
+        radius *= (holeRadius + (100 - mChart.getHoleRadius()) / 2) / 100;
+        // Add touch tolerance
+        double innerRadius = radius * (1 - ENTRY_LONGPRESS_TOLERANCE);
+        double outerRadius = radius * (1 + ENTRY_LONGPRESS_TOLERANCE);
+
+        // Get distance of touched point to center with pythagoras
+        double dist = Math.sqrt(Math.pow(center.x - x, 2) + Math.pow(center.y - y, 2));
+
+        return dist >= innerRadius && dist <= outerRadius;
     }
 
-    protected static float distance(float eventX, float startX, float eventY, float startY) {
+    private static float distance(float eventX, float startX, float eventY, float startY) {
         float dx = eventX - startX;
         float dy = eventY - startY;
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
+    public void onEntryDragged(MotionEvent me, float diffAngle) {
+        Log.i("ENTRY:DRAG", "Entry dragged");
+        WheelEntry entry = WheelEntry.getActiveEntry();
+        float maxBufferVal = 270;
+        float maxDriveVal = 270;
 
+        if (entry != null) {
+            int nEntries = mChart.getXValCount();
+            int entryIndex = entry.getXIndex();
+
+            // split the break
+            if (entry.getVal() == 45.0 ) {
+                if(diffAngle< 0) {
+                    addEntry(entryIndex, 15, WheelEntry.PAUSE_ENTRY);
+                    ((WheelEntry) (mChart.getEntriesAtIndex(entryIndex).get(0))).setEditModeActive(true);
+                    mChart.highlightValue(entryIndex, 0);
+                    entry.setVal(30);
+                    addEntry(entryIndex+1, 0, WheelEntry.BUFFER_ENTRY);
+                } else {
+                    return;
+                }
+            }
+
+            WheelEntry bufferEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex + 1).get(0);
+            WheelEntry driveEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex - 1).get(0);
+
+            double ratio = diffAngle / 360;
+
+            float newBufferVal = (float) (bufferEntry.getVal() - MINUTES_PER_DAY * ratio);
+            float newDriveVal = (float) (driveEntry.getVal() + MINUTES_PER_DAY * ratio);
+
+            if (newBufferVal < 0) {
+                bufferEntry.setVal(0);
+            } else if (newBufferVal > maxBufferVal) {
+                bufferEntry.setVal(maxBufferVal);
+            } else {
+                bufferEntry.setVal(newBufferVal);
+            }
+
+            if (newDriveVal <= MIN_TIME_BETWEEN_BREAKS) {
+                driveEntry.setVal(MIN_TIME_BETWEEN_BREAKS);
+            } else if (newDriveVal > maxDriveVal) {
+                driveEntry.setVal(maxDriveVal);
+            } else {
+                driveEntry.setVal(newDriveVal);
+            }
+
+            //  merge the breaks
+            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == maxDriveVal && entry.getVal() == 15) {
+                entry.setVal(45);
+                removeEntry(entryIndex + 1);
+                removeEntry(entryIndex + 1);
+            }
+
+            mChart.notifyDataSetChanged();
+            mChart.invalidate();
+        }
+    }
+
+    private double getArc(double radius, double diffAngle) {
+        return radius * Math.PI * (diffAngle / 180);
     }
 
     @Override
-    public void onConnectionSuspended(int i) {
+    public void onEntryResized(MotionEvent me) {
 
+    }
+
+    private void addEntry(int index, int size, int type) {
+        for (int i = index; i < entries.size(); i++) {
+            entries.get(i).setXIndex(i + 1);
+        }
+        entries.add(index, new WheelEntry(size, index, type));
+        dataSet.getColors().add(index, COLORS.get(type));
+        data.notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+    }
+
+    private void removeEntry(int index) {
+        data.removeEntry(mChart.getEntriesAtIndex(index).get(0), 0);
+        dataSet.getColors().remove(index);
+        data.notifyDataChanged();
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
     }
 }
