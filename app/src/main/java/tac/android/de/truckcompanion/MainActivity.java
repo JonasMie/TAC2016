@@ -55,9 +55,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
 
-    private Roadhouse mainRoadhouse;
-    private List<Roadhouse> alternativesRoadhouse;
-
     public static Context context;
 
     @Override
@@ -240,22 +237,5 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
     }
-
-    public List<Roadhouse> getAlternativesRoadhouse() {
-        return alternativesRoadhouse;
-    }
-
-    public void setAlternativesRoadhouse(List<Roadhouse> alternativesRoadhouse) {
-        this.alternativesRoadhouse = alternativesRoadhouse;
-    }
-
-    public Roadhouse getMainRoadhouse() {
-        return mainRoadhouse;
-    }
-
-    public void setMainRoadhouse(Roadhouse mainRoadhouse) {
-        this.mainRoadhouse = mainRoadhouse;
-    }
-
 
 }
