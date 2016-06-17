@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.fragment;
 
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
@@ -59,18 +60,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
 
-        entries = WheelEntry.getEntries();
-        dataSet = new PieDataSet(entries, "Fahrtzeiten");
-
-        ArrayList<String> xVals = new ArrayList<String>();
-
-        for(int i=0; i<11; i++){
-            xVals.add("");
-        }
-
-        data = new PieData(xVals, dataSet);
-        mChart.setData(data);
-
         // Layout + appearance
         mChart.setDrawHoleEnabled(true);
         mChart.setHoleColor(Color.WHITE);
@@ -81,7 +70,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setHoleRadius(80f);
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
-        dataSet.setColors(WheelEntry.getColors(entries));
 
         // Listener
         mChart.setOnChartGestureListener(this);
@@ -90,10 +78,30 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         // Hide Lables, Legend, ...
         mChart.setDescription("");
         mChart.setDrawSliceText(false);
-        data.setDrawValues(false);
         mChart.getLegend().setEnabled(false);
-
         return view;
+    }
+
+    public void setupFragment(ProgressDialog mProgressDialog) {
+        mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
+
+        entries = WheelEntry.getEntries();
+        dataSet = new PieDataSet(entries, "Fahrtzeiten");
+
+        ArrayList<String> xVals = new ArrayList<String>();
+
+        for (int i = 0; i < 11; i++) {
+            xVals.add("");
+        }
+
+        data = new PieData(xVals, dataSet);
+        mChart.setData(data);
+
+        if (mProgressDialog.isShowing()) {
+            mProgressDialog.dismiss();
+        }
+        dataSet.setColors(WheelEntry.getColors(entries));
+        data.setDrawValues(false);
     }
 
     @Override
@@ -286,13 +294,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             int entryIndex = entry.getXIndex();
 
             // split the break
-            if (entry.getVal() == 45.0 ) {
-                if(diffAngle< 0) {
+            if (entry.getVal() == 45.0) {
+                if (diffAngle < 0) {
                     addEntry(entryIndex, 15, WheelEntry.PAUSE_ENTRY);
                     ((WheelEntry) (mChart.getEntriesAtIndex(entryIndex).get(0))).setEditModeActive(true);
                     mChart.highlightValue(entryIndex, 0);
                     entry.setVal(30);
-                    addEntry(entryIndex+1, 0, WheelEntry.BUFFER_ENTRY);
+                    addEntry(entryIndex + 1, 0, WheelEntry.BUFFER_ENTRY);
                 } else {
                     return;
                 }

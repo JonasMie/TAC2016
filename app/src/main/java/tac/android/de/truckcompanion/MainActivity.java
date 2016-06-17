@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -22,10 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.*;
+import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
@@ -187,10 +187,12 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         public void onSuccess(JSONObject result) {
                             try {
                                 mCurrentJourney.getRoute().setup(result);
-                                if (mProgressDialog.isShowing()) {
-                                    mProgressDialog.dismiss();
-                                }
+
+                                // Setup Main-Fragment (wheel)
+                                MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                fragment.setupFragment(mProgressDialog);
                             } catch (JSONException e) {
+                                mProgressDialog.dismiss();
                                 e.printStackTrace();
                             }
                         }
