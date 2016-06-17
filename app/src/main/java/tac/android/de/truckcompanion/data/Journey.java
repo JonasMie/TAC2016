@@ -14,6 +14,7 @@ import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets;
 
@@ -153,7 +154,31 @@ public class Journey implements SimulationEventListener {
     }
 
     public LatLng getPositionOnRouteByTime(int time) {
-        // TODO implement getPositionOnRouteByTime
+        if (time > route.getDuration() - getTravelledDuration()) {
+            // Chosen time exceeds duration of remaining route.
+            // set it to the total route duration
+            time = route.getDuration() - getTravelledDuration();
+        }
+        ArrayList<ArrayList> legs = route.getLegs();
+        int distance = 0;
+        float estimatedDistance = 0;
+        int duration = 0;
+        for (int i = 0; i < legs.size(); i++) {
+            ArrayList<HashMap> leg = legs.get(i);
+            for (int j = 0; j < leg.size(); j++) {
+                HashMap<String, Integer> step = leg.get(j);
+                int stepDuration = step.get("duration");
+                int stepDistance = step.get("distance");
+
+                if (duration + stepDuration >= time) {
+                    float remainer = (time - duration) / (duration + stepDuration);
+                    estimatedDistance = distance+ stepDistance*remainer;
+                    return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
+                }
+                duration += stepDuration;
+                distance += stepDistance;
+            }
+        }
         return null;
     }
 }

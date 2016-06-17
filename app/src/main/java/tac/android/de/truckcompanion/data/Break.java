@@ -33,6 +33,17 @@ public class Break {
         dc = new DataCollector(MainActivity.context);
     }
 
+    public Break(LatLng loc) {
+        dc = new DataCollector(MainActivity.context);
+        calculateRoadhouses(loc, null);
+    }
+
+    public Break(int elapsedTime) {
+        dc = new DataCollector(MainActivity.context);
+        calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime), null);
+    }
+
+
     public ArrayList<Roadhouse> getAlternativeRoadhouses() {
         return alternativeRoadhouses;
     }
@@ -74,7 +85,10 @@ public class Break {
                                 alternativeRoadhouses.add(produceNewRoadhouse(roadhouse));
                             }
                         }
-                        callback.processFinish(Break.this);
+                        if (callback != null) {
+                            callback.processFinish(Break.this);
+
+                        }
                     }
                 } catch (JSONException e) {
                     Log.e("TAC", e.getMessage());

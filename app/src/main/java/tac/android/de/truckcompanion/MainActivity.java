@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private CharSequence mTitle;
 
     // Data
-    private Journey mCurrentJourney;
+    private static Journey mCurrentJourney;
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
 
@@ -240,4 +240,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         Log.d("TAC", "State changed: " + state);
     }
 
+    public static Journey getmCurrentJourney() {
+        return mCurrentJourney;
+    }
 }

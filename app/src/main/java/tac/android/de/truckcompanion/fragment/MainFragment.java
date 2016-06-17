@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -339,6 +338,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             mChart.notifyDataSetChanged();
             mChart.invalidate();
+
+            // Calculate breaks
+
         }
     }
 
@@ -368,5 +370,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         data.notifyDataChanged();
         mChart.notifyDataSetChanged();
         mChart.invalidate();
+    }
+
+    private int elapsedTimeForEntry(int index) {
+        int elapsedTime = 0;
+        for (int i = 0; i < index; i++) {
+            elapsedTime += mChart.getEntriesAtIndex(i).get(0).getVal();
+        }
+        return elapsedTime;
     }
 }
