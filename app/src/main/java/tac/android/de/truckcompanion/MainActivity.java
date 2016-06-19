@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mProgressDialog.setTitle(R.string.loading_journey_data_title);
         mProgressDialog.setMessage(getString(R.string.loading_journey_data_msg));
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
         new Journey.LoadJourneyData(this, new AsyncResponse<Journey>() {
             @Override
@@ -206,6 +207,11 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         }
                     });
                 }
+            }
+
+            @Override
+            public void processFinish(Journey output, Integer index) {
+
             }
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
