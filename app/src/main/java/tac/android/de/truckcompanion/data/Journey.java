@@ -171,9 +171,9 @@ public class Journey implements SimulationEventListener {
                 int stepDistance = step.get("distance");
 
                 if (duration + stepDuration >= time) {
-                    float remainer = (time - duration) / (duration + stepDuration);
+                    float remainer = (time - duration) / (float)(stepDuration);
                     estimatedDistance = distance+ stepDistance*remainer;
-                    return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
+                    return route.getWaypoints().get(Math.round((estimatedDistance/1000) / Route.DISTANCE_INTERVAL));
                 }
                 duration += stepDuration;
                 distance += stepDistance;
