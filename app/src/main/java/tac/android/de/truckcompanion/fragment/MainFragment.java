@@ -19,11 +19,16 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.data.Break;
+import tac.android.de.truckcompanion.data.Journey;
+import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
 
@@ -47,6 +52,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     // Logic data
     private WheelEntry selectedEntry;
+    private int processedBreaks = 0;
+    private int totalBreaks;
 
     // Constants
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
@@ -81,10 +88,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         return view;
     }
 
-    public void setupFragment(ProgressDialog mProgressDialog) {
+    public void setupFragment(final ProgressDialog mProgressDialog) {
         mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
 
-        entries = WheelEntry.getEntries();
+        entries = WheelEntry.getEntries(mProgressDialog);
+
         dataSet = new PieDataSet(entries, "Fahrtzeiten");
 
         ArrayList<String> xVals = new ArrayList<String>();
@@ -96,11 +104,33 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         data = new PieData(xVals, dataSet);
         mChart.setData(data);
 
-        if (mProgressDialog.isShowing()) {
-            mProgressDialog.dismiss();
-        }
         dataSet.setColors(WheelEntry.getColors(entries));
         data.setDrawValues(false);
+
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+
+        ArrayList<Break> breaks = Break.getBreaks();
+        totalBreaks = breaks.size();
+
+        // WTF, fucking callbacks
+        for (int i = 0; i < totalBreaks; i++) {
+            breaks.get(i).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(i).getElapsedTime()), i,  new AsyncResponse<Break>() {
+                @Override
+                public void processFinish(Break output) {
+                }
+
+                @Override
+                public void processFinish(Break output, Integer index) {
+                    if (index+1== totalBreaks) {
+                        if (mProgressDialog.isShowing()) {
+                            mProgressDialog.dismiss();
+                        }
+                        processedBreaks = 0;
+                    }
+                }
+            });
+        }
     }
 
     @Override

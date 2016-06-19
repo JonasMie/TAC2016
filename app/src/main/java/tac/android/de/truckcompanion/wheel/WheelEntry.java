@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.wheel;
 
+import android.app.ProgressDialog;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
@@ -47,9 +48,9 @@ public class WheelEntry extends Entry {
         super(val, xIndex);
         this.entryType = entryType;
         this.editModeActive = false;
-//        if (this.entryType == PAUSE_ENTRY) {
-//            this.pause = new Break(elapsedTime);
-//        }
+        if (this.entryType == PAUSE_ENTRY) {
+            this.pause = new Break(elapsedTime);
+        }
     }
 
     public WheelEntry(float val, int xIndex, Object data) {
@@ -70,7 +71,7 @@ public class WheelEntry extends Entry {
         }
     };
 
-    public static ArrayList<Entry> getEntries() {
+    public static ArrayList<Entry> getEntries(ProgressDialog mProgressDialog) {
         return new ArrayList<Entry>() {
             {
                 add(new WheelEntry(270, 0, DRIVE_ENTRY, 0));
