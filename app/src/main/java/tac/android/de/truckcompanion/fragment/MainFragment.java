@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import com.android.volley.VolleyError;
@@ -29,6 +30,7 @@ import com.google.android.gms.location.places.Places;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.adapter.AlternativesListViewAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 
@@ -60,6 +62,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         View view = inflater.inflate(R.layout.fragment_main2, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
         textView = (TextView) view.findViewById(R.id.testView);
+        ListView listView=(ListView)view.findViewById(R.id.listViewAlternatives);
+        AlternativesListViewAdapter adapter=new AlternativesListViewAdapter(getActivity());
+        listView.setAdapter(adapter);
+
+
 
 //        ((MainActivity)getActivity()).dataCollector.getPlacesNearby(48.7473363, 9.1024129, 20, new ResponseCallback() {
 //            @Override
