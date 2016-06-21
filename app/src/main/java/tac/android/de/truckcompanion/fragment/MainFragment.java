@@ -1,9 +1,11 @@
 package tac.android.de.truckcompanion.fragment;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Color;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -56,6 +58,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private int processedBreaks = 0;
     private int totalBreaks;
 
+    // Misc
+    Vibrator vibrator;
     // Constants
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
     private static final float MINUTES_PER_DAY = 24 * 60;
@@ -66,6 +70,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         mChart = (PieChart) view.findViewById(R.id.chart);
+
+        vibrator = (Vibrator) getContext().getSystemService(Context.VIBRATOR_SERVICE);
 
         // Layout + appearance
         mChart.setDrawHoleEnabled(true);
@@ -230,6 +236,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             return;
         }
 
+        // Now we know, that a chart sector was longpressed
+
+        // Vibrate to provide haptic feedback
+        vibrator.vibrate(50);
+
         // Since the pause-entry is now selected, set it as current selected element (same behaviour as single-tap)
         WheelEntry prevActiveEntry = WheelEntry.getActiveEntry();
         if (prevActiveEntry != null) {
@@ -369,6 +380,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 entry.setVal(45);
                 removeEntry(entryIndex + 1);
                 removeEntry(entryIndex + 1);
+                // Vibrate to provide haptic feedback
+                vibrator.vibrate(50);
             }
 
             mChart.notifyDataSetChanged();
