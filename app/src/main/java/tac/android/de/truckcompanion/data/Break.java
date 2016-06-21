@@ -42,10 +42,10 @@ public class Break {
         breaks.add(this);
     }
 
-    public Break(int elapsedTime) {
+    public Break(int elapsedTime, int index) {
         dc = new DataCollector(MainActivity.context);
         this.elapsedTime = elapsedTime * 60;
-        breaks.add(this);
+        breaks.add(index, this);
     }
 
     public Break(int elapsedTime, AsyncResponse callback) {
@@ -144,5 +144,13 @@ public class Break {
 
     public static ArrayList<Break> getBreaks() {
         return breaks;
+    }
+
+    public static void setBreaks(ArrayList<Break> breaks) {
+        Break.breaks = breaks;
+    }
+
+    public static void removeBreak(int index){
+        breaks.remove(index);
     }
 }

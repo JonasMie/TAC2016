@@ -28,6 +28,7 @@ import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
@@ -115,14 +116,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         // WTF, fucking callbacks
         for (int i = 0; i < totalBreaks; i++) {
-            breaks.get(i).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(i).getElapsedTime()), i,  new AsyncResponse<Break>() {
+            breaks.get(i).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(i).getElapsedTime()), i, new AsyncResponse<Break>() {
                 @Override
                 public void processFinish(Break output) {
                 }
 
                 @Override
                 public void processFinish(Break output, Integer index) {
-                    if (index+1== totalBreaks) {
+                    if (index + 1 == totalBreaks) {
                         if (mProgressDialog.isShowing()) {
                             mProgressDialog.dismiss();
                         }
@@ -236,6 +237,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         }
         selectedEntry = longPressedEntry;
         longPressedEntry.setEditModeActive(true);
+
+        updateColor(index, Color.GREEN);
+
         mChart.highlightValue(index, 0);
         mChart.setRotationEnabled(false);
         mChart.setEditModeEnabled(true);
@@ -248,6 +252,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
          */
 
         mChart.notifyDataSetChanged();
+        mChart.invalidate();
     }
 
     @Override
@@ -384,10 +389,15 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     }
 
     private void addEntry(int index, int size, int type) {
+        int nBreaks = 0;
         for (int i = index; i < entries.size(); i++) {
-            entries.get(i).setXIndex(i + 1);
+            WheelEntry prevEntry = (WheelEntry) entries.get(i);
+            if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY) {
+                nBreaks++;
+            }
+            prevEntry.setXIndex(i + 1);
         }
-        entries.add(index, new WheelEntry(size, index, type));
+        entries.add(index, new WheelEntry(size, index, type, nBreaks));
         dataSet.getColors().add(index, COLORS.get(type));
         data.notifyDataChanged();
         mChart.notifyDataSetChanged();
@@ -407,6 +417,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         for (int i = 0; i < index; i++) {
             elapsedTime += mChart.getEntriesAtIndex(i).get(0).getVal();
         }
+        Break.removeBreak(index);
         return elapsedTime;
+    }
+
+
+    private void updateColor(int index, int green) {
+        List<Integer> colors = dataSet.getColors();
+        Integer color = colors.get(index);
+        dataSet.setColors(colors);
     }
 }

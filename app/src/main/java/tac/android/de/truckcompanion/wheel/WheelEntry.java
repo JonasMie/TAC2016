@@ -44,13 +44,19 @@ public class WheelEntry extends Entry {
         super(val, xIndex);
     }
 
-    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime) {
+    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime, int pauseIndex) {
         super(val, xIndex);
         this.entryType = entryType;
         this.editModeActive = false;
         if (this.entryType == PAUSE_ENTRY) {
-            this.pause = new Break(elapsedTime);
+            this.pause = new Break(elapsedTime, pauseIndex);
         }
+    }
+
+    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime) {
+        super(val, xIndex);
+        this.entryType = entryType;
+        this.editModeActive = false;
     }
 
     public WheelEntry(float val, int xIndex, Object data) {
@@ -75,9 +81,9 @@ public class WheelEntry extends Entry {
         return new ArrayList<Entry>() {
             {
                 add(new WheelEntry(270, 0, DRIVE_ENTRY, 0));
-                add(new WheelEntry(45, 1, PAUSE_ENTRY, 270));
+                add(new WheelEntry(45, 1, PAUSE_ENTRY, 270, 0));
                 add(new WheelEntry(270, 2, DRIVE_ENTRY, 315));
-                add(new WheelEntry(45, 3, PAUSE_ENTRY, 585));
+                add(new WheelEntry(45, 3, PAUSE_ENTRY, 585, 1));
                 add(new WheelEntry(60, 6, DRIVE_ENTRY, 650));
                 add(new WheelEntry(30, 7, RECOVERY_ENTRY, 710));
             }
