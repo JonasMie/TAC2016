@@ -3,7 +3,11 @@ package tac.android.de.truckcompanion.adapter;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+
+
+
 import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.fragment.MapFragment;
 
 /**
  * Created by Jonas Miederer.
@@ -20,11 +24,11 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
     @Override
     public Fragment getItem(int position) {
         switch (position) {
-            case 1:
+            case 0:
                 return new MainFragment();  // TODO: create fragment
 //                return new MapFragment();
-            case 2:
-                return new MainFragment(); // TODO: create fragment
+            case 1:
+                return new MapFragment(); // TODO: create fragment
 //                return new StatsFragment();
             default:
                 return new MainFragment();
