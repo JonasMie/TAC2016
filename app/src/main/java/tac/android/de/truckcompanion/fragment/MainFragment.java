@@ -65,7 +65,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private static final int FIRST_SPLIT = 15 * 60;
     private static final int SECOND_SPLIT = 30 * 60;
     private static final int COMPLETE_BREAK = 45 * 60;
-    private static final int MIN_TIME_BETWEEN_BREAKS = 10;
+    private static final int MIN_TIME_BETWEEN_BREAKS = 10 * 60;
+    private static final float MAX_BUFFER_VAL = 270 * 60 - MIN_TIME_BETWEEN_BREAKS;
+    private static final float MAX_DRIVE_VAL = 270 * 60;
     private static final int RECALCULATION_STEP = 5;
 
     @Nullable
@@ -156,12 +158,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         Log.i("Gesture", "END, lastGesture: " + lastPerformedGesture);
 
         if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
-//            if (distance(me.getX(), mTouchStartPoint.x, me.getY(), mTouchStartPoint.y)
-//                    > Utils.convertDpToPixel(8f)) {
-//                rotateIcons(me.getX(), me.getY());
-//            }
-            float diffAngle = mChart.getAngleForPoint(me.getX(), me.getY()) - mStartAngle;
-
+            float pointAngle = mChart.getAngleForPoint(me.getX(), me.getY());
+            float diffAngle = pointAngle - mStartAngle;
+            // this is fixing the undesired behaviour that the pause jumps around when the entry crosses the 0°-mark
+            if(diffAngle > 180){
+                diffAngle =- 360;
+            }
             if (mChart.isEditModeEnabled()) {
                 if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
                     onEntryDragged(me, diffAngle);
@@ -169,7 +171,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             }
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
-
         }
         // un-highlight values after the gesture is finished and no single-tap
         if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
@@ -334,8 +335,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onEntryDragged(MotionEvent me, float diffAngle) {
         Log.i("ENTRY:DRAG", "Entry dragged");
         WheelEntry entry = WheelEntry.getActiveEntry();
-        float maxBufferVal = 270 * 60;
-        float maxDriveVal = 270 * 60;
         boolean splitBreak = false;
 
         if (entry != null) {
@@ -370,23 +369,24 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             if (newBufferVal < 0) {
                 bufferEntry.setVal(0);
-            } else if (newBufferVal > maxBufferVal) {
-                bufferEntry.setVal(maxBufferVal);
+            } else if (newBufferVal > MAX_BUFFER_VAL) {
+                bufferEntry.setVal(MAX_BUFFER_VAL);
             } else {
                 bufferEntry.setVal(newBufferVal);
             }
 
             if (newDriveVal <= MIN_TIME_BETWEEN_BREAKS) {
                 driveEntry.setVal(MIN_TIME_BETWEEN_BREAKS);
-            } else if (newDriveVal > maxDriveVal) {
-                driveEntry.setVal(maxDriveVal);
+            } else if (newDriveVal > MAX_DRIVE_VAL) {
+                driveEntry.setVal(MAX_DRIVE_VAL);
             } else {
                 driveEntry.setVal(newDriveVal);
             }
 
+            Log.e(LOG, "Buffer:   " + bufferEntry.getVal() / 60 + "    Drive:   " + driveEntry.getVal() / 60);
             //  merge the breaks
-            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == maxDriveVal && entry.getVal() == FIRST_SPLIT) {
-                entry.setVal(COMPLETE_BREAK);
+            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == MAX_DRIVE_VAL && entry.getVal() == FIRST_SPLIT) {
+                pauseEntry.setVal(COMPLETE_BREAK);
                 removeEntry(entryIndex + 1);
                 removeEntry(entryIndex + 1);
                 // Vibrate to provide haptic feedback
