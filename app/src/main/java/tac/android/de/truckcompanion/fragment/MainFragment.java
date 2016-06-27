@@ -437,14 +437,28 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     private void addEntry(int index, int size, int type) {
         int nBreaks = 0;
-        for (int i = index; i < entries.size(); i++) {
+        int elapsedTime = 0;
+
+        for (int i = 0; i < entries.size(); i++) {
             WheelEntry prevEntry = (WheelEntry) entries.get(i);
-            if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY) {
-                nBreaks++;
+
+            if (i < index) {
+                elapsedTime += prevEntry.getVal();
+            } else {
+                if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY) {
+                    nBreaks++;
+                }
+                prevEntry.setXIndex(i + 1);
             }
-            prevEntry.setXIndex(i + 1);
         }
-        entries.add(index, new WheelEntry(size, index, type, nBreaks));
+        if (type == WheelEntry.PAUSE_ENTRY) {
+            WheelEntry entry = new WheelEntry(size, index, type, elapsedTime, nBreaks, false);
+            entry.setPause(((WheelEntry) (mChart.getEntriesAtIndex(index + 1).get(0))).getPause());
+            entries.add(index, entry);
+        } else {
+            entries.add(index, new WheelEntry(size, index, type, elapsedTime));
+        }
+
         dataSet.getColors().add(index, COLORS.get(type));
         data.notifyDataChanged();
         mChart.notifyDataSetChanged();
