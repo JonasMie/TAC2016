@@ -24,14 +24,12 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
-import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
 
@@ -61,9 +59,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     // Misc
     Vibrator vibrator;
     // Constants
+    private static final String LOG = "TAC";
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
-    private static final float MINUTES_PER_DAY = 24 * 60;
+    private static final float SECONDS_PER_DAY = 24 * 60 * 60;
+    private static final int FIRST_SPLIT = 15 * 60;
+    private static final int SECOND_SPLIT = 30 * 60;
+    private static final int COMPLETE_BREAK = 45 * 60;
     private static final int MIN_TIME_BETWEEN_BREAKS = 10;
+    private static final int RECALCULATION_STEP = 5;
 
     @Nullable
     @Override
@@ -331,20 +334,22 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onEntryDragged(MotionEvent me, float diffAngle) {
         Log.i("ENTRY:DRAG", "Entry dragged");
         WheelEntry entry = WheelEntry.getActiveEntry();
-        float maxBufferVal = 270;
-        float maxDriveVal = 270;
+        float maxBufferVal = 270 * 60;
+        float maxDriveVal = 270 * 60;
+        boolean splitBreak = false;
 
         if (entry != null) {
             int nEntries = mChart.getXValCount();
             int entryIndex = entry.getXIndex();
 
             // split the break
-            if (entry.getVal() == 45.0) {
+            if (entry.getVal() == COMPLETE_BREAK) {
                 if (diffAngle < 0) {
-                    addEntry(entryIndex, 15, WheelEntry.PAUSE_ENTRY);
+                    splitBreak = true;
+                    addEntry(entryIndex, FIRST_SPLIT, WheelEntry.PAUSE_ENTRY);
                     ((WheelEntry) (mChart.getEntriesAtIndex(entryIndex).get(0))).setEditModeActive(true);
                     mChart.highlightValue(entryIndex, 0);
-                    entry.setVal(30);
+                    entry.setVal(SECOND_SPLIT);
                     addEntry(entryIndex + 1, 0, WheelEntry.BUFFER_ENTRY);
                 } else {
                     return;
@@ -353,11 +358,15 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             WheelEntry bufferEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex + 1).get(0);
             WheelEntry driveEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex - 1).get(0);
+            WheelEntry pauseEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(0);
 
+            if (splitBreak) {
+                pauseEntry.setStepAngle(RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP)));
+            }
             double ratio = diffAngle / 360;
 
-            float newBufferVal = (float) (bufferEntry.getVal() - MINUTES_PER_DAY * ratio);
-            float newDriveVal = (float) (driveEntry.getVal() + MINUTES_PER_DAY * ratio);
+            float newBufferVal = (float) (bufferEntry.getVal() - SECONDS_PER_DAY * ratio);
+            float newDriveVal = (float) (driveEntry.getVal() + SECONDS_PER_DAY * ratio);
 
             if (newBufferVal < 0) {
                 bufferEntry.setVal(0);
@@ -376,8 +385,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             }
 
             //  merge the breaks
-            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == maxDriveVal && entry.getVal() == 15) {
-                entry.setVal(45);
+            if (bufferEntry.getVal() == 0 && driveEntry.getVal() == maxDriveVal && entry.getVal() == FIRST_SPLIT) {
+                entry.setVal(COMPLETE_BREAK);
                 removeEntry(entryIndex + 1);
                 removeEntry(entryIndex + 1);
                 // Vibrate to provide haptic feedback
@@ -386,10 +395,35 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             mChart.notifyDataSetChanged();
             mChart.invalidate();
+            Log.i("TACt", "" + diffAngle);
+            Log.i("TACt", "" + mStartAngle);
 
-            // Calculate breaks
 
+            // (Re-)Calculate breaks
+            float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
+            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
+                Break pause = pauseEntry.getPause();
+                pauseEntry.setStepAngle(RECALCULATION_STEP * Math.round(mStartAngle / RECALCULATION_STEP));
+                pause.update(getAccumulatedValue(entryIndex), new AsyncResponse<Break>() {
+                    @Override
+                    public void processFinish(Break output) {
+                        Log.i(LOG, "Roadhouse updated. New Roadhouse: " + output.getMainRoadhouse().getName());
+                    }
+
+                    @Override
+                    public void processFinish(Break output, Integer index) {
+                    }
+                });
+            }
         }
+    }
+
+    private int getAccumulatedValue(int entryIndex) {
+        int value = 0;
+        for (int i = 0; i < entryIndex; i++) {
+            value += mChart.getEntriesAtIndex(0).get(0).getVal();
+        }
+        return value;
     }
 
     private double getArc(double radius, double diffAngle) {

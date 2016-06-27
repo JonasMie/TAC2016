@@ -44,7 +44,7 @@ public class Break {
 
     public Break(int elapsedTime, int index) {
         dc = new DataCollector(MainActivity.context);
-        this.elapsedTime = elapsedTime * 60;
+        this.elapsedTime = elapsedTime;
         breaks.add(index, this);
     }
 
@@ -152,5 +152,10 @@ public class Break {
 
     public static void removeBreak(int index){
         breaks.remove(index);
+    }
+
+    public void update(int elapsedTime, AsyncResponse<Break> callback) {
+        setElapsedTime(elapsedTime);
+        this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime),null, callback );
     }
 }
