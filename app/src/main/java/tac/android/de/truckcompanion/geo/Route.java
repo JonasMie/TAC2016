@@ -1,9 +1,11 @@
 package tac.android.de.truckcompanion.geo;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.util.Log;
 import com.android.volley.VolleyError;
 import com.google.android.gms.maps.model.LatLng;
+import com.skobbler.ngx.SKPrepareMapTextureThread;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -14,6 +16,7 @@ import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.utils.Helper;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -35,6 +38,10 @@ public class Route {
     private ArrayList<ArrayList> legs = new ArrayList<>();
 
     public Route() {
+
+    }
+
+    public void init(Context context){
 
     }
 

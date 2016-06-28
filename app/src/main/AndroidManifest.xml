@@ -15,6 +15,7 @@
         <meta-data
                 android:name="com.google.android.gms.version"
                 android:value="@integer/google_play_services_version"/>
+        <meta-data android:name="com.skobbler.ngx.API_KEY" android:value="89d7b1cdcb81d51442b61f0f238e51ca74cb4056716dbf368eaa6c9720b68157"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
