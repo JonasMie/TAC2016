@@ -15,6 +15,7 @@ import tac.android.de.truckcompanion.utils.Helper;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by Jonas Miederer.
@@ -31,39 +32,44 @@ public class Route {
     private int duration;
     private int distance;
 
+    private ArrayList<ArrayList> legs = new ArrayList<>();
+
     public Route() {
 
     }
 
-    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, DataCollector dataCollector, ResponseCallback callback){
+    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, DataCollector dataCollector, ResponseCallback callback) {
         dataCollector.getRoute(startPoint, destinationPoints, callback);
     }
+
     public void setup(JSONObject result) throws JSONException {
         googleRoute = result.getJSONArray("routes").getJSONObject(0);
         waypoints = getWaypoints(new JSONArray(Helper.getJsonStringFromAssets(MainActivity.context, "live.json")));
-        duration = getRouteDuration(googleRoute);
-        distance = getRouteDistance(googleRoute);
-    }
-    private int getRouteDuration(JSONObject googleRoute) throws JSONException {
-        int duration = 0;
-        JSONArray legs = googleRoute.getJSONArray("legs");
-        for (int i = 0; i < legs.length(); i++) {
-            JSONObject leg = legs.getJSONObject(i);
-            duration += leg.getJSONObject("duration").getInt("value");
-        }
-        return duration;
+        fillLegs(googleRoute);
     }
 
-    private int getRouteDistance(JSONObject googleRoute) throws JSONException {
-        int distance = 0;
+    private void fillLegs(JSONObject googleRoute) throws JSONException {
         JSONArray legs = googleRoute.getJSONArray("legs");
-        for (int i = 0; i < legs.length(); i++) {
-            JSONObject leg = legs.getJSONObject(i);
-            distance += leg.getJSONObject("distance").getInt("value");
-        }
-        return distance;
-    }
 
+        for (int i = 0; i < legs.length(); i++) {
+            ArrayList<HashMap<String, Integer>> stepsCont = new ArrayList<>();
+            JSONObject leg = legs.getJSONObject(i);
+            JSONArray steps = leg.getJSONArray("steps");
+
+            for (int j = 0; j < steps.length(); j++) {
+                HashMap<String, Integer> stepsMap = new HashMap<>();
+                JSONObject step = steps.getJSONObject(j);
+                int duration = step.getJSONObject("duration").getInt("value");
+                int distance = step.getJSONObject("distance").getInt("value");
+                stepsMap.put("duration", duration);
+                stepsMap.put("distance", distance);
+                this.duration += duration;
+                this.distance += distance;
+                stepsCont.add(stepsMap);
+            }
+            this.legs.add(stepsCont);
+        }
+    }
     private static ArrayList<LatLng> getWaypoints(JSONArray json) {
         ArrayList<LatLng> arrayList = new ArrayList<>();
         for (int i = 0; i < json.length(); i++) {
@@ -91,5 +97,9 @@ public class Route {
 
     public int getDistance() {
         return distance;
+    }
+
+    public ArrayList<ArrayList> getLegs() {
+        return legs;
     }
 }

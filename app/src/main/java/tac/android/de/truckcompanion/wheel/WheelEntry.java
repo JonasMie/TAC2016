@@ -1,11 +1,13 @@
 package tac.android.de.truckcompanion.wheel;
 
+import android.app.ProgressDialog;
 import android.os.Parcel;
 import android.os.Parcelable;
 import android.support.v4.content.ContextCompat;
 import com.github.mikephil.charting.data.Entry;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.data.Break;
 
 import java.util.ArrayList;
 
@@ -36,12 +38,33 @@ public class WheelEntry extends Entry {
     private int entryType;
     private boolean editModeActive;
     private static WheelEntry activeEntry;
+    private float stepAngle;
+
+    private Break pause;
 
     public WheelEntry(float val, int xIndex) {
         super(val, xIndex);
     }
 
-    public WheelEntry(float val, int xIndex, int entryType) {
+    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime, int pauseIndex) {
+        super(val, xIndex);
+        this.entryType = entryType;
+        this.editModeActive = false;
+        if (this.entryType == PAUSE_ENTRY) {
+            this.pause = new Break(elapsedTime, pauseIndex);
+        }
+    }
+
+    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime, int pauseIndex, boolean addBreak) {
+        super(val, xIndex);
+        this.entryType = entryType;
+        this.editModeActive = false;
+        if (this.entryType == PAUSE_ENTRY && addBreak) {
+            this.pause = new Break(elapsedTime, pauseIndex);
+        }
+    }
+
+    public WheelEntry(float val, int xIndex, int entryType, int elapsedTime) {
         super(val, xIndex);
         this.entryType = entryType;
         this.editModeActive = false;
@@ -65,15 +88,15 @@ public class WheelEntry extends Entry {
         }
     };
 
-    public static ArrayList<Entry> getEntries() {
+    public static ArrayList<Entry> getEntries(ProgressDialog mProgressDialog) {
         return new ArrayList<Entry>() {
             {
-                add(new WheelEntry(270, 0, DRIVE_ENTRY));
-                add(new WheelEntry(45, 1, PAUSE_ENTRY));
-                add(new WheelEntry(270, 2, DRIVE_ENTRY));
-                add(new WheelEntry(45, 3, PAUSE_ENTRY));
-                add(new WheelEntry(60, 6, DRIVE_ENTRY));
-                add(new WheelEntry(30, 7, RECOVERY_ENTRY));
+                add(new WheelEntry(270*60, 0, DRIVE_ENTRY, 0));
+                add(new WheelEntry(45*60, 1, PAUSE_ENTRY, 270*60, 0));
+                add(new WheelEntry(270*60, 2, DRIVE_ENTRY, 315*60));
+                add(new WheelEntry(45*60, 3, PAUSE_ENTRY, 585*60, 1));
+                add(new WheelEntry(60*60, 6, DRIVE_ENTRY, 650*60));
+                add(new WheelEntry(30*60, 7, RECOVERY_ENTRY, 710*60));
             }
         };
     }
@@ -105,4 +128,22 @@ public class WheelEntry extends Entry {
             activeEntry = editModeActive ? this : null;
         }
     }
+
+    public Break getPause() {
+        return pause;
+    }
+
+    public void setPause(Break pause) {
+        this.pause = pause;
+    }
+
+
+    public float getStepAngle() {
+        return stepAngle;
+    }
+
+    public void setStepAngle(float stepAngle) {
+        this.stepAngle = stepAngle;
+    }
+
 }

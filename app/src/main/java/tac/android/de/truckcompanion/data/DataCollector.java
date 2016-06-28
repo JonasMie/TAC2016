@@ -196,7 +196,7 @@ public class DataCollector {
                 "?origin=" + startPoint.getCoordinate().latitude + "," + startPoint.getCoordinate().longitude +
                 "&destination=" + destinationPoint.getCoordinate().latitude + "," + destinationPoint.getCoordinate().longitude +
                 "&waypoints=" + waypointsString +
-                "&departure_time=" + startPoint.getDate().getTime() / 1000 +
+//                "&departure_time=" + startPoint.getDate().getTime() / 1000 +
                 "&key=" + GOOGLE_PLACES_API_KEY;
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {

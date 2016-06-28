@@ -28,9 +28,30 @@ public class Break {
     private Roadhouse mainRoadhouse;
     private ArrayList<Roadhouse> alternativeRoadhouses;
     private DataCollector dc;
+    private int elapsedTime;
+
+    private static ArrayList<Break> breaks = new ArrayList<>();
 
     public Break() {
         dc = new DataCollector(MainActivity.context);
+    }
+
+    public Break(LatLng loc) {
+        dc = new DataCollector(MainActivity.context);
+        calculateRoadhouses(loc, null, null);
+        breaks.add(this);
+    }
+
+    public Break(int elapsedTime, int index) {
+        dc = new DataCollector(MainActivity.context);
+        this.elapsedTime = elapsedTime;
+        breaks.add(index, this);
+    }
+
+    public Break(int elapsedTime, AsyncResponse callback) {
+        dc = new DataCollector(MainActivity.context);
+        calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime * 60), null, callback);
+        breaks.add(this);
     }
 
     public ArrayList<Roadhouse> getAlternativeRoadhouses() {
@@ -49,12 +70,21 @@ public class Break {
         this.mainRoadhouse = mainRoadhouse;
     }
 
-    public void calculateRoadhouses(LatLng loc, final AsyncResponse<Break> callback) {
+    public int getElapsedTime() {
+        return elapsedTime;
+    }
+
+    public void setElapsedTime(int elapsedTime) {
+        this.elapsedTime = elapsedTime;
+    }
+
+    public void calculateRoadhouses(LatLng loc, final Integer index, final AsyncResponse<Break> callback) {
         dc.getPlacesNearby(loc.latitude, loc.longitude, MAX_SEARCHRADIUS, new ResponseCallback() {
             @Override
             public void onSuccess(JSONObject result) {
                 alternativeRoadhouses = new ArrayList<>();
                 JSONArray results;
+
                 try {
                     results = result.getJSONArray("results");
                     int n_alternatives = MAX_ALTERNATIVES;
@@ -74,7 +104,13 @@ public class Break {
                                 alternativeRoadhouses.add(produceNewRoadhouse(roadhouse));
                             }
                         }
-                        callback.processFinish(Break.this);
+                        if (callback != null) {
+                            if (index != null) {
+                                callback.processFinish(Break.this, index);
+                            } else {
+                                callback.processFinish(Break.this);
+                            }
+                        }
                     }
                 } catch (JSONException e) {
                     Log.e("TAC", e.getMessage());
@@ -104,5 +140,22 @@ public class Break {
                 new LatLng(location.getDouble("lat"), location.getDouble("lng")),
                 types
         );
+    }
+
+    public static ArrayList<Break> getBreaks() {
+        return breaks;
+    }
+
+    public static void setBreaks(ArrayList<Break> breaks) {
+        Break.breaks = breaks;
+    }
+
+    public static void removeBreak(int index){
+        breaks.remove(index);
+    }
+
+    public void update(int elapsedTime, AsyncResponse<Break> callback) {
+        setElapsedTime(elapsedTime);
+        this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime),null, callback );
     }
 }

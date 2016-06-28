@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -22,10 +23,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.*;
+import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
-
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private CharSequence mTitle;
 
     // Data
-    private Journey mCurrentJourney;
+    private static Journey mCurrentJourney;
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
 
@@ -172,6 +172,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mProgressDialog.setTitle(R.string.loading_journey_data_title);
         mProgressDialog.setMessage(getString(R.string.loading_journey_data_msg));
         mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
         mProgressDialog.show();
         new Journey.LoadJourneyData(this, new AsyncResponse<Journey>() {
             @Override
@@ -187,10 +188,12 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         public void onSuccess(JSONObject result) {
                             try {
                                 mCurrentJourney.getRoute().setup(result);
-                                if (mProgressDialog.isShowing()) {
-                                    mProgressDialog.dismiss();
-                                }
+
+                                // Setup Main-Fragment (wheel)
+                                MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                fragment.setupFragment(mProgressDialog);
                             } catch (JSONException e) {
+                                mProgressDialog.dismiss();
                                 e.printStackTrace();
                             }
                         }
@@ -204,6 +207,11 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         }
                     });
                 }
+            }
+
+            @Override
+            public void processFinish(Journey output, Integer index) {
+
             }
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
@@ -238,4 +246,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         Log.d("TAC", "State changed: " + state);
     }
 
+    public static Journey getmCurrentJourney() {
+        return mCurrentJourney;
+    }
 }
