@@ -33,22 +33,22 @@ public class AlternativesListViewAdapter extends BaseAdapter{
         String THIRD_COLUMN="c";
        this.list=new ArrayList<HashMap<String,String>>();
         HashMap<String,String> temp=new HashMap<String, String>();
-        temp.put(FIRST_COLUMN, "Ra");
-        temp.put(SECOND_COLUMN, "Male");
-        temp.put(THIRD_COLUMN, "22");
+        temp.put(FIRST_COLUMN, "Rasthof Motivationslos");
+        temp.put(SECOND_COLUMN, "11.00");
+        temp.put(THIRD_COLUMN, "100km");
 
         list.add(temp);
 
         HashMap<String,String> temp2=new HashMap<String, String>();
-        temp2.put(FIRST_COLUMN, "Rajat Ghai");
-        temp2.put(SECOND_COLUMN, "Male");
-        temp2.put(THIRD_COLUMN, "25");
+        temp2.put(FIRST_COLUMN, "Raststätte Tac");
+        temp2.put(SECOND_COLUMN, "12.00");
+        temp2.put(THIRD_COLUMN, "25km");
         list.add(temp2);
 
         HashMap<String,String> temp3=new HashMap<String, String>();
-        temp3.put(FIRST_COLUMN, "Karina Kaif");
-        temp3.put(SECOND_COLUMN, "Female");
-        temp3.put(THIRD_COLUMN, "31");
+        temp3.put(FIRST_COLUMN, "Rathof Haumichblau");
+        temp3.put(SECOND_COLUMN, "13.30");
+        temp3.put(THIRD_COLUMN, "80km");
 
         list.add(temp3);
     }

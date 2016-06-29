@@ -7,7 +7,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 
 import tac.android.de.truckcompanion.fragment.MainFragment;
-import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.fragment.MyMapFragment;
 
 /**
  * Created by Jonas Miederer.
@@ -26,9 +26,9 @@ public class ViewPagerAdapter extends FragmentPagerAdapter {
         switch (position) {
             case 0:
                 return new MainFragment();  // TODO: create fragment
-//                return new MapFragment();
+//                return new MyMapFragment();
             case 1:
-                return new MapFragment(); // TODO: create fragment
+                return new MyMapFragment(); // TODO: create fragment
 //                return new StatsFragment();
             default:
                 return new MainFragment();

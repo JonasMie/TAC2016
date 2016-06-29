@@ -15,12 +15,20 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapFragment;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.fragment.MyMapFragment;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
@@ -53,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         dataCollector = new DataCollector(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -167,6 +174,9 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 }
             }
         }, dataCollector).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
+
+
+
     }
 
 //    @Override
@@ -212,4 +222,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
     }
+
+
+
+
 }
