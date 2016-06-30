@@ -24,6 +24,7 @@ import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 
@@ -183,29 +184,49 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 } else {
                     mCurrentJourney = journey;
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
-                    mCurrentJourney.getRoute().requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), dataCollector, new ResponseCallback() {
+                    mCurrentJourney.initRouting(new AsyncResponse<Route>() {
                         @Override
-                        public void onSuccess(JSONObject result) {
-                            try {
-                                mCurrentJourney.getRoute().setup(result);
+                        public void processFinish(Route route) {
+                            route.requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), new AsyncResponse<Route>() {
+                                @Override
+                                public void processFinish(Route output) {
+                                    Log.d("test", "Test");
+                                }
 
-                                // Setup Main-Fragment (wheel)
-                                MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
-                                fragment.setupFragment(mProgressDialog);
-                            } catch (JSONException e) {
-                                mProgressDialog.dismiss();
-                                e.printStackTrace();
-                            }
+                                @Override
+                                public void processFinish(Route output, Integer index) {
+
+                                }
+                            });
                         }
 
                         @Override
-                        public void onError(VolleyError error) {
-                            Log.e("TAC", error.getMessage());
-                            if (mProgressDialog.isShowing()) {
-                                mProgressDialog.dismiss();
-                            }
+                        public void processFinish(Route output, Integer index) {
+
                         }
-                    });
+                    });//.requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), dataCollector, new ResponseCallback() {
+//                        @Override
+//                        public void onSuccess(JSONObject result) {
+//                            try {
+//                                mCurrentJourney.getRoute().setup(result);
+//
+//                                // Setup Main-Fragment (wheel)
+//                                MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+//                                fragment.setupFragment(mProgressDialog);
+//                            } catch (JSONException e) {
+//                                mProgressDialog.dismiss();
+//                                e.printStackTrace();
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onError(VolleyError error) {
+//                            Log.e("TAC", error.getMessage());
+//                            if (mProgressDialog.isShowing()) {
+//                                mProgressDialog.dismiss();
+//                            }
+//                        }
+//                    });
                 }
             }
 

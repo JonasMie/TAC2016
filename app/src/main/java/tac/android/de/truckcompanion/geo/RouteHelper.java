@@ -5,19 +5,23 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
-import com.skobbler.ngx.SKMaps;
-import com.skobbler.ngx.SKMapsInitSettings;
-import com.skobbler.ngx.SKPrepareMapTextureListener;
-import com.skobbler.ngx.SKPrepareMapTextureThread;
+import com.google.android.gms.maps.model.LatLng;
+import com.skobbler.ngx.*;
 import com.skobbler.ngx.map.SKMapViewStyle;
 import com.skobbler.ngx.navigation.SKAdvisorSettings;
+import com.skobbler.ngx.routing.SKRouteManager;
+import com.skobbler.ngx.routing.SKRouteSettings;
 import com.skobbler.ngx.versioning.SKMapUpdateListener;
 import com.skobbler.ngx.versioning.SKVersioningManager;
+import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.ResponseCallback;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -33,25 +37,29 @@ public class RouteHelper implements SKPrepareMapTextureListener, SKMapUpdateList
     public static final String TAG = "TAC";
     private static RouteHelper instance;
     private Context context;
-
+    private AsyncResponse<RouteHelper> callback;
     // Skobbler-related stuff
     private String mapResourcesDirPath;
 
     private static final String SKMAPS_DIR = "/SKMaps/";
 
-    private RouteHelper(Context context) {
+    private RouteHelper(Context context, AsyncResponse<RouteHelper> callback) {
         this.context = context;
+        this.callback = callback;
+        init();
     }
 
-    public static RouteHelper getInstance(Context context) {
+    public static void getInstance(AsyncResponse<RouteHelper> callback) {
         if (instance == null) {
-            return new RouteHelper(context);
+            instance = new RouteHelper(MainActivity.context, callback);
+        } else {
+            callback.processFinish(instance);
         }
-        return instance;
+
     }
 
 
-    public void init() {
+    private void init() {
         File externalDir = context.getExternalFilesDir(null);
 
         // determine path where map resources should be copied on the device
@@ -161,6 +169,31 @@ public class RouteHelper implements SKPrepareMapTextureListener, SKMapUpdateList
 //        }
 //    }
 
+    public void launchRouteCalculation(Route route, LatLng start, LatLng end) { //, ArrayList<LatLng> via
+        // get a route settings object and populate it with the desired properties
+        SKRouteSettings routeSettings = new SKRouteSettings();
+        // set start and destination points
+        // wtf, why do they use Long,Lat and not Lat,Long?
+        routeSettings.setStartCoordinate(new SKCoordinate(start.longitude, start.latitude));
+        routeSettings.setDestinationCoordinate(new SKCoordinate(end.longitude, end.latitude));
+        // set the number of routes to be calculated
+        routeSettings.setNoOfRoutes(1);
+        // set the route mode
+        routeSettings.setRouteMode(SKRouteSettings.SKRouteMode.CAR_FASTEST);
+        // set whether the route should be shown on the map after it's computed
+        routeSettings.setRouteExposed(false);
+
+        routeSettings.setRequestAdvices(true);
+        routeSettings.setExtendedPointsReturned(true);
+
+        // set the route listener to be notified of route calculation
+        // events
+        SKRouteManager.getInstance().setRouteListener(route);
+        // pass the route to the calculation routine
+        SKRouteManager.getInstance().calculateRoute(routeSettings);
+    }
+
+
     /**
      * Initializes the SKMaps framework
      */
@@ -214,5 +247,6 @@ public class RouteHelper implements SKPrepareMapTextureListener, SKMapUpdateList
     @Override
     public void onMapTexturesPrepared(boolean b) {
         initializeLibrary();
+        callback.processFinish(instance);
     }
 }

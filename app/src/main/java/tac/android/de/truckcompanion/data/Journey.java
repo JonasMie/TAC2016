@@ -6,9 +6,11 @@ import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.Route;
+import tac.android.de.truckcompanion.geo.RouteHelper;
 import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
@@ -75,7 +77,7 @@ public class Journey implements SimulationEventListener {
             this.destinationPoints.add(new DispoInformation.DestinationPoint(stopsObjs.getJSONObject(i)));
         }
 
-        this.route = new Route();
+//        this.route = new Route(MainActivity.context);
     }
 
     @Override
@@ -93,8 +95,23 @@ public class Journey implements SimulationEventListener {
         }
     }
 
+    public void initRouting(final AsyncResponse<Route> callback) {
+        Route.init(new AsyncResponse<Route>() {
+            @Override
+            public void processFinish(Route route) {
+                Journey.this.route = route;
+                callback.processFinish(route);
+            }
 
-    public static class LoadJourneyData extends AsyncTask<Integer, Void, Journey> {
+            @Override
+            public void processFinish(Route output, Integer index) {
+
+            }
+        });
+    }
+
+
+    public static class LoadJourneyData extends AsyncTask<Object, Void, Journey> {
         private Context context;
         public AsyncResponse<Journey> callback = null;
 
@@ -104,11 +121,11 @@ public class Journey implements SimulationEventListener {
         }
 
         @Override
-        protected Journey doInBackground(Integer... params) {
+        protected Journey doInBackground(Object... params) {
             JSONArray journeys = null;
             try {
                 journeys = new JSONArray(getJsonStringFromAssets(context, "dispo.json"));
-                return new Journey(journeys.getJSONObject(params[0] - 1));
+                return new Journey(journeys.getJSONObject((int) (params[0]) - 1));
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -150,7 +167,9 @@ public class Journey implements SimulationEventListener {
             // set it to the total route distance
             distance = route.getDistance() - getTravelledDistance();
         }
-        return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
+//        return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
+        // TODO
+        return null;
     }
 
     public LatLng getPositionOnRouteByTime(int time) {
@@ -171,9 +190,10 @@ public class Journey implements SimulationEventListener {
                 int stepDistance = step.get("distance");
 
                 if (duration + stepDuration >= time) {
-                    float remainer = (time - duration) / (float)(stepDuration);
-                    estimatedDistance = distance+ stepDistance*remainer;
-                    return route.getWaypoints().get(Math.round((estimatedDistance/1000) / Route.DISTANCE_INTERVAL));
+                    float remainer = (time - duration) / (float) (stepDuration);
+                    estimatedDistance = distance + stepDistance * remainer;
+                    return null;
+//                    return route.getWaypoints().get(Math.round((estimatedDistance / 1000) / Route.DISTANCE_INTERVAL));
                 }
                 duration += stepDuration;
                 distance += stepDistance;
