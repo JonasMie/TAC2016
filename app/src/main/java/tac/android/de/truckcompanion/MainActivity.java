@@ -5,7 +5,6 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -18,15 +17,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import com.android.volley.VolleyError;
+import com.skobbler.ngx.util.SKLogging;
 import org.json.JSONException;
-import org.json.JSONObject;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
-import tac.android.de.truckcompanion.data.*;
-import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.data.DataCollector;
+import tac.android.de.truckcompanion.data.Journey;
+import tac.android.de.truckcompanion.data.TruckState;
+import tac.android.de.truckcompanion.data.TruckStateEventListener;
 import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
-import tac.android.de.truckcompanion.utils.ResponseCallback;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 

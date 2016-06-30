@@ -41,18 +41,20 @@ public class Route implements SKRouteListener {
     private SKRouteManager routeManager;
     private Context context;
     private AsyncResponse<Route> callback;
-//    private JSONObject googleRoute;
+    //    private JSONObject googleRoute;
 //    private ArrayList<LatLng> waypoints;
     private int duration;
     private int distance;
 
     private ArrayList<ArrayList> legs = new ArrayList<>();
 
-    private Route(){
+    private Route() {
 
-    };
+    }
 
-    public static void init(final AsyncResponse<Route> callback){
+    ;
+
+    public static void init(final AsyncResponse<Route> callback) {
         RouteHelper.getInstance(new AsyncResponse<RouteHelper>() {
             @Override
             public void processFinish(RouteHelper helper) {
@@ -138,9 +140,8 @@ public class Route implements SKRouteListener {
     public void onRouteCalculationCompleted(SKRouteInfo skRouteInfo) {
         Log.d(TAG, "Route successfully calculated");
         routeInfo = skRouteInfo;
-        List<SKRouteAdvice> adv = SKRouteManager.getInstance().getAdviceList(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
+//        List<SKRouteAdvice> adv = SKRouteManager.getInstance().getAdviceList(skRouteInfo.getRouteID(), SKMaps.SKDistanceUnitType.DISTANCE_UNIT_KILOMETER_METERS);
         SKRouteManager.getInstance().saveRouteToCache(skRouteInfo.getRouteID());
-        callback.processFinish(this);
 
     }
 
@@ -151,20 +152,17 @@ public class Route implements SKRouteListener {
 
     @Override
     public void onAllRoutesCompleted() {
-        Log.d("test", "test");
+        Log.d(TAG, "All routes successfully calculated");
+        callback.processFinish(this);
     }
 
     @Override
     public void onServerLikeRouteCalculationCompleted(SKRouteJsonAnswer skRouteJsonAnswer) {
-        Log.d("test", "test");
+        Log.d(TAG, "server like route calculation completed");
     }
 
     @Override
     public void onOnlineRouteComputationHanging(int i) {
-        Log.d("test", "test");
-    }
-
-    public static void onRouteHelperReady(RouteHelper helper) {
-        Route.helper = helper;
+        Log.i(TAG, "online route computation hanging");
     }
 }
