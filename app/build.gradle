@@ -24,10 +24,6 @@ repositories {
     maven {
         url "https://jitpack.io"
     }
-    maven {
-        url "http://developer.skobbler.com/maven/"
-    }
-
 }
 
 configurations {
@@ -43,41 +39,4 @@ dependencies {
     compile 'com.android.support:cardview-v7:23.4.0+'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.github.JonasMie:MPAndroidChart:v2.2.4-alpha'
-    skobblersdk "com.skobbler.ngx:SKMaps:2.5.0"
-    compile files('libs/SKMaps.jar')
-}
-
-
-// Skobbler stuff setup
-def assetsPath = "$projectDir/src/main/assets"
-def libsPath = "$projectDir/libs"
-def jniLibsPath = "$projectDir/src/main/jniLibs"
-
-task installSKMaps << {
-    copy {
-        from configurations.skobblersdk
-        into "$buildDir/skobblersdk-down"
-        rename { String fileName -> 'skobblersdkres.zip' }
-    }
-    copy {
-        from zipTree("$buildDir/skobblersdk-down/skobblersdkres.zip")
-        into "$buildDir/skobblersdk-down"
-    }
-    delete("$jniLibsPath",
-            "$assetsPath/SKMaps.zip",
-            "$libsPath/SKMaps.jar")
-    copy {
-        from "${buildDir}/skobblersdk-down/jniLibs"
-        into "$jniLibsPath"
-    }
-    copy {
-        from "${buildDir}/skobblersdk-down/SKMaps.zip"
-        into "$assetsPath"
-    }
-    copy {
-        from "${buildDir}/skobblersdk-down/SKMaps.jar"
-        into "$libsPath"
-    }
-    delete("$buildDir/skobblersdk-down")
-    delete(configurations.skobblersdk)
 }
