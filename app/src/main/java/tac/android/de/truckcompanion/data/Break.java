@@ -2,11 +2,11 @@ package tac.android.de.truckcompanion.data;
 
 import android.util.Log;
 import com.android.volley.VolleyError;
-import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
+import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 

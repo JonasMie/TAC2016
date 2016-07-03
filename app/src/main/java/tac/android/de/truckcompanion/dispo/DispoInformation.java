@@ -1,8 +1,9 @@
 package tac.android.de.truckcompanion.dispo;
 
-import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONException;
 import org.json.JSONObject;
+import tac.android.de.truckcompanion.geo.LatLng;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;

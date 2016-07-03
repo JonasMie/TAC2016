@@ -1,6 +1,6 @@
 package tac.android.de.truckcompanion.data;
 
-import com.google.android.gms.maps.model.LatLng;
+import tac.android.de.truckcompanion.geo.LatLng;
 
 import java.util.ArrayList;
 

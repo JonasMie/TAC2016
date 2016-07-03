@@ -2,7 +2,6 @@ package tac.android.de.truckcompanion.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import com.google.android.gms.maps.model.LatLng;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -11,6 +10,7 @@ import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.Route;
 import tac.android.de.truckcompanion.geo.RouteHelper;
+import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
