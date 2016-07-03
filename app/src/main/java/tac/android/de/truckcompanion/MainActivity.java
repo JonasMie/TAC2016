@@ -17,18 +17,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import com.skobbler.ngx.util.SKLogging;
+import com.here.android.mpa.common.OnEngineInitListener;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
-import tac.android.de.truckcompanion.geo.Route;
+import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     public static FragmentManager fm;
 
     private static final int DRIVER_ID = 1;
@@ -39,7 +42,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
     private ViewPager mViewPager;
-    private ViewPagerAdapter mViewPagerAdapter;
+    public static ViewPagerAdapter mViewPagerAdapter;
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -183,49 +186,31 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 } else {
                     mCurrentJourney = journey;
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
-                    mCurrentJourney.initRouting(new AsyncResponse<Route>() {
+                    final MapFragment mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
+                    mapFragment.init(new OnEngineInitListener() {
                         @Override
-                        public void processFinish(Route route) {
-                            route.requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), new AsyncResponse<Route>() {
-                                @Override
-                                public void processFinish(Route output) {
-                                    Log.d("test", "Test");
-                                }
+                        public void onEngineInitializationCompleted(Error error) {
+                            if (error == Error.NONE) {
+                                mapFragment.setMap(mapFragment.getMapFragment().getMap());
+                                mCurrentJourney.initRoute().requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                    @Override
+                                    public void processFinish(RouteWrapper routeWrapper) {
+                                        // Setup Main-Fragment (wheel)
+                                        MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                        fragment.setupFragment(mProgressDialog);
+                                    }
 
-                                @Override
-                                public void processFinish(Route output, Integer index) {
+                                    @Override
+                                    public void processFinish(RouteWrapper output, Integer index) {
 
-                                }
-                            });
+                                    }
+                                });
+                            } else {
+                                Log.e(TAG, "MapFragment initialization failed with: " + error.toString());
+                            }
                         }
+                    });
 
-                        @Override
-                        public void processFinish(Route output, Integer index) {
-
-                        }
-                    });//.requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), dataCollector, new ResponseCallback() {
-//                        @Override
-//                        public void onSuccess(JSONObject result) {
-//                            try {
-//                                mCurrentJourney.getRoute().setup(result);
-//
-//                                // Setup Main-Fragment (wheel)
-//                                MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
-//                                fragment.setupFragment(mProgressDialog);
-//                            } catch (JSONException e) {
-//                                mProgressDialog.dismiss();
-//                                e.printStackTrace();
-//                            }
-//                        }
-//
-//                        @Override
-//                        public void onError(VolleyError error) {
-//                            Log.e("TAC", error.getMessage());
-//                            if (mProgressDialog.isShowing()) {
-//                                mProgressDialog.dismiss();
-//                            }
-//                        }
-//                    });
                 }
             }
 
