@@ -1,5 +1,8 @@
 package tac.android.de.truckcompanion.data;
 
+import com.here.android.mpa.search.DiscoveryResult;
+import com.here.android.mpa.search.PlaceLink;
+import com.nokia.maps.PlacesLink;
 import tac.android.de.truckcompanion.geo.LatLng;
 
 import java.util.ArrayList;
