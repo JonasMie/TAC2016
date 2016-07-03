@@ -40,4 +40,8 @@ dependencies {
     compile 'com.android.support:cardview-v7:24.0.0'
     compile 'com.mcxiaoke.volley:library:1.0.19'
     compile 'com.github.JonasMie:MPAndroidChart:v2.2.4-alpha'
+    compile 'com.google.code.gson:gson:2.4'
+    compile files('libs/HERE-sdk.jar')
+    compile files('libs/HERE-sdk-javadoc.jar')
+    compile files('libs/jts-1.14.jar')
 }
