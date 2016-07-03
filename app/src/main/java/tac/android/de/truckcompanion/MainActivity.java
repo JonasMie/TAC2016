@@ -5,7 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.FragmentManager;
+import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
@@ -71,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
 
-        fm = getSupportFragmentManager();
+        fm = getFragmentManager();
         setSupportActionBar(toolbar);
 
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
