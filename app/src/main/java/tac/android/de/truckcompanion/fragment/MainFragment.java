@@ -383,7 +383,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 driveEntry.setVal(newDriveVal);
             }
 
-            Log.e(LOG, "Buffer:   " + bufferEntry.getVal() / 60 + "    Drive:   " + driveEntry.getVal() / 60);
             //  merge the breaks
             if (bufferEntry.getVal() == 0 && driveEntry.getVal() == MAX_DRIVE_VAL && entry.getVal() == FIRST_SPLIT) {
                 pauseEntry.setVal(COMPLETE_BREAK);
@@ -407,11 +406,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 pause.update(getAccumulatedValue(entryIndex), new AsyncResponse<Break>() {
                     @Override
                     public void processFinish(Break output) {
-                        Log.i(LOG, "Roadhouse updated. New Roadhouse: " + output.getMainRoadhouse().getName());
+                        Log.i(LOG, "Roadhouse updated. New Roadhouse");
                     }
 
                     @Override
                     public void processFinish(Break output, Integer index) {
+                        Log.i(LOG, "Roadhouse updated. New Roadhouse");
                     }
                 });
             }
