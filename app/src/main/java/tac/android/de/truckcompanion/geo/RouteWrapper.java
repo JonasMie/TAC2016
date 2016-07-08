@@ -3,6 +3,7 @@ package tac.android.de.truckcompanion.geo;
 import android.app.ProgressDialog;
 import android.util.Log;
 import com.here.android.mpa.common.GeoCoordinate;
+import com.here.android.mpa.common.Image;
 import com.here.android.mpa.customlocation.Request;
 import com.here.android.mpa.mapping.Map;
 import com.here.android.mpa.mapping.MapMarker;
@@ -17,6 +18,7 @@ import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +42,7 @@ public class RouteWrapper {
     private Map map;
     private MapRoute mapRoute;
     private tac.android.de.truckcompanion.fragment.MapFragment mapFragment;
+    private Image marker;
     private int duration;
     private int distance;
 
@@ -48,6 +51,12 @@ public class RouteWrapper {
     public RouteWrapper() {
         mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.mViewPagerAdapter.getRegisteredFragment(1);
         map = mapFragment.getMap();
+        marker = new Image();
+        try {
+            marker.setImageResource(R.drawable.marker);
+        } catch (IOException e) {
+            Log.e(TAG, "Marker image not found");
+        }
         //routeManager.setTrafficPenaltyMode(); TODO
         routePlan = new RoutePlan();
         RouteOptions routeOptions = new RouteOptions();
@@ -59,11 +68,13 @@ public class RouteWrapper {
     public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
         this.callback = callback;
         routePlan.removeAllWaypoints();
+        final List<MapObject> markers = new ArrayList<>();
         routePlan.addWaypoint(new RouteWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude)));
         for (DispoInformation.DestinationPoint destinationPoint :
                 destinationPoints) {
             GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
             routePlan.addWaypoint(new RouteWaypoint(coordinate));
+            markers.add(new MapMarker(coordinate,marker));
         }
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
@@ -85,6 +96,7 @@ public class RouteWrapper {
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
+                        map.addMapObjects(markers);
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
