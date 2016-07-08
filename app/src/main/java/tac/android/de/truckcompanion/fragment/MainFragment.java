@@ -141,12 +141,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
                 @Override
                 public void processFinish(Break pause, Integer index) {
+                    totalBreaks -= 1;
                     PlaceLink pauseLink = ((PlaceLink) pause.getMainRoadhouse());
                     // TODO: correct position!
                     MainActivity.getmCurrentJourney().getDestinationPoints().add(index+1,new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
-                    if (index + 1 == totalBreaks) {
+                    if (0 == totalBreaks) {
                         callback.processFinish(breaks);
-                        processedBreaks = 0;
                     }
                 }
             });
