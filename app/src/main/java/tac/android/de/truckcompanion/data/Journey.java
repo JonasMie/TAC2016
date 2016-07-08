@@ -59,6 +59,10 @@ public class Journey implements SimulationEventListener {
         return destinationPoints;
     }
 
+    public void setDestinationPoints(ArrayList<DispoInformation.DestinationPoint> destinationPoints) {
+        this.destinationPoints = destinationPoints;
+    }
+
     public RouteWrapper getRouteWrapper() {
         return routeWrapper;
     }

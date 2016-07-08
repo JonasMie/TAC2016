@@ -216,6 +216,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                 calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                                     @Override
                                                     public void processFinish(RouteWrapper output) {
+                                                        // TODO : update pause entries!
                                                         if (mProgressDialog.isShowing()) {
                                                             mProgressDialog.dismiss();
                                                         }

@@ -2,6 +2,7 @@ package tac.android.de.truckcompanion.geo;
 
 import android.app.ProgressDialog;
 import android.util.Log;
+import com.android.volley.VolleyError;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.Image;
 import com.here.android.mpa.customlocation.Request;
@@ -13,12 +14,18 @@ import com.here.android.mpa.routing.*;
 import com.here.android.mpa.search.DiscoveryRequest;
 import com.here.android.mpa.search.ResultListener;
 import com.here.android.mpa.search.SearchRequest;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
+import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.ResponseCallback;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +81,7 @@ public class RouteWrapper {
                 destinationPoints) {
             GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
             routePlan.addWaypoint(new RouteWaypoint(coordinate));
-            markers.add(new MapMarker(coordinate,marker));
+            markers.add(new MapMarker(coordinate, marker));
         }
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
@@ -107,6 +114,7 @@ public class RouteWrapper {
         });
 
     }
+
     public int getDuration() {
         return duration;
     }
@@ -133,5 +141,50 @@ public class RouteWrapper {
         // limit number of items in each result page to 10
         request.setCollectionSize(10);
         request.execute(resultListener);
+    }
+
+    public static void getOrderedWaypoints(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final AsyncResponse<ArrayList> callback) {
+        DataCollector dc = new DataCollector(MainActivity.context);
+        final ArrayList<DispoInformation.DestinationPoint> orderedDestPoints = new ArrayList<>();
+        dc.getWaypointMatrix(startPoint, destinationPoints, new ResponseCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    JSONArray entries = result.getJSONObject("response").getJSONArray("matrixEntry");
+                    ArrayList<Integer> costs = new ArrayList<>();
+
+                    for (int i = 0; i < entries.length(); i++) {
+                        JSONObject entry = entries.getJSONObject(i);
+                        int index = entry.getInt("destinationIndex");
+                        int cost = entry.getJSONObject("summary").getInt("costFactor");
+                        if (costs.size() == 0) {
+                            costs.add(0, cost);
+                            orderedDestPoints.add(0, destinationPoints.get(0));
+                        } else {
+                            for (int j = 0; j < costs.size(); j++) {
+                                if (costs.get(j) > cost) {
+                                    costs.add(j, cost);
+                                    orderedDestPoints.add(j, destinationPoints.get(index));
+                                    break;
+                                } else if (costs.get(j) <= cost && j == costs.size()-1){
+                                    costs.add(cost);
+                                    orderedDestPoints.add(destinationPoints.get(index));
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+                    callback.processFinish(orderedDestPoints);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                Log.e(TAG, "Route matrix calculation failed: " + error.getMessage());
+            }
+        });
     }
 }

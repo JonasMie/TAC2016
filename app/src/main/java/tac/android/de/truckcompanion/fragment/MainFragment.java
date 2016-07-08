@@ -128,7 +128,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.invalidate();
     }
 
-    public void setBreaks(final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback){
+    public void setBreaks(final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback) {
         mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
         final ArrayList<Break> breaks = Break.getBreaks();
         totalBreaks = breaks.size();
@@ -143,15 +143,28 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 public void processFinish(Break pause, Integer index) {
                     totalBreaks -= 1;
                     PlaceLink pauseLink = ((PlaceLink) pause.getMainRoadhouse());
-                    // TODO: correct position!
-                    MainActivity.getmCurrentJourney().getDestinationPoints().add(index+1,new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
+
+                    ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
+                    destinationPoints.add(new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
                     if (0 == totalBreaks) {
-                        callback.processFinish(breaks);
+                        RouteWrapper.getOrderedWaypoints(MainActivity.getmCurrentJourney().getStartPoint(), MainActivity.getmCurrentJourney().getDestinationPoints(), new AsyncResponse<ArrayList>() {
+                            @Override
+                            public void processFinish(ArrayList orderedDestinationPoints) {
+                                MainActivity.getmCurrentJourney().setDestinationPoints(orderedDestinationPoints);
+                                callback.processFinish(breaks);
+                            }
+
+                            @Override
+                            public void processFinish(ArrayList output, Integer index) {
+
+                            }
+                        });
                     }
                 }
             });
         }
     }
+
 
     @Override
     public void onChartGestureStart(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
