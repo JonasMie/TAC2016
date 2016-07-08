@@ -24,10 +24,13 @@ import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
 
@@ -57,6 +60,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private static Journey mCurrentJourney;
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
+
+    // Fragments
+    private MainFragment mainFragment;
+    private MapFragment mapFragment;
 
     public static Context context;
 
@@ -185,6 +192,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
                     mCurrentJourney = journey;
+
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
                     final MapFragment mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
@@ -192,17 +200,44 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         public void onEngineInitializationCompleted(Error error) {
                             if (error == Error.NONE) {
                                 mapFragment.setMap(mapFragment.getMapFragment().getMap());
-                                mCurrentJourney.initRoute().requestRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                mCurrentJourney.initRoute();
+
+                                // Calculate first route
+                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                     @Override
                                     public void processFinish(RouteWrapper routeWrapper) {
                                         // Setup Main-Fragment (wheel)
-                                        MainFragment fragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
-                                        fragment.setupFragment(mProgressDialog);
+                                        mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                        mainFragment.setBreaks(mProgressDialog, new AsyncResponse<ArrayList>() {
+
+                                            @Override
+                                            public void processFinish(ArrayList breaks) {
+                                                // Calculate second route (with breaks)
+                                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                                    @Override
+                                                    public void processFinish(RouteWrapper output) {
+                                                        if (mProgressDialog.isShowing()) {
+                                                            mProgressDialog.dismiss();
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void processFinish(RouteWrapper output, Integer index) {
+
+                                                    }
+                                                });
+                                            }
+
+                                            @Override
+                                            public void processFinish(ArrayList breaks, Integer index) {
+
+                                            }
+                                        });
+
                                     }
 
                                     @Override
                                     public void processFinish(RouteWrapper output, Integer index) {
-
                                     }
                                 });
                             } else {
@@ -210,7 +245,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                             }
                         }
                     });
-
                 }
             }
 
@@ -254,4 +288,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public static Journey getmCurrentJourney() {
         return mCurrentJourney;
     }
+
+    public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
+        mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
+    }
+
+    ;
 }

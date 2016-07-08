@@ -4,6 +4,9 @@ import android.app.ProgressDialog;
 import android.util.Log;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.customlocation.Request;
+import com.here.android.mpa.mapping.Map;
+import com.here.android.mpa.mapping.MapMarker;
+import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.mapping.MapRoute;
 import com.here.android.mpa.routing.*;
 import com.here.android.mpa.search.DiscoveryRequest;
@@ -28,18 +31,23 @@ public class RouteWrapper {
 
     public static final int DISTANCE_INTERVAL = 10;
     private static final String TAG = "TAC";
-    private static RouteManager routeManager = new RouteManager();
+    private static CoreRouter routeManager = new CoreRouter();
     private RoutePlan routePlan;
     private RouteOptions routeOptions;
     private RouteResult routeResult;
     private AsyncResponse<RouteWrapper> callback;
     private Route route;
+    private Map map;
+    private MapRoute mapRoute;
+    private tac.android.de.truckcompanion.fragment.MapFragment mapFragment;
     private int duration;
     private int distance;
 
     private ArrayList<ArrayList> legs = new ArrayList<>();
 
     public RouteWrapper() {
+        mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.mViewPagerAdapter.getRegisteredFragment(1);
+        map = mapFragment.getMap();
         //routeManager.setTrafficPenaltyMode(); TODO
         routePlan = new RoutePlan();
         RouteOptions routeOptions = new RouteOptions();
@@ -50,13 +58,14 @@ public class RouteWrapper {
 
     public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
         this.callback = callback;
-        routePlan.addWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude));
+        routePlan.removeAllWaypoints();
+        routePlan.addWaypoint(new RouteWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude)));
         for (DispoInformation.DestinationPoint destinationPoint :
                 destinationPoints) {
-            routePlan.addWaypoint(new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude));
+            GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
+            routePlan.addWaypoint(new RouteWaypoint(coordinate));
         }
-        routePlan.addWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude));
-        RouteManager.Error error = routeManager.calculateRoute(routePlan, new RouteManager.Listener() {
+        routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
             public void onProgress(int i) {
                 if (progressDialog != null) {
@@ -66,16 +75,16 @@ public class RouteWrapper {
             }
 
             @Override
-            public void onCalculateRouteFinished(RouteManager.Error error, List<RouteResult> routeResults) {
-                if (error == RouteManager.Error.NONE) {
+            public void onCalculateRouteFinished(List<RouteResult> routeResults, RoutingError error) {
+                if (error == RoutingError.NONE) {
                     if (routeResults.size() < 1) {
                         Log.e(TAG, "No route found");
                     } else {
                         Log.i(TAG, "Routing successful");
                         route = routeResults.get(0).getRoute();
-                        MapRoute mapRoute = new MapRoute(route);
-                        tac.android.de.truckcompanion.fragment.MapFragment mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.mViewPagerAdapter.getRegisteredFragment(1);
-                        mapFragment.getMap().addMapObject(mapRoute);
+                        map.removeMapObject(mapRoute);
+                        mapRoute = new MapRoute(route);
+                        map.addMapObject(mapRoute);
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
@@ -85,61 +94,7 @@ public class RouteWrapper {
             }
         });
 
-        if (error != RouteManager.Error.NONE) {
-            Log.e(TAG, "Route calculation failed with: " + error.toString());
-        }
     }
-
-//    public void setup(JSONObject result) throws JSONException {
-//        googleRoute = result.getJSONArray("routes").getJSONObject(0);
-//        waypoints = getWaypoints(new JSONArray(Helper.getJsonStringFromAssets(MainActivity.context, "live.json")));
-//        fillLegs(googleRoute);
-//    }
-
-//    private void fillLegs(JSONObject googleRoute) throws JSONException {
-//        JSONArray legs = googleRoute.getJSONArray("legs");
-//
-//        for (int i = 0; i < legs.length(); i++) {
-//            ArrayList<HashMap<String, Integer>> stepsCont = new ArrayList<>();
-//            JSONObject leg = legs.getJSONObject(i);
-//            JSONArray steps = leg.getJSONArray("steps");
-//
-//            for (int j = 0; j < steps.length(); j++) {
-//                HashMap<String, Integer> stepsMap = new HashMap<>();
-//                JSONObject step = steps.getJSONObject(j);
-//                int duration = step.getJSONObject("duration").getInt("value");
-//                int distance = step.getJSONObject("distance").getInt("value");
-//                stepsMap.put("duration", duration);
-//                stepsMap.put("distance", distance);
-//                this.duration += duration;
-//                this.distance += distance;
-//                stepsCont.add(stepsMap);
-//            }
-//            this.legs.add(stepsCont);
-//        }
-//    }
-
-//    private static ArrayList<LatLng> getWaypoints(JSONArray json) {
-//        ArrayList<LatLng> arrayList = new ArrayList<>();
-//        for (int i = 0; i < json.length(); i++) {
-//            try {
-//                JSONObject obj = json.getJSONObject(i);
-//                arrayList.add(new LatLng(obj.getDouble("lat"), obj.getDouble("lng")));
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//        }
-//        return arrayList;
-//    }
-
-//    public JSONObject getGoogleRoute() {
-//        return googleRoute;
-//    }
-
-//    public ArrayList<LatLng> getWaypoints() {
-//        return waypoints;
-//    }
-
     public int getDuration() {
         return duration;
     }

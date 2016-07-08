@@ -88,7 +88,7 @@ public class WheelEntry extends Entry {
         }
     };
 
-    public static ArrayList<Entry> getEntries(ProgressDialog mProgressDialog) {
+    public static ArrayList<Entry> getEntries() {
         return new ArrayList<Entry>() {
             {
                 add(new WheelEntry(270*60, 0, DRIVE_ENTRY, 0));

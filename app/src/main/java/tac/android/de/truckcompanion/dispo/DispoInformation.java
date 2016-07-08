@@ -68,6 +68,12 @@ public abstract class DispoInformation {
                 // no time means driver finished journey
             }
         }
+
+        public DestinationPoint(LatLng dest, int time) {
+            this.coordinate = dest;
+            this.time = time;
+
+        }
     }
 
 }

@@ -21,9 +21,13 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.here.android.mpa.search.PlaceLink;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
+import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.geo.LatLng;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
@@ -58,6 +62,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     // Misc
     Vibrator vibrator;
+    MainActivity activity = ((MainActivity) getActivity());
     // Constants
     private static final String LOG = "TAC";
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
@@ -77,6 +82,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart = (PieChart) view.findViewById(R.id.chart);
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
+
+        setupFragment();
 
         // Layout + appearance
         mChart.setDrawHoleEnabled(true);
@@ -100,10 +107,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         return view;
     }
 
-    public void setupFragment(final ProgressDialog mProgressDialog) {
-        mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
-
-        entries = WheelEntry.getEntries(mProgressDialog);
+    public void setupFragment() {
+        entries = WheelEntry.getEntries();
 
         dataSet = new PieDataSet(entries, "Fahrtzeiten");
 
@@ -121,11 +126,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         mChart.notifyDataSetChanged();
         mChart.invalidate();
+    }
 
-        ArrayList<Break> breaks = Break.getBreaks();
+    public void setBreaks(final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback){
+        mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
+        final ArrayList<Break> breaks = Break.getBreaks();
         totalBreaks = breaks.size();
 
-        // WTF, fucking callbacks
         for (int i = 0; i < totalBreaks; i++) {
             breaks.get(i).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(i).getElapsedTime()), i, new AsyncResponse<Break>() {
                 @Override
@@ -133,11 +140,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 }
 
                 @Override
-                public void processFinish(Break output, Integer index) {
+                public void processFinish(Break pause, Integer index) {
+                    PlaceLink pauseLink = ((PlaceLink) pause.getMainRoadhouse());
+                    // TODO: correct position!
+                    MainActivity.getmCurrentJourney().getDestinationPoints().add(index+1,new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
                     if (index + 1 == totalBreaks) {
-                        if (mProgressDialog.isShowing()) {
-                            mProgressDialog.dismiss();
-                        }
+                        callback.processFinish(breaks);
                         processedBreaks = 0;
                     }
                 }
@@ -161,8 +169,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             float pointAngle = mChart.getAngleForPoint(me.getX(), me.getY());
             float diffAngle = pointAngle - mStartAngle;
             // this is fixing the undesired behaviour that the pause jumps around when the entry crosses the 0°-mark
-            if(diffAngle > 180){
-                diffAngle =- 360;
+            if (diffAngle > 180) {
+                diffAngle = -360;
             }
             if (mChart.isEditModeEnabled()) {
                 if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
@@ -412,6 +420,20 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     @Override
                     public void processFinish(Break output, Integer index) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
+//                        ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
+//
+//                        // UPDATE ROUTE!
+//                        activity.calculateRoute(null, , null, new AsyncResponse<RouteWrapper>() {
+//                            @Override
+//                            public void processFinish(RouteWrapper output) {
+//
+//                            }
+//
+//                            @Override
+//                            public void processFinish(RouteWrapper output, Integer index) {
+//
+//                            }
+//                        });
                     }
                 });
             }
