@@ -107,6 +107,9 @@ public class RouteWrapper {
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
+                    if(error == RoutingError.REQUEST_TIMEOUT){
+                        callback.processFinish(null, error.value());
+                    }
                     Log.e(TAG, "Route calculation failed with: " + error.toString());
                 }
 

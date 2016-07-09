@@ -13,6 +13,8 @@
     <string name="loading_journey_data_msg">Aktuelle Fahrtdaten werden abgerufen.</string>
     <string name="loading_route_data_msg">Route wird berechnet.</string>
     <string name="loading_pause_data_msg">Pausen werden berechnet.</string>
+    <string name="updating_pause_data_msg">Pausen werden neu berechnet.</string>
+    <string name="updating_route_data_msg">Route wird neu berechnet.</string>
     <string name="start_simulation_menu_item">Simulation starten</string>
-    <string name="SKOBBLER_API_KEY">89d7b1cdcb81d51442b61f0f238e51ca74cb4056716dbf368eaa6c9720b68157</string>
+    <string name="no_internet_connection">Berechnung fehlgeschlagen, keine Internetverbindung.</string>
 </resources>

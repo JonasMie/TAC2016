@@ -215,7 +215,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                 // Calculate second route (with breaks)
                                                 calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                                     @Override
-                                                    public void processFinish(RouteWrapper output) {
+                                                    public void processFinish(RouteWrapper updatedRouteWrapper) {
+                                                        mainFragment.updateEntryPositions(updatedRouteWrapper);
                                                         // TODO : update pause entries!
                                                         if (mProgressDialog.isShowing()) {
                                                             mProgressDialog.dismiss();
@@ -224,7 +225,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
                                                     @Override
                                                     public void processFinish(RouteWrapper output, Integer index) {
-
+                                                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                                                        if (mProgressDialog.isShowing()) {
+                                                            mProgressDialog.dismiss();
+                                                        }
                                                     }
                                                 });
                                             }
@@ -234,11 +238,14 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
                                             }
                                         });
-
                                     }
 
                                     @Override
                                     public void processFinish(RouteWrapper output, Integer index) {
+                                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                                        if (mProgressDialog.isShowing()) {
+                                            mProgressDialog.dismiss();
+                                        }
                                     }
                                 });
                             } else {
