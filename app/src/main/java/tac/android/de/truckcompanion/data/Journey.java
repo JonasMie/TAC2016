@@ -63,6 +63,14 @@ public class Journey implements SimulationEventListener {
         this.destinationPoints = destinationPoints;
     }
 
+    public void addDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
+        this.destinationPoints.add(destinationPoint);
+    }
+
+    public void removeDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
+        this.destinationPoints.remove(destinationPoint);
+    }
+
     public RouteWrapper getRouteWrapper() {
         return routeWrapper;
     }
@@ -166,8 +174,8 @@ public class Journey implements SimulationEventListener {
 
     public GeoCoordinate getPositionOnRouteByTime(int time) {
         // TODO: fix inaccuracies
-        RouteElements durationElemens = routeWrapper.getRoute().getRouteElementsFromDuration(time);
-        return durationElemens.getElements().get(durationElemens.getElements().size() - 1).getRoadElement().getGeometry().get(0);
+        RouteElements durationElements = routeWrapper.getRoute().getRouteElementsFromDuration(time);
+        return durationElements.getElements().get(durationElements.getElements().size() - 1).getRoadElement().getGeometry().get(0);
 
 //        if (time > routeWrapper.getDuration() - getTravelledDuration()) {
 //            // Chosen time exceeds duration of remaining routeWrapper.

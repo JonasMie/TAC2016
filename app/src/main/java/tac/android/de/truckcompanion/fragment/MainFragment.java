@@ -21,11 +21,17 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.here.android.mpa.common.GeoCoordinate;
+import com.here.android.mpa.common.RoadElement;
+import com.here.android.mpa.routing.Maneuver;
+import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
+import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
@@ -33,6 +39,7 @@ import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
@@ -80,6 +87,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
         activity  = ((MainActivity) getActivity());
+        progressDialog = new ProgressDialog(activity);
         mChart = (PieChart) view.findViewById(R.id.chart);
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -358,6 +366,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         Log.i("ENTRY:DRAG", "Entry dragged");
         WheelEntry entry = WheelEntry.getActiveEntry();
         boolean splitBreak = false;
+        boolean mergeBreak = false;
 
         if (entry != null) {
             int nEntries = mChart.getXValCount();
@@ -382,6 +391,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             WheelEntry pauseEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(0);
 
             if (splitBreak) {
+                MainActivity.getmCurrentJourney().addDestinationPoint(pauseEntry.getPause().getDestinationPoint());
                 pauseEntry.setStepAngle(RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP)));
             }
             double ratio = diffAngle / 360;
@@ -407,6 +417,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             //  merge the breaks
             if (bufferEntry.getVal() == 0 && driveEntry.getVal() == MAX_DRIVE_VAL && entry.getVal() == FIRST_SPLIT) {
+                mergeBreak = true;
                 pauseEntry.setVal(COMPLETE_BREAK);
                 removeEntry(entryIndex + 1);
                 removeEntry(entryIndex + 1);
@@ -420,8 +431,17 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             // (Re-)Calculate breaks
             float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
             if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
+//                activity.showDialog(R.string.loading_journey_data_title, R.string.updating_pause_data_msg, ProgressDialog.STYLE_SPINNER, false);
+                progressDialog.setTitle(R.string.loading_journey_data_title);
+                progressDialog.setMessage(getString(R.string.updating_pause_data_msg));
+                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                progressDialog.setCancelable(false);
+                progressDialog.show();
                 Break pause = pauseEntry.getPause();
                 pauseEntry.setStepAngle(RECALCULATION_STEP * Math.round(mStartAngle / RECALCULATION_STEP));
+                final boolean finalSplitBreak = splitBreak;
+                final boolean finalMergeBreak = mergeBreak;
+                final DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
                 pause.update(getAccumulatedValue(entryIndex), new AsyncResponse<Break>() {
                     @Override
                     public void processFinish(Break output) {
@@ -429,8 +449,43 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     }
 
                     @Override
-                    public void processFinish(Break output, Integer index) {
+                    public void processFinish(Break pause, Integer index) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
+                        progressDialog.setMessage(getString(R.string.updating_route_data_msg));
+                        Journey journey = MainActivity.getmCurrentJourney();
+                        PlaceLink mainRoadhouse = (PlaceLink) pause.getMainRoadhouse();
+                        if (finalSplitBreak) {
+                            // Pause is splitted => A new DestinationPoint is necessary
+                            journey.addDestinationPoint(pause.getDestinationPoint());
+                        } else if (finalMergeBreak) {
+                            // Pause is merged => DestinationPoint is not needed anymore
+                            journey.removeDestinationPoint(formerDestinationPoint);
+                        } else {
+                            // Update DestinationPoint
+                            journey.removeDestinationPoint(formerDestinationPoint);
+                            journey.addDestinationPoint(pause.getDestinationPoint());
+                        }
+
+
+
+                        // UPDATE ROUTE!
+                        activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
+                            @Override
+                            public void processFinish(RouteWrapper output) {
+                                getActivity().runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        progressDialog.dismiss();
+                                    }
+                                });
+                                progressDialog.dismiss();
+                            }
+
+                            @Override
+                            public void processFinish(RouteWrapper output, Integer index) {
+
+                            }
+                        });
                     }
                 });
             }
@@ -507,4 +562,16 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         Integer color = colors.get(index);
         dataSet.setColors(colors);
     }
+
+    private void updateProgressDialog(final ProgressDialog dialog, final String msg){
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                dialog.setMessage(msg);
+            }
+        });
+    }
+
+
 }
+

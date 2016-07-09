@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
+import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
@@ -33,6 +34,8 @@ public class Break {
     private DataCollector dc;
     private int elapsedTime;
     private AsyncResponse<Break> callback;
+
+    private DispoInformation.DestinationPoint destinationPoint;
 
     private static ArrayList<Break> breaks = new ArrayList<>();
 
@@ -88,6 +91,8 @@ public class Break {
             public void onCompleted(DiscoveryResultPage discoveryResultPage, ErrorCode errorCode) {
                 if (errorCode == ErrorCode.NONE) {
                     mainRoadhouse = discoveryResultPage.getItems().get(0);
+                    PlaceLink mainRoadhouseLink = (PlaceLink) mainRoadhouse;
+                    Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(mainRoadhouseLink.getPosition().getLatitude(), mainRoadhouseLink.getPosition().getLongitude()), 15);
                     callback.processFinish(Break.this, index);
                 } else {
                     Log.e(TAG, "Place query failed with " + errorCode.toString());
@@ -169,11 +174,20 @@ public class Break {
     }
 
     public static void removeBreak(int index) {
+        MainActivity.getmCurrentJourney().removeDestinationPoint(breaks.get(index).destinationPoint);
         breaks.remove(index);
     }
 
     public void update(int elapsedTime, AsyncResponse<Break> callback) {
         setElapsedTime(elapsedTime);
         this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime), null, callback);
+    }
+
+    public DispoInformation.DestinationPoint getDestinationPoint() {
+        return destinationPoint;
+    }
+
+    public void setDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
+        this.destinationPoint = destinationPoint;
     }
 }
