@@ -57,12 +57,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     // Logic data
     private WheelEntry selectedEntry;
-    private int processedBreaks = 0;
     private int totalBreaks;
 
     // Misc
     Vibrator vibrator;
-    MainActivity activity = ((MainActivity) getActivity());
+    MainActivity activity;
+    ProgressDialog progressDialog;
     // Constants
     private static final String LOG = "TAC";
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
@@ -79,6 +79,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
+        activity  = ((MainActivity) getActivity());
         mChart = (PieChart) view.findViewById(R.id.chart);
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
@@ -415,9 +416,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             mChart.notifyDataSetChanged();
             mChart.invalidate();
-            Log.i("TACt", "" + diffAngle);
-            Log.i("TACt", "" + mStartAngle);
-
 
             // (Re-)Calculate breaks
             float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
@@ -433,20 +431,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     @Override
                     public void processFinish(Break output, Integer index) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
-//                        ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
-//
-//                        // UPDATE ROUTE!
-//                        activity.calculateRoute(null, , null, new AsyncResponse<RouteWrapper>() {
-//                            @Override
-//                            public void processFinish(RouteWrapper output) {
-//
-//                            }
-//
-//                            @Override
-//                            public void processFinish(RouteWrapper output, Integer index) {
-//
-//                            }
-//                        });
                     }
                 });
             }

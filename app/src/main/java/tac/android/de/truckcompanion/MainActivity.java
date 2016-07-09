@@ -294,5 +294,4 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
     }
 
-    ;
 }
