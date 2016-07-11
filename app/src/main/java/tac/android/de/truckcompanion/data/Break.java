@@ -9,6 +9,7 @@ import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.LatLng;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
 import java.util.ArrayList;
@@ -26,11 +27,8 @@ public class Break {
     private static final int MAX_ALTERNATIVES = 4;
     private static final int MAX_SEARCHRADIUS = 50;
     private static final String TAG = Break.class.getSimpleName();
-
-//    private Roadhouse mainRoadhouse;
-//    private ArrayList<Roadhouse> alternativeRoadhouses;
-    private DiscoveryResult mainRoadhouse;
-    private ArrayList<DiscoveryResult> alternativeRoadhouses;
+    private Roadhouse mainRoadhouse;
+    private ArrayList<Roadhouse> alternativeRoadhouses;
     private DataCollector dc;
     private int elapsedTime;
     private AsyncResponse<Break> callback;
@@ -61,19 +59,19 @@ public class Break {
         breaks.add(this);
     }
 
-    public ArrayList<DiscoveryResult> getAlternativeRoadhouses() {
+    public ArrayList<Roadhouse> getAlternativeRoadhouses() {
         return alternativeRoadhouses;
     }
 
-    public void setAlternativeRoadhouses(ArrayList<DiscoveryResult> alternativeRoadhouses) {
+    public void setAlternativeRoadhouses(ArrayList<Roadhouse> alternativeRoadhouses) {
         this.alternativeRoadhouses = alternativeRoadhouses;
     }
 
-    public DiscoveryResult getMainRoadhouse() {
+    public Roadhouse getMainRoadhouse() {
         return mainRoadhouse;
     }
 
-    public void setMainRoadhouse(DiscoveryResult mainRoadhouse) {
+    public void setMainRoadhouse(Roadhouse mainRoadhouse) {
         this.mainRoadhouse = mainRoadhouse;
     }
 
@@ -90,62 +88,22 @@ public class Break {
             @Override
             public void onCompleted(DiscoveryResultPage discoveryResultPage, ErrorCode errorCode) {
                 if (errorCode == ErrorCode.NONE) {
-                    mainRoadhouse = discoveryResultPage.getItems().get(0);
-                    PlaceLink mainRoadhouseLink = (PlaceLink) mainRoadhouse;
-                    Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(mainRoadhouseLink.getPosition().getLatitude(), mainRoadhouseLink.getPosition().getLongitude()), 15);
+                    Break.this.mainRoadhouse = new Roadhouse((PlaceLink)discoveryResultPage.getItems().get(0));
+
+//                    mainRoadhouseLink.getDetailsRequest().execute(new ResultListener<Place>() {
+//                        @Override
+//                        public void onCompleted(Place place, ErrorCode errorCode) {
+//                            Log.d("test", "test");
+//                        }
+//                    });
+                    Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
                     callback.processFinish(Break.this, index);
                 } else {
                     Log.e(TAG, "Place query failed with " + errorCode.toString());
                 }
             }
         });
-    }
-
-//    public void calculateRoadhouses(LatLng loc, final Integer index, final AsyncResponse<Break> callback) {
-//        dc.getPlacesNearby(loc.latitude, loc.longitude, MAX_SEARCHRADIUS, new ResponseCallback() {
-//            @Override
-//            public void onSuccess(JSONObject result) {
-//                alternativeRoadhouses = new ArrayList<>();
-//                JSONArray results;
-//
-//                try {
-//                    results = result.getJSONArray("results");
-//                    int n_alternatives = MAX_ALTERNATIVES;
-//                    if (results != null) {
-//                        if (results.length() < MAX_ALTERNATIVES) {
-//                            n_alternatives = results.length();
-//                        }
-//
-//                        for (int i = 0; i <= n_alternatives; i++) {
-//                            JSONObject roadhouse = results.getJSONObject(i);
-//                            // TODO: prioritize correctly
-//                            if (i == 0) {
-//                                // main roadhouse
-//                                setMainRoadhouse(produceNewRoadhouse(roadhouse));
-//                            } else {
-//                                // alternative roadhouse
-//                                alternativeRoadhouses.add(produceNewRoadhouse(roadhouse));
-//                            }
-//                        }
-//                        if (callback != null) {
-//                            if (index != null) {
-//                                callback.processFinish(Break.this, index);
-//                            } else {
-//                                callback.processFinish(Break.this);
-//                            }
-//                        }
-//                    }
-//                } catch (JSONException e) {
-//                    Log.e("TAC", e.getMessage());
-//                }
-//            }
-//
-//            @Override
-//            public void onError(VolleyError error) {
-//
-//            }
-//        });
-//    }
+    
 
     private Roadhouse produceNewRoadhouse(JSONObject roadhouse) throws JSONException {
         JSONObject location = roadhouse.getJSONObject("geometry").getJSONObject("location");
