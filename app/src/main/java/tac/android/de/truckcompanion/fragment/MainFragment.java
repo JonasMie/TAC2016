@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.fragment;
 
+import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
@@ -7,7 +8,6 @@ import android.graphics.PointF;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
-import android.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -21,8 +21,6 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.here.android.mpa.common.GeoCoordinate;
-import com.here.android.mpa.common.RoadElement;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
@@ -31,7 +29,6 @@ import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
-import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
@@ -39,10 +36,10 @@ import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
+import static tac.android.de.truckcompanion.wheel.WheelEntry.PAUSE_ENTRY;
 
 
 /**
@@ -86,7 +83,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main, container, false);
-        activity  = ((MainActivity) getActivity());
+        activity = ((MainActivity) getActivity());
         progressDialog = new ProgressDialog(activity);
         mChart = (PieChart) view.findViewById(R.id.chart);
 
@@ -151,7 +148,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 @Override
                 public void processFinish(Break pause, Integer index) {
                     totalBreaks -= 1;
-                    PlaceLink pauseLink = ((PlaceLink) pause.getMainRoadhouse());
+                    PlaceLink pauseLink = pause.getMainRoadhouse().getPlaceLink();
 
                     ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
                     destinationPoints.add(new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
@@ -453,7 +450,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
                         progressDialog.setMessage(getString(R.string.updating_route_data_msg));
                         Journey journey = MainActivity.getmCurrentJourney();
-                        PlaceLink mainRoadhouse = (PlaceLink) pause.getMainRoadhouse();
+                        PlaceLink mainRoadhouse = pause.getMainRoadhouse().getPlaceLink();
                         if (finalSplitBreak) {
                             // Pause is splitted => A new DestinationPoint is necessary
                             journey.addDestinationPoint(pause.getDestinationPoint());
@@ -467,11 +464,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                         }
 
 
-
                         // UPDATE ROUTE!
                         activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
                             @Override
-                            public void processFinish(RouteWrapper output) {
+                            public void processFinish(RouteWrapper routeWrapper) {
+                                updateEntryPositions(routeWrapper);
                                 getActivity().runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -563,7 +560,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         dataSet.setColors(colors);
     }
 
-    private void updateProgressDialog(final ProgressDialog dialog, final String msg){
+    private void updateProgressDialog(final ProgressDialog dialog, final String msg) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -572,6 +569,39 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         });
     }
 
+    public void updateEntryPositions(RouteWrapper routeWrapper) {
+        Route route = routeWrapper.getRoute();
+        List<Maneuver> maneuvers = route.getManeuvers();
+        ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
+        ArrayList<Break> breaks = Break.getBreaks();
+        long timeSinceLastStop = routeWrapper.getDepartureTime().getTime();
+        for (int i = 0; i < maneuvers.size(); i++) {
+            if (maneuvers.get(i).getAction() == Maneuver.Action.STOPOVER || maneuvers.get(i).getAction() == Maneuver.Action.END) {
+                for (Break pause : breaks) {
+                    // Distance between these coordinates is less than 50 meters, so we can assume it's the same place
+                    if (maneuvers.get(i).getCoordinate().distanceTo(pause.getMainRoadhouse().getPlaceLink().getPosition()) < 50) {
+                        pause.getMainRoadhouse().setETA(maneuvers.get(i).getStartTime());
+                        pause.getMainRoadhouse().setDurationFromStart((maneuvers.get(i).getStartTime().getTime() - timeSinceLastStop) / 1000);
+                        timeSinceLastStop = maneuvers.get(i).getStartTime().getTime();
+                        break;
+                    }
+                }
+            }
+        }
 
+        WheelEntry prevWheelEntry = null;
+//        long prevVal = 0;
+        for (int i = 0; i < dataSet.getEntryCount(); i++) {
+            WheelEntry wheelEntry = (WheelEntry) dataSet.getEntryForIndex(i);
+
+            if (wheelEntry.getEntryType() == PAUSE_ENTRY) {
+                prevWheelEntry.setVal(wheelEntry.getPause().getMainRoadhouse().getDurationFromStart());
+//                prevVal = wheelEntry.getPause().getMainRoadhouse().getDurationFromStart();
+            }
+            prevWheelEntry = wheelEntry;
+        }
+        mChart.notifyDataSetChanged();
+        mChart.invalidate();
+    }
 }
 

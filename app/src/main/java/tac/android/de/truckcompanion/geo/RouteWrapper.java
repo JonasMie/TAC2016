@@ -27,6 +27,7 @@ import tac.android.de.truckcompanion.utils.ResponseCallback;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -46,6 +47,7 @@ public class RouteWrapper {
     private RouteResult routeResult;
     private AsyncResponse<RouteWrapper> callback;
     private Route route;
+    private Date departureTime;
     private Map map;
     private MapRoute mapRoute;
     private tac.android.de.truckcompanion.fragment.MapFragment mapFragment;
@@ -100,6 +102,7 @@ public class RouteWrapper {
                     } else {
                         Log.i(TAG, "Routing successful");
                         route = routeResults.get(0).getRoute();
+                        departureTime = new Date();
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
@@ -189,5 +192,13 @@ public class RouteWrapper {
                 Log.e(TAG, "Route matrix calculation failed: " + error.getMessage());
             }
         });
+    }
+
+    public Date getDepartureTime() {
+        return departureTime;
+    }
+
+    public void setDepartureTime(Date departureTime) {
+        this.departureTime = departureTime;
     }
 }
