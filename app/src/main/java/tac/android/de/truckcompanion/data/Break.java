@@ -33,9 +33,7 @@ public class Break {
     private int index;
     private Roadhouse mainRoadhouse;
     private ArrayList<Roadhouse> alternativeRoadhouses = new ArrayList<>();
-    private DataCollector dc;
     private int elapsedTime;
-    private AsyncResponse<Break> callback;
 
     private DispoInformation.DestinationPoint destinationPoint;
 
@@ -43,11 +41,18 @@ public class Break {
     private int nTry = 1;
 
     public Break(int elapsedTime, int index, WheelEntry wheelEntry) {
-        dc = new DataCollector(MainActivity.context);
         this.elapsedTime = elapsedTime;
         this.index = index;
         this.wheelEntry = wheelEntry;
         breaks.add(index, this);
+    }
+
+    public Break(Break pause) {
+        this.wheelEntry = pause.getWheelEntry();
+        this.index = pause.getIndex();
+        this.mainRoadhouse = pause.getMainRoadhouse();
+        this.alternativeRoadhouses = pause.getAlternativeRoadhouses();
+        this.elapsedTime = pause.getElapsedTime();
     }
 
     public ArrayList<Roadhouse> getAlternativeRoadhouses() {
@@ -121,7 +126,7 @@ public class Break {
             }
         });
     }
-    
+
     private Roadhouse produceNewRoadhouse(JSONObject roadhouse) throws JSONException {
         JSONObject location = roadhouse.getJSONObject("geometry").getJSONObject("location");
         JSONArray jTypes = roadhouse.getJSONArray("types");
@@ -153,8 +158,18 @@ public class Break {
         breaks.remove(index);
     }
 
+    public static void removeBreak(Break pause) {
+        breaks.remove(pause);
+    }
+
+    public static void addBreak(Break pause) {
+        breaks.add(pause);
+    }
+
     public void update(int elapsedTime, GeoCoordinate refPoint, int pauseIndex, AsyncResponse<Break> callback) {
         setElapsedTime(elapsedTime);
+        this.setMainRoadhouse(null);
+        this.alternativeRoadhouses.clear();
         this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime), refPoint, pauseIndex, callback);
     }
 

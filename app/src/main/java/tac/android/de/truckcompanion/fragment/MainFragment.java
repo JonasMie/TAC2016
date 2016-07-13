@@ -381,9 +381,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 }
             }
 
-            WheelEntry bufferEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex + 1).get(0);
-            WheelEntry driveEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex - 1).get(0);
-            WheelEntry pauseEntry = (WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(0);
+            WheelEntry bufferEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex + 1);
+            WheelEntry driveEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex - 1);
+            WheelEntry pauseEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex);
 
             if (splitBreak) {
                 MainActivity.getmCurrentJourney().addDestinationPoint(pauseEntry.getPause().getDestinationPoint());
@@ -440,45 +440,47 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
                 GeoCoordinate refPoint;
 
-                if (pauseEntry.getPause().getIndex() == 0) {
+                if (pause.getIndex() == 0) {
                     // entry is first entry
                     refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
                 } else {
                     refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
                 }
-
+                final Break[] formerPause = {pause};
                 pause.update(getAccumulatedValue(entryIndex), refPoint, pauseEntry.getPause().getIndex(), new AsyncResponse<Break>() {
                     @Override
                     public void processFinish(Break pause) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
+                        Break.removeBreak(formerPause[0]);
+                        formerPause[0] = pause;
+                        Break.addBreak(pause);
+
                         progressDialog.setMessage(getString(R.string.updating_route_data_msg));
-                        Journey journey = MainActivity.getmCurrentJourney();
+                        final Journey journey = MainActivity.getmCurrentJourney();
                         PlaceLink mainRoadhouse = pause.getMainRoadhouse().getPlaceLink();
-                        if (finalSplitBreak) {
-                            // Pause is splitted => A new DestinationPoint is necessary
+                        if (!journey.getDestinationPoints().contains(pause.getDestinationPoint())) {
                             journey.addDestinationPoint(pause.getDestinationPoint());
-                        } else if (finalMergeBreak) {
-                            // Pause is merged => DestinationPoint is not needed anymore
                             journey.removeDestinationPoint(formerDestinationPoint);
-                        } else {
-                            // Update DestinationPoint
-                            journey.removeDestinationPoint(formerDestinationPoint);
-                            journey.addDestinationPoint(pause.getDestinationPoint());
                         }
 
-
                         // UPDATE ROUTE!
-                        activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
+                        RouteWrapper.getOrderedWaypoints(journey.getStartPoint(), journey.getDestinationPoints(), null, new AsyncResponse<ArrayList>() {
                             @Override
-                            public void processFinish(RouteWrapper routeWrapper) {
-                                updateEntryPositions(routeWrapper);
-                                getActivity().runOnUiThread(new Runnable() {
+                            public void processFinish(ArrayList orderedDestinationPoints) {
+                                journey.setDestinationPoints(orderedDestinationPoints);
+                                activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
                                     @Override
-                                    public void run() {
+                                    public void processFinish(RouteWrapper routeWrapper) {
+                                        updateEntryPositions(routeWrapper);
+                                        getActivity().runOnUiThread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                progressDialog.dismiss();
+                                            }
+                                        });
                                         progressDialog.dismiss();
                                     }
                                 });
-                                progressDialog.dismiss();
                             }
                         });
                     }
@@ -513,16 +515,21 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             if (i < index) {
                 elapsedTime += prevEntry.getVal();
-            } else {
                 if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY) {
                     nBreaks++;
                 }
-                prevEntry.setXIndex(i + 1);
+            } else {
+                if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY && i > index) {
+                    prevEntry.getPause().setIndex(prevEntry.getPause().getIndex() + 1);
+                }
             }
         }
         if (type == WheelEntry.PAUSE_ENTRY) {
             WheelEntry entry = new WheelEntry(size, index, type, elapsedTime, nBreaks, false);
-            entry.setPause(((WheelEntry) (mChart.getEntriesAtIndex(index + 1).get(0))).getPause());
+            entry.setPause(new Break(((WheelEntry) (mChart.getEntriesAtIndex(index).get(0))).getPause()));
+            entry.getPause().setWheelEntry(entry);
+            entry.getPause().setIndex(nBreaks);
+            Break.addBreak(entry.getPause());
             entries.add(index, entry);
         } else {
             entries.add(index, new WheelEntry(size, index, type, elapsedTime));
@@ -537,6 +544,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private void removeEntry(int index) {
         data.removeEntry(mChart.getEntriesAtIndex(index).get(0), 0);
         dataSet.getColors().remove(index);
+
+        for (int i = index; i < entries.size(); i++) {
+            WheelEntry entry = (WheelEntry) entries.get(i);
+            entry.getPause().setIndex(i - 1);
+        }
+
         data.notifyDataChanged();
         mChart.notifyDataSetChanged();
         mChart.invalidate();
@@ -580,7 +593,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     if (maneuvers.get(i).getCoordinate().distanceTo(pause.getMainRoadhouse().getPlaceLink().getPosition()) < 50) {
                         pause.getMainRoadhouse().setETA(maneuvers.get(i).getStartTime());
                         pause.getMainRoadhouse().setDurationFromStart((maneuvers.get(i).getStartTime().getTime() - timeSinceLastStop) / 1000);
-                        timeSinceLastStop = maneuvers.get(i).getStartTime().getTime();
+//                        timeSinceLastStop = maneuvers.get(i).getStartTime().getTime();
                         break;
                     }
                 }
@@ -588,13 +601,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         }
 
         WheelEntry prevWheelEntry = null;
-//        long prevVal = 0;
+        long prevVal = 0;
         for (int i = 0; i < dataSet.getEntryCount(); i++) {
             WheelEntry wheelEntry = (WheelEntry) dataSet.getEntryForIndex(i);
 
             if (wheelEntry.getEntryType() == PAUSE_ENTRY) {
-                prevWheelEntry.setVal(wheelEntry.getPause().getMainRoadhouse().getDurationFromStart());
-//                prevVal = wheelEntry.getPause().getMainRoadhouse().getDurationFromStart();
+                prevWheelEntry.setVal(wheelEntry.getPause().getMainRoadhouse().getDurationFromStart() - prevVal);
+                prevVal = wheelEntry.getPause().getMainRoadhouse().getDurationFromStart();
             }
             prevWheelEntry = wheelEntry;
         }
