@@ -173,36 +173,7 @@ public class Journey implements SimulationEventListener {
     }
 
     public GeoCoordinate getPositionOnRouteByTime(int time) {
-        // TODO: fix inaccuracies
         RouteElements durationElements = routeWrapper.getRoute().getRouteElementsFromDuration(time);
         return durationElements.getElements().get(durationElements.getElements().size() - 1).getRoadElement().getGeometry().get(0);
-
-//        if (time > routeWrapper.getDuration() - getTravelledDuration()) {
-//            // Chosen time exceeds duration of remaining routeWrapper.
-//            // set it to the total routeWrapper duration
-//            time = routeWrapper.getDuration() - getTravelledDuration();
-//        }
-//        ArrayList<ArrayList> legs = routeWrapper.getLegs();
-//        int distance = 0;
-//        float estimatedDistance = 0;
-//        int duration = 0;
-//        for (int i = 0; i < legs.size(); i++) {
-//            ArrayList<HashMap> leg = legs.get(i);
-//            for (int j = 0; j < leg.size(); j++) {
-//                HashMap<String, Integer> step = leg.get(j);
-//                int stepDuration = step.get("duration");
-//                int stepDistance = step.get("distance");
-//
-//                if (duration + stepDuration >= time) {
-//                    float remainer = (time - duration) / (float) (stepDuration);
-//                    estimatedDistance = distance + stepDistance * remainer;
-//                    return null;
-////                    return routeWrapper.getWaypoints().get(Math.round((estimatedDistance / 1000) / RouteWrapper.DISTANCE_INTERVAL));
-//                }
-//                duration += stepDuration;
-//                distance += stepDistance;
-//            }
-//        }
-//        return null;
     }
 }
