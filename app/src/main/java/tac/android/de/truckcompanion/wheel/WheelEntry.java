@@ -51,7 +51,7 @@ public class WheelEntry extends Entry {
         this.entryType = entryType;
         this.editModeActive = false;
         if (this.entryType == PAUSE_ENTRY) {
-            this.pause = new Break(elapsedTime, pauseIndex);
+            this.pause = new Break(elapsedTime, pauseIndex, this);
         }
     }
 
@@ -60,7 +60,7 @@ public class WheelEntry extends Entry {
         this.entryType = entryType;
         this.editModeActive = false;
         if (this.entryType == PAUSE_ENTRY && addBreak) {
-            this.pause = new Break(elapsedTime, pauseIndex);
+            this.pause = new Break(elapsedTime, pauseIndex, this);
         }
     }
 
