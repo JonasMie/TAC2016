@@ -11,9 +11,7 @@ import com.here.android.mpa.mapping.MapMarker;
 import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.mapping.MapRoute;
 import com.here.android.mpa.routing.*;
-import com.here.android.mpa.search.DiscoveryRequest;
-import com.here.android.mpa.search.ResultListener;
-import com.here.android.mpa.search.SearchRequest;
+import com.here.android.mpa.search.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -110,8 +108,8 @@ public class RouteWrapper {
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
-                    if(error == RoutingError.REQUEST_TIMEOUT){
-                        callback.processFinish(null, error.value());
+                    if (error == RoutingError.REQUEST_TIMEOUT) {
+                        callback.processFinish(null);
                     }
                     Log.e(TAG, "Route calculation failed with: " + error.toString());
                 }
@@ -149,7 +147,14 @@ public class RouteWrapper {
         request.execute(resultListener);
     }
 
-    public static void getOrderedWaypoints(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final AsyncResponse<ArrayList> callback) {
+    public static void getOrderedWaypoints(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, String _key, final AsyncResponse<ArrayList> callback) {
+        final String key;
+        if (_key == null) {
+            key = "costFactor";
+        } else {
+            key = _key;
+        }
+
         DataCollector dc = new DataCollector(MainActivity.context);
         final ArrayList<DispoInformation.DestinationPoint> orderedDestPoints = new ArrayList<>();
         dc.getWaypointMatrix(startPoint, destinationPoints, new ResponseCallback() {
@@ -162,7 +167,7 @@ public class RouteWrapper {
                     for (int i = 0; i < entries.length(); i++) {
                         JSONObject entry = entries.getJSONObject(i);
                         int index = entry.getInt("destinationIndex");
-                        int cost = entry.getJSONObject("summary").getInt("costFactor");
+                        int cost = entry.getJSONObject("summary").getInt(key);
                         if (costs.size() == 0) {
                             costs.add(0, cost);
                             orderedDestPoints.add(0, destinationPoints.get(0));
@@ -172,7 +177,7 @@ public class RouteWrapper {
                                     costs.add(j, cost);
                                     orderedDestPoints.add(j, destinationPoints.get(index));
                                     break;
-                                } else if (costs.get(j) <= cost && j == costs.size()-1){
+                                } else if (costs.get(j) <= cost && j == costs.size() - 1) {
                                     costs.add(cost);
                                     orderedDestPoints.add(destinationPoints.get(index));
                                     break;
@@ -190,6 +195,88 @@ public class RouteWrapper {
             @Override
             public void onError(VolleyError error) {
                 Log.e(TAG, "Route matrix calculation failed: " + error.getMessage());
+            }
+        });
+    }
+
+    public static void getOrderedWaypoints(GeoCoordinate startPoint, final ArrayList<DiscoveryResult> points, String _key, final AsyncResponse<ArrayList> callback) {
+        final String key;
+        if (_key == null) {
+            key = "costFactor";
+        } else {
+            key = _key;
+        }
+
+        DataCollector dc = new DataCollector(MainActivity.context);
+        final ArrayList<DiscoveryResult> orderedDestPoints = new ArrayList<>();
+
+        ArrayList<GeoCoordinate> destinationPoints = new ArrayList<>();
+        for (DiscoveryResult res : points) {
+            PlaceLink placeLink = (PlaceLink) res;
+            destinationPoints.add(new GeoCoordinate(placeLink.getPosition().getLatitude(), placeLink.getPosition().getLongitude()));
+        }
+
+        dc.getWaypointMatrix(startPoint, destinationPoints, new ResponseCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                try {
+                    JSONArray entries = result.getJSONObject("response").getJSONArray("matrixEntry");
+                    ArrayList<Integer> costs = new ArrayList<>();
+
+                    for (int i = 0; i < entries.length(); i++) {
+                        JSONObject entry = entries.getJSONObject(i);
+                        int index = entry.getInt("destinationIndex");
+                        int cost = entry.getJSONObject("summary").getInt(key);
+                        if (costs.size() == 0) {
+                            costs.add(0, cost);
+                            orderedDestPoints.add(0, points.get(0));
+                        } else {
+                            for (int j = 0; j < costs.size(); j++) {
+                                if (costs.get(j) > cost) {
+                                    costs.add(j, cost);
+                                    orderedDestPoints.add(j, points.get(index));
+                                    break;
+                                } else if (costs.get(j) <= cost && j == costs.size() - 1) {
+                                    costs.add(cost);
+                                    orderedDestPoints.add(points.get(index));
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+                    callback.processFinish(orderedDestPoints);
+                } catch (JSONException e) {
+                    Log.e(TAG, e.getMessage());
+                }
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                Log.e(TAG, "Route matrix calculation failed: " + error.getMessage());
+            }
+        });
+    }
+
+    public static void getWaypointMatrix(GeoCoordinate startPoint, final ArrayList<DiscoveryResult> points, final AsyncResponse<JSONObject> callback) {
+        DataCollector dc = new DataCollector(MainActivity.context);
+        final ArrayList<DiscoveryResult> orderedDestPoints = new ArrayList<>();
+
+        ArrayList<GeoCoordinate> destinationPoints = new ArrayList<>();
+        for (DiscoveryResult res : points) {
+            PlaceLink placeLink = (PlaceLink) res;
+            destinationPoints.add(new GeoCoordinate(placeLink.getPosition().getLatitude(), placeLink.getPosition().getLongitude()));
+        }
+
+        dc.getWaypointMatrix(startPoint, destinationPoints, new ResponseCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                callback.processFinish(result);
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+                callback.processFinish(null);
             }
         });
     }

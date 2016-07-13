@@ -4,6 +4,7 @@ import android.content.Context;
 import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.here.android.mpa.common.GeoCoordinate;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
@@ -226,6 +227,41 @@ public class DataCollector {
             url += "&destination" + i + "=" + destinationPoints.get(i).getCoordinate().latitude + "," + destinationPoints.get(i).getCoordinate().longitude;
         }
         url += "&mode=fastest;truck;traffic:enabled";
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onError(error);
+            }
+        });
+
+        // Matrix calculation can take a few seconds since it's quite complex.
+        // To prevent Volley-Timeouts, increase its accepted time
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(req);
+    }
+
+    public void getWaypointMatrix(GeoCoordinate startPoint, ArrayList<GeoCoordinate> destinationPoints, final ResponseCallback callback) {
+        String url = HERE_MATRIX_API_BASE_URL +
+                "?app_id=" + HERE_APP_ID +
+                "&app_code=" + HERE_APP_CODE +
+                "&start0=" + startPoint.getLatitude() + "," + startPoint.getLongitude();
+        // TODO: ignore last destinationPoint if its a circuit
+        for (int i = 0; i < destinationPoints.size(); i++) {
+                url += "&destination" + i + "=" + destinationPoints.get(i).getLatitude() + "," + destinationPoints.get(i).getLongitude();
+        }
+        url += "&mode=fastest;truck;traffic:disabled" +
+                "&summaryAttributes=traveltime,costfactor,distance";
+
+        // TODO: enable traffic
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
             @Override

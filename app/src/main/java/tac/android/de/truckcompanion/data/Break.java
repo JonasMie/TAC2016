@@ -97,13 +97,49 @@ public class Break {
 //                        }
 //                    });
                     Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
+                    RouteWrapper.getWaypointMatrix(refPoint, (ArrayList) discoveryResultPage.getItems(), new AsyncResponse<JSONObject>() {
+
+                        @Override
+                        public void processFinish(JSONObject output) {
+                            if (output == null) {
+                                // Error
+                            } else {
+                                try {
+                                    JSONArray entries = output.getJSONObject("response").getJSONArray("matrixEntry");
+                                    for (int i = 0; i < entries.length(); i++) {
+                                        if (entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime") <= MainFragment.MAX_DRIVE_VAL + MainFragment.MAX_DRIVER_TOLERANCE) {
+                                            if (mainRoadhouse == null) {
+                                                Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(0));
+                                                Break.this.mainRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                                            } else {
+                                                Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(0));
+                                                altRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                                                Break.this.alternativeRoadhouses.add(altRoadhouse);
+                                            }
+                                            Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
+                                        }
+                                    }
+                                    if (Break.this.getMainRoadhouse() == null) {
+                                        nTry++;
+                                        calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(pauseIndex).getElapsedTime() - 30 * 60 * nTry), refPoint, pauseIndex, callback);
+                                    } else {
+                                        nTry = 0;
+                                        callback.processFinish(Break.this);
+                                    }
+
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }
+                    });
                 } else {
                     Log.e(TAG, "Place query failed with " + errorCode.toString());
                 }
             }
         });
+    }
     
-
     private Roadhouse produceNewRoadhouse(JSONObject roadhouse) throws JSONException {
         JSONObject location = roadhouse.getJSONObject("geometry").getJSONObject("location");
         JSONArray jTypes = roadhouse.getJSONArray("types");
