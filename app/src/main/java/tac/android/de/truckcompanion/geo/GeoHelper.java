@@ -19,7 +19,12 @@ public class GeoHelper {
 
         return loc;
     }
+
     public static GeoCoordinate LatLngToGeoCoordinate(LatLng coord) {
         return new GeoCoordinate(coord.latitude, coord.longitude);
+    }
+
+    public static LatLng GeoCoordinateToLatLng(GeoCoordinate coord) {
+        return new LatLng(coord.getLatitude(), coord.getLongitude());
     }
 }
