@@ -21,6 +21,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.listener.ChartTouchListener;
 import com.github.mikephil.charting.listener.OnChartGestureListener;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
+import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
@@ -29,6 +30,7 @@ import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
@@ -70,14 +72,15 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     // Constants
     private static final String LOG = "TAC";
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
-    private static final float SECONDS_PER_DAY = 24 * 60 * 60;
-    private static final int FIRST_SPLIT = 15 * 60;
-    private static final int SECOND_SPLIT = 30 * 60;
-    private static final int COMPLETE_BREAK = 45 * 60;
-    private static final int MIN_TIME_BETWEEN_BREAKS = 10 * 60;
-    private static final float MAX_BUFFER_VAL = 270 * 60 - MIN_TIME_BETWEEN_BREAKS;
-    private static final float MAX_DRIVE_VAL = 270 * 60;
-    private static final int RECALCULATION_STEP = 5;
+    public static final float SECONDS_PER_DAY = 24 * 60 * 60;
+    public static final int FIRST_SPLIT = 15 * 60;
+    public static final int SECOND_SPLIT = 30 * 60;
+    public static final int COMPLETE_BREAK = 45 * 60;
+    public static final int MIN_TIME_BETWEEN_BREAKS = 10 * 60;
+    public static final float MAX_BUFFER_VAL = 270 * 60 - MIN_TIME_BETWEEN_BREAKS;
+    public static final float MAX_DRIVE_VAL = 270 * 60;
+    public static final int RECALCULATION_STEP = 5;
+    public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
 
     @Nullable
     @Override
@@ -134,22 +137,26 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.invalidate();
     }
 
-    public void setBreaks(final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback) {
+    public void setBreaks(final RouteWrapper routeWrapper, final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback) {
         mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
         final ArrayList<Break> breaks = Break.getBreaks();
         totalBreaks = breaks.size();
+        final ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
+        breaks.get(0).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(0).getElapsedTime()), routeWrapper.getRoute().getStart(), 0, new AsyncResponse<Break>() {
+            @Override
+            public void processFinish(Break pause) {
+                PlaceLink pauseLink = pause.getMainRoadhouse().getPlaceLink();
+                GeoCoordinate pos = pauseLink.getPosition();
+                destinationPoints.add(new DispoInformation.DestinationPoint(GeoHelper.GeoCoordinateToLatLng(pos), 15));
 
-        for (int i = 0; i < totalBreaks; i++) {
-            breaks.get(i).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(i).getElapsedTime()), i, new AsyncResponse<Break>() {
-                @Override
-                public void processFinish(Break output) {
-                }
+                breaks.get(1).calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(breaks.get(1).getElapsedTime()), pos, 1, new AsyncResponse<Break>() {
+                    @Override
+                    public void processFinish(Break output) {
+                        PlaceLink pauseLink = output.getMainRoadhouse().getPlaceLink();
+                        GeoCoordinate pos = pauseLink.getPosition();
+                        destinationPoints.add(new DispoInformation.DestinationPoint(GeoHelper.GeoCoordinateToLatLng(pos), 15));
 
-
-                    ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
-                    destinationPoints.add(new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
-                    if (0 == totalBreaks) {
-                        RouteWrapper.getOrderedWaypoints(MainActivity.getmCurrentJourney().getStartPoint(), MainActivity.getmCurrentJourney().getDestinationPoints(), new AsyncResponse<ArrayList>() {
+                        RouteWrapper.getOrderedWaypoints(MainActivity.getmCurrentJourney().getStartPoint(), MainActivity.getmCurrentJourney().getDestinationPoints(), null, new AsyncResponse<ArrayList>() {
                             @Override
                             public void processFinish(ArrayList orderedDestinationPoints) {
                                 MainActivity.getmCurrentJourney().setDestinationPoints(orderedDestinationPoints);
@@ -430,12 +437,17 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 final boolean finalSplitBreak = splitBreak;
                 final boolean finalMergeBreak = mergeBreak;
                 final DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
-                pause.update(getAccumulatedValue(entryIndex), new AsyncResponse<Break>() {
-                    @Override
-                    public void processFinish(Break output) {
-                        Log.i(LOG, "Roadhouse updated. New Roadhouse");
-                    }
 
+                GeoCoordinate refPoint;
+
+                if (pauseEntry.getPause().getIndex() == 0) {
+                    // entry is first entry
+                    refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
+                } else {
+                    refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
+                }
+
+                pause.update(getAccumulatedValue(entryIndex), refPoint, pauseEntry.getPause().getIndex(), new AsyncResponse<Break>() {
                     @Override
                     public void processFinish(Break pause) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");

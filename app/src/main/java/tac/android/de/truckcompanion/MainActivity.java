@@ -208,7 +208,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                     public void processFinish(RouteWrapper routeWrapper) {
                                         // Setup Main-Fragment (wheel)
                                         mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
-                                        mainFragment.setBreaks(mProgressDialog, new AsyncResponse<ArrayList>() {
+                                        mainFragment.setBreaks(routeWrapper, mProgressDialog, new AsyncResponse<ArrayList>() {
 
                                             @Override
                                             public void processFinish(ArrayList breaks) {

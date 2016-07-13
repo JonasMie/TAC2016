@@ -8,9 +8,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 
@@ -27,8 +29,10 @@ public class Break {
     private static final int MAX_ALTERNATIVES = 4;
     private static final int MAX_SEARCHRADIUS = 50;
     private static final String TAG = Break.class.getSimpleName();
+    private WheelEntry wheelEntry;
+    private int index;
     private Roadhouse mainRoadhouse;
-    private ArrayList<Roadhouse> alternativeRoadhouses;
+    private ArrayList<Roadhouse> alternativeRoadhouses = new ArrayList<>();
     private DataCollector dc;
     private int elapsedTime;
     private AsyncResponse<Break> callback;
@@ -36,27 +40,14 @@ public class Break {
     private DispoInformation.DestinationPoint destinationPoint;
 
     private static ArrayList<Break> breaks = new ArrayList<>();
+    private int nTry = 1;
 
-    public Break() {
-        dc = new DataCollector(MainActivity.context);
-    }
-
-    public Break(GeoCoordinate loc) {
-        dc = new DataCollector(MainActivity.context);
-        calculateRoadhouses(loc, null, null);
-        breaks.add(this);
-    }
-
-    public Break(int elapsedTime, int index) {
+    public Break(int elapsedTime, int index, WheelEntry wheelEntry) {
         dc = new DataCollector(MainActivity.context);
         this.elapsedTime = elapsedTime;
+        this.index = index;
+        this.wheelEntry = wheelEntry;
         breaks.add(index, this);
-    }
-
-    public Break(int elapsedTime, AsyncResponse callback) {
-        dc = new DataCollector(MainActivity.context);
-        calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime * 60), null, callback);
-        breaks.add(this);
     }
 
     public ArrayList<Roadhouse> getAlternativeRoadhouses() {
@@ -83,20 +74,11 @@ public class Break {
         this.elapsedTime = elapsedTime;
     }
 
-    public void calculateRoadhouses(final GeoCoordinate loc, final Integer index, final AsyncResponse<Break> callback) {
+    public void calculateRoadhouses(final GeoCoordinate loc, final GeoCoordinate refPoint, final int pauseIndex, final AsyncResponse<Break> callback) {
         MainActivity.getmCurrentJourney().getRouteWrapper().runSearch(loc, "Raststätte", new ResultListener<DiscoveryResultPage>() {
             @Override
-            public void onCompleted(DiscoveryResultPage discoveryResultPage, ErrorCode errorCode) {
+            public void onCompleted(final DiscoveryResultPage discoveryResultPage, ErrorCode errorCode) {
                 if (errorCode == ErrorCode.NONE) {
-                    Break.this.mainRoadhouse = new Roadhouse((PlaceLink)discoveryResultPage.getItems().get(0));
-
-//                    mainRoadhouseLink.getDetailsRequest().execute(new ResultListener<Place>() {
-//                        @Override
-//                        public void onCompleted(Place place, ErrorCode errorCode) {
-//                            Log.d("test", "test");
-//                        }
-//                    });
-                    Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
                     RouteWrapper.getWaypointMatrix(refPoint, (ArrayList) discoveryResultPage.getItems(), new AsyncResponse<JSONObject>() {
 
                         @Override
@@ -171,9 +153,9 @@ public class Break {
         breaks.remove(index);
     }
 
-    public void update(int elapsedTime, AsyncResponse<Break> callback) {
+    public void update(int elapsedTime, GeoCoordinate refPoint, int pauseIndex, AsyncResponse<Break> callback) {
         setElapsedTime(elapsedTime);
-        this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime), null, callback);
+        this.calculateRoadhouses(MainActivity.getmCurrentJourney().getPositionOnRouteByTime(elapsedTime), refPoint, pauseIndex, callback);
     }
 
     public DispoInformation.DestinationPoint getDestinationPoint() {
@@ -182,5 +164,22 @@ public class Break {
 
     public void setDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
         this.destinationPoint = destinationPoint;
+    }
+
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+
+    public WheelEntry getWheelEntry() {
+        return wheelEntry;
+    }
+
+    public void setWheelEntry(WheelEntry wheelEntry) {
+        this.wheelEntry = wheelEntry;
     }
 }
