@@ -145,10 +145,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 public void processFinish(Break output) {
                 }
 
-                @Override
-                public void processFinish(Break pause, Integer index) {
-                    totalBreaks -= 1;
-                    PlaceLink pauseLink = pause.getMainRoadhouse().getPlaceLink();
 
                     ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
                     destinationPoints.add(new DispoInformation.DestinationPoint(new LatLng(pauseLink.getPosition().getLatitude(), pauseLink.getPosition().getLongitude()), 15));
@@ -159,16 +155,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                 MainActivity.getmCurrentJourney().setDestinationPoints(orderedDestinationPoints);
                                 callback.processFinish(breaks);
                             }
-
-                            @Override
-                            public void processFinish(ArrayList output, Integer index) {
-
-                            }
                         });
                     }
-                }
-            });
-        }
+                });
+            }
+        });
     }
 
 
@@ -446,7 +437,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     }
 
                     @Override
-                    public void processFinish(Break pause, Integer index) {
+                    public void processFinish(Break pause) {
                         Log.i(LOG, "Roadhouse updated. New Roadhouse");
                         progressDialog.setMessage(getString(R.string.updating_route_data_msg));
                         Journey journey = MainActivity.getmCurrentJourney();
@@ -476,11 +467,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                     }
                                 });
                                 progressDialog.dismiss();
-                            }
-
-                            @Override
-                            public void processFinish(RouteWrapper output, Integer index) {
-
                             }
                         });
                     }

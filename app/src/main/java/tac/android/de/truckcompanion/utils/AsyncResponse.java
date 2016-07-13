@@ -9,5 +9,4 @@ package tac.android.de.truckcompanion.utils;
  */
 public interface AsyncResponse<T> {
     void processFinish(T output);
-    void processFinish(T output, Integer index);
 }

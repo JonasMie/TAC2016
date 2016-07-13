@@ -97,7 +97,6 @@ public class Break {
 //                        }
 //                    });
                     Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
-                    callback.processFinish(Break.this, index);
                 } else {
                     Log.e(TAG, "Place query failed with " + errorCode.toString());
                 }

@@ -216,36 +216,22 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                 calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                                     @Override
                                                     public void processFinish(RouteWrapper updatedRouteWrapper) {
-                                                        mainFragment.updateEntryPositions(updatedRouteWrapper);
-                                                        // TODO : update pause entries!
-                                                        if (mProgressDialog.isShowing()) {
-                                                            mProgressDialog.dismiss();
-                                                        }
-                                                    }
-
-                                                    @Override
-                                                    public void processFinish(RouteWrapper output, Integer index) {
-                                                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                                                        if (mProgressDialog.isShowing()) {
-                                                            mProgressDialog.dismiss();
+                                                        if(updatedRouteWrapper==null) {
+                                                            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                                                            if (mProgressDialog.isShowing()) {
+                                                                mProgressDialog.dismiss();
+                                                            }
+                                                        } else {
+                                                            mainFragment.updateEntryPositions(updatedRouteWrapper);
+                                                            // TODO : update pause entries!
+                                                            if (mProgressDialog.isShowing()) {
+                                                                mProgressDialog.dismiss();
+                                                            }
                                                         }
                                                     }
                                                 });
                                             }
-
-                                            @Override
-                                            public void processFinish(ArrayList breaks, Integer index) {
-
-                                            }
                                         });
-                                    }
-
-                                    @Override
-                                    public void processFinish(RouteWrapper output, Integer index) {
-                                        Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                                        if (mProgressDialog.isShowing()) {
-                                            mProgressDialog.dismiss();
-                                        }
                                     }
                                 });
                             } else {
@@ -254,11 +240,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         }
                     });
                 }
-            }
-
-            @Override
-            public void processFinish(Journey output, Integer index) {
-
             }
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
