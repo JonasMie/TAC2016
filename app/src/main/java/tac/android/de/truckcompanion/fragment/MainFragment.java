@@ -543,15 +543,15 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     }
 
     private void removeEntry(int index) {
-        data.removeEntry(dataSet.getEntryForXIndex(index), 0);
+        dataSet.removeEntry(dataSet.getEntryForIndex(index));
         dataSet.getColors().remove(index);
 
         for (int i = index; i < entries.size(); i++) {
-            WheelEntry entry = (WheelEntry) entries.get(i);
-            entry.getPause().setIndex(i - 1);
+            WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(i);
+            if (entry.getEntryType() == PAUSE_ENTRY) {
+                entry.getPause().setIndex(i - 1);
+            }
         }
-
-        data.notifyDataChanged();
         mChart.notifyDataSetChanged();
         mChart.invalidate();
     }
