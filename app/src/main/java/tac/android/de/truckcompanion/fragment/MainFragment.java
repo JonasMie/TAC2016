@@ -518,6 +518,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     nBreaks++;
                 }
             } else {
+                prevEntry.setXIndex(i + 1);
                 if (prevEntry.getEntryType() == WheelEntry.PAUSE_ENTRY && i > index) {
                     prevEntry.getPause().setIndex(prevEntry.getPause().getIndex() + 1);
                 }
@@ -546,6 +547,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         for (int i = index; i < entries.size(); i++) {
             WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(i);
+            entry.setXIndex(i);
             if (entry.getEntryType() == PAUSE_ENTRY) {
                 entry.getPause().setIndex(i - 1);
             }
