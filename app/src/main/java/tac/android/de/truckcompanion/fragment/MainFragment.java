@@ -279,8 +279,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         longPressedEntry.setEditModeActive(true);
 
 //        updateColor(index, Color.GREEN);
-
-        mChart.highlightValue(index, 0);
         mChart.setRotationEnabled(false);
         mChart.setEditModeEnabled(true);
         /*
@@ -331,7 +329,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onNothingSelected() {
         Log.i("Nothing selected", "Nothing selected.");
         mChart.setRotationEnabled(true);
-        mChart.setEditModeEnabled(true);
+        mChart.setEditModeEnabled(false);
     }
 
     private boolean isInToleratedDistance(float x, float y, PointF center, float radius) {
