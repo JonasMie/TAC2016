@@ -247,7 +247,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         // Get the index belonging to the corresponding wheel entry at this angle
         int index = mChart.getIndexForAngle(angle);
         // Finally get the entry
-        WheelEntry longPressedEntry = (WheelEntry) mChart.getEntriesAtIndex(index).get(0);
+        WheelEntry longPressedEntry = (WheelEntry) dataSet.getEntryForIndex(index);
 
         // If another element is still selected, deselect it
 //        this.onNothingSelected();
@@ -278,7 +278,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         selectedEntry = longPressedEntry;
         longPressedEntry.setEditModeActive(true);
 
-        updateColor(index, Color.GREEN);
+//        updateColor(index, Color.GREEN);
 
         mChart.highlightValue(index, 0);
         mChart.setRotationEnabled(false);
@@ -324,7 +324,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
         mChart.setRotationEnabled(false);
-        selectedEntry = (WheelEntry) mChart.getEntriesAtIndex(dataSetIndex).get(0);
+        selectedEntry = (WheelEntry) dataSet.getEntryForIndex(dataSetIndex);
     }
 
     @Override
@@ -372,7 +372,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 if (diffAngle < 0) {
                     splitBreak = true;
                     addEntry(entryIndex, FIRST_SPLIT, WheelEntry.PAUSE_ENTRY);
-                    ((WheelEntry) (mChart.getEntriesAtIndex(entryIndex).get(0))).setEditModeActive(true);
+                    ((WheelEntry) (dataSet.getEntryForIndex(entryIndex))).setEditModeActive(true);
                     mChart.highlightValue(entryIndex, 0);
                     entry.setVal(SECOND_SPLIT);
                     addEntry(entryIndex + 1, 0, WheelEntry.BUFFER_ENTRY);
@@ -425,7 +425,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             // (Re-)Calculate breaks
             float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
-            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
+            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP || false) {
 //                activity.showDialog(R.string.loading_journey_data_title, R.string.updating_pause_data_msg, ProgressDialog.STYLE_SPINNER, false);
                 progressDialog.setTitle(R.string.loading_journey_data_title);
                 progressDialog.setMessage(getString(R.string.updating_pause_data_msg));
@@ -444,6 +444,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     // entry is first entry
                     refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
                 } else {
+                    // TODO
                     refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
                 }
                 final Break[] formerPause = {pause};
@@ -492,7 +493,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private int getAccumulatedValue(int entryIndex) {
         int value = 0;
         for (int i = 0; i < entryIndex; i++) {
-            value += mChart.getEntriesAtIndex(0).get(0).getVal();
+            value += dataSet.getEntryForIndex(i).getVal();
         }
         return value;
     }
@@ -526,7 +527,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         }
         if (type == WheelEntry.PAUSE_ENTRY) {
             WheelEntry entry = new WheelEntry(size, index, type, elapsedTime, nBreaks, false);
-            entry.setPause(new Break(((WheelEntry) (mChart.getEntriesAtIndex(index).get(0))).getPause()));
+            entry.setPause(new Break(((WheelEntry) (dataSet.getEntryForIndex(index))).getPause()));
             entry.getPause().setWheelEntry(entry);
             entry.getPause().setIndex(nBreaks);
             Break.addBreak(entry.getPause());
@@ -542,7 +543,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     }
 
     private void removeEntry(int index) {
-        data.removeEntry(mChart.getEntriesAtIndex(index).get(0), 0);
+        data.removeEntry(dataSet.getEntryForXIndex(index), 0);
         dataSet.getColors().remove(index);
 
         for (int i = index; i < entries.size(); i++) {
