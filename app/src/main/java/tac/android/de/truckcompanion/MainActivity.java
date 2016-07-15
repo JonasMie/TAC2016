@@ -1,37 +1,41 @@
 package tac.android.de.truckcompanion;
 
 import android.app.ProgressDialog;
+import android.content.Context;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
+import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-
-import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
-import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-
+import com.here.android.mpa.common.OnEngineInitListener;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.TruckState;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
-import tac.android.de.truckcompanion.fragment.MyMapFragment;
+import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.fragment.MainFragment;
+import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
+import java.util.ArrayList;
+
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
+
+    private static final String TAG = MainActivity.class.getSimpleName();
+    public static FragmentManager fm;
 
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
@@ -40,8 +44,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     // View references
     private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
-    private ViewPager mViewPger;
-    private ViewPagerAdapter mViewPagerAdapter;
+    private ViewPager mViewPager;
+    public static ViewPagerAdapter mViewPagerAdapter;
 
     private DrawerLayout mDrawerLayout;
     private NavigationView mNavigationView;
@@ -53,52 +57,62 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private CharSequence mTitle;
 
     // Data
-    private Journey mCurrentJourney;
+    private static Journey mCurrentJourney;
     private TruckState mCurrentTruckState;
     public DataCollector dataCollector;
+
+    // Fragments
+    private MainFragment mainFragment;
+    private MapFragment mapFragment;
+
+    public static Context context;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        context = getApplicationContext();
         dataCollector = new DataCollector(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPger = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = (ViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
 
-        /*
-        ViewPager / Tabs related stuff starts here
-         */
-        // Creating adapter and setting that adapter to the viewPager
-        mViewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
-        mViewPger.setAdapter(mViewPagerAdapter);
-
+        fm = getFragmentManager();
         setSupportActionBar(toolbar);
 
-        // Create the tabs
-        final TabLayout.Tab home = mTabLayout.newTab();
-        final TabLayout.Tab map = mTabLayout.newTab();
-        final TabLayout.Tab stats = mTabLayout.newTab();
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
+        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.stats));
 
-        // Set the tab titles
-        home.setText(R.string.main_view);
-        map.setText(R.string.map);
-        stats.setText(R.string.stats);
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        // Add the tabs to the layout
-        mTabLayout.addTab(home, 0);
-        mTabLayout.addTab(map, 1);
-        mTabLayout.addTab(stats, 2);
+        // Creating adapter and setting that adapter to the viewPager
+        mViewPagerAdapter = new ViewPagerAdapter(fm);
+        mViewPager.setAdapter(mViewPagerAdapter);
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                mViewPager.setCurrentItem(tab.getPosition());
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
         // Set tab text colors
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
         mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
-
-        // Add the onPageChangeListener to the view pager
-        mViewPger.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
         /*
         Drawer related stuff starts here
@@ -163,30 +177,71 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         });
 
         // Setup/load journey data
-        new Journey.LoadJourneyData(this, mProgressDialog, new AsyncResponse<Journey>() {
+        mProgressDialog = new ProgressDialog(this);
+        mProgressDialog.setTitle(R.string.loading_journey_data_title);
+        mProgressDialog.setMessage(getString(R.string.loading_journey_data_msg));
+        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        mProgressDialog.setCancelable(false);
+        mProgressDialog.show();
+        new Journey.LoadJourneyData(this, new AsyncResponse<Journey>() {
             @Override
             public void processFinish(Journey journey) {
                 if (journey == null) {
+                    mProgressDialog.dismiss();
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
                     mCurrentJourney = journey;
-                    Log.d("TAC", journey.toString());
+
+                    mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
+                    final MapFragment mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
+                    mapFragment.init(new OnEngineInitListener() {
+                        @Override
+                        public void onEngineInitializationCompleted(Error error) {
+                            if (error == Error.NONE) {
+                                mapFragment.setMap(mapFragment.getMapFragment().getMap());
+                                mCurrentJourney.initRoute();
+
+                                // Calculate first route
+                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                    @Override
+                                    public void processFinish(RouteWrapper routeWrapper) {
+                                        // Setup Main-Fragment (wheel)
+                                        mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                        mainFragment.setBreaks(routeWrapper, mProgressDialog, new AsyncResponse<ArrayList>() {
+
+                                            @Override
+                                            public void processFinish(ArrayList breaks) {
+                                                // Calculate second route (with breaks)
+                                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                                    @Override
+                                                    public void processFinish(RouteWrapper updatedRouteWrapper) {
+                                                        if(updatedRouteWrapper==null) {
+                                                            Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
+                                                            if (mProgressDialog.isShowing()) {
+                                                                mProgressDialog.dismiss();
+                                                            }
+                                                        } else {
+                                                            mainFragment.updateEntryPositions(updatedRouteWrapper);
+                                                            // TODO : update pause entries!
+                                                            if (mProgressDialog.isShowing()) {
+                                                                mProgressDialog.dismiss();
+                                                            }
+                                                        }
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+                                });
+                            } else {
+                                Log.e(TAG, "MapFragment initialization failed with: " + error.toString());
+                            }
+                        }
+                    });
                 }
             }
-        }, dataCollector).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
-
-
-
+        }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
-
-//    @Override
-//    public void onSimulationEvent(JSONObject event) {
-//        try {
-//            Log.d("TACSimulation", "New event: " + event.getDouble("lat") + ", " + event.getDouble("lng") + ", Speed: " + event.getInt("speed"));
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-//    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -200,13 +255,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         // Handle item selection
         switch (item.getItemId()) {
             case R.id.start_simulation_menu_item:
-                // Start simulation
+                // add journey event listener
                 try {
-//                    JourneySimulation simulation = JourneySimulation.Builder(this);
-//                    simulation.addOnSimulationEventListener(this);
-//                    simulation.startSimulation();
-
-                    // add journey event listener
                     mCurrentTruckState = new TruckState(this);
                     mCurrentTruckState.addTruckStateEventListener(this);
                 } catch (JSONException e) {
@@ -223,7 +273,12 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         Log.d("TAC", "State changed: " + state);
     }
 
+    public static Journey getmCurrentJourney() {
+        return mCurrentJourney;
+    }
 
+    public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
+        mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
 
 
 }

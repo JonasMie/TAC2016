@@ -417,11 +417,11 @@
     </RelativeLayout>
     </ScrollView>
 
-    <com.google.android.gms.maps.MapView
-        android:id="@+id/mapview"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_weight="1" />
+    <fragment
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            class="com.here.android.mpa.mapping.MapFragment"
+            android:id="@+id/map"/>
 
 
 </LinearLayout>

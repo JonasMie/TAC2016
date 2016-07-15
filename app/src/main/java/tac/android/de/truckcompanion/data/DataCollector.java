@@ -1,14 +1,14 @@
 package tac.android.de.truckcompanion.data;
 
 import android.content.Context;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
+import com.android.volley.*;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.here.android.mpa.common.GeoCoordinate;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
+import tac.android.de.truckcompanion.geo.LatLng;
 import tac.android.de.truckcompanion.utils.Helper;
 import tac.android.de.truckcompanion.utils.ResponseCallback;
 
@@ -34,11 +34,14 @@ public class DataCollector {
     private static final String WEATHER_API_BASE_URL = "http://api.openweathermap.org/data/2.5/weather";
     private static final String GOOGLE_PLACES_API_BASE_URL = "https://maps.googleapis.com/maps/api/place/nearbysearch/json";
     private static final String GOOGLE_DIRECTIONS_API_BASE_URL = "https://maps.googleapis.com/maps/api/directions/json";
+    private static final String HERE_MATRIX_API_BASE_URL = "https://matrix.route.cit.api.here.com/routing/7.2/calculatematrix.json";
 
     private static final String GAS_API_KEY = "d807f7d7-3b4a-ade3-c086-7785718692d5";
     private static final String WEATHER_API_KEY = "a3318c093e5004906c70c9fc0da06def";
     private static final String GOOGLE_PLACES_API_KEY = "AIzaSyDQNm6h0XUY5UjvBJSDgZj-ORQ1CHhDyFs";
     private static final String GOOGLE_ANDROID_API_KEY = "AIzaSyBgddqXsREV4deEqia0D0Rmlpc7ckrbgKM";
+    private static final String HERE_APP_ID = "lt922LLJOd0gYtIfJxSv";
+    private static final String HERE_APP_CODE = "wMoF_ey5b3Vp_4ClFFO_2Q";
 
     private RequestQueue queue;
 
@@ -187,16 +190,16 @@ public class DataCollector {
         String waypointsString = "";
         DispoInformation.DestinationPoint destinationPoint = destinationPoints.remove(destinationPoints.size() - 1);
         for (DispoInformation.DestinationPoint wayPoint : destinationPoints) {
-            waypointsString += wayPoint.getLat() + "," + wayPoint.getLng() + "|";
+            waypointsString += wayPoint.getCoordinate().latitude + "," + wayPoint.getCoordinate().longitude + "|";
         }
-        if(waypointsString.length()>0){
-            waypointsString = waypointsString.substring(0,waypointsString.length() - 1);
+        if (waypointsString.length() > 0) {
+            waypointsString = waypointsString.substring(0, waypointsString.length() - 1);
         }
         String url = GOOGLE_DIRECTIONS_API_BASE_URL +
-                "?origin=" + startPoint.getLat() + "," + startPoint.getLng() +
-                "&destination=" + destinationPoint.getLat() + "," + destinationPoint.getLng() +
+                "?origin=" + startPoint.getCoordinate().latitude + "," + startPoint.getCoordinate().longitude +
+                "&destination=" + destinationPoint.getCoordinate().latitude + "," + destinationPoint.getCoordinate().longitude +
                 "&waypoints=" + waypointsString +
-                "&departure_time=" +startPoint.getDate().getTime()/1000 +
+//                "&departure_time=" + startPoint.getDate().getTime() / 1000 +
                 "&key=" + GOOGLE_PLACES_API_KEY;
 
         JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
@@ -211,6 +214,73 @@ public class DataCollector {
                 callback.onError(error);
             }
         });
+        queue.add(req);
+    }
+
+    public void getWaypointMatrix(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ResponseCallback callback) {
+        String url = HERE_MATRIX_API_BASE_URL +
+                "?app_id=" + HERE_APP_ID +
+                "&app_code=" + HERE_APP_CODE +
+                "&start0=" + startPoint.getCoordinate().latitude + "," + startPoint.getCoordinate().longitude;
+        // TODO: ignore last destinationPoint if its a circuit
+        for (int i = 0; i < destinationPoints.size(); i++) {
+            url += "&destination" + i + "=" + destinationPoints.get(i).getCoordinate().latitude + "," + destinationPoints.get(i).getCoordinate().longitude;
+        }
+        url += "&mode=fastest;truck;traffic:enabled";
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onError(error);
+            }
+        });
+
+        // Matrix calculation can take a few seconds since it's quite complex.
+        // To prevent Volley-Timeouts, increase its accepted time
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+        queue.add(req);
+    }
+
+    public void getWaypointMatrix(GeoCoordinate startPoint, ArrayList<GeoCoordinate> destinationPoints, final ResponseCallback callback) {
+        String url = HERE_MATRIX_API_BASE_URL +
+                "?app_id=" + HERE_APP_ID +
+                "&app_code=" + HERE_APP_CODE +
+                "&start0=" + startPoint.getLatitude() + "," + startPoint.getLongitude();
+        // TODO: ignore last destinationPoint if its a circuit
+        for (int i = 0; i < destinationPoints.size(); i++) {
+                url += "&destination" + i + "=" + destinationPoints.get(i).getLatitude() + "," + destinationPoints.get(i).getLongitude();
+        }
+        url += "&mode=fastest;truck;traffic:disabled" +
+                "&summaryAttributes=traveltime,costfactor,distance";
+
+        // TODO: enable traffic
+
+        JsonObjectRequest req = new JsonObjectRequest(Request.Method.GET, url, new Response.Listener<JSONObject>() {
+            @Override
+            public void onResponse(JSONObject response) {
+                callback.onSuccess(response);
+            }
+        }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                callback.onError(error);
+            }
+        });
+
+        // Matrix calculation can take a few seconds since it's quite complex.
+        // To prevent Volley-Timeouts, increase its accepted time
+        req.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
         queue.add(req);
     }
 }

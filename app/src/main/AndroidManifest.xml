@@ -1,25 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="tac.android.de.truckcompanion" >
+          package="tac.android.de.truckcompanion">
 
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
-        android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
-        <meta-data
-                android:name="com.google.android.geo.API_KEY"
-                android:value="AIzaSyBgddqXsREV4deEqia0D0Rmlpc7ckrbgKM"/>
-        <activity android:name=".MainActivity" >
+            android:allowBackup="true"
+            android:icon="@mipmap/ic_launcher"
+            android:label="@string/app_name"
+            android:supportsRtl="true"
+            android:theme="@style/AppTheme"
+            android:hardwareAccelerated="true"
+    >
+        <meta-data android:name="com.here.android.maps.appid" android:value="VDwqZzOm3mPGB2OktZm2"/>
+        <meta-data android:name="com.here.android.maps.apptoken" android:value="iZso_clIgAsrscsIQoUpxg"/>
+        <meta-data android:name="com.here.android.maps.license.key"
+                   android:value="CuKyynhN4zxHp9tmH3dDdW4BejYgUop49nyB7aRgwWMmyfsvw36jKPls5kWnSQx9UZvetM+TP2V5ncJSEw1svcekoQXH85iH+nUELHU82gIX06HgP+nGxGXjDt4P/QDgbMrqIoQbZJEfjr+qqBvrTtK8BsJDZR94uazupObIvy18W0VTgZGrAnRLhI56wbwMUa24yl+dsZe04XcnRHhrRbxR/6XcZIPQaVuVExHG6zXk3ek4gfddCOu5oCxWfwkcFWrpCG745v6PdOmIaB3eiQbqXPVzLY95hQ8Wyq89QOJMwjIwW8XP2hjrtAPMKEhkHuiPEpFs4oVr21WJI9Xtgk6lzjMETgTYkEicGiucntqqke9nxH8t3IrkUmRgT83FAGFj5An+KWbEqNxQQaTRLQ4iDvWbdNPLc+1GZLeDFc/0YlaY5RM5G9clOTlwAD/ce3Sg1xdrRGm2YzckwI9gRiWT3mGYvNgWytNjtWp6zt5ZaUpBKkQ+5+2RUk8XeaRX876/HssFGYmHvYm6ijvbV4RGoj4+huV/1G5VDRoP88hMiEfQdtrMy4O+P4dS0ZbRl/0/7msZ0232OZg1DArlwlSBCRqPVy48qbFqR4AR7PefSw862aGqemljQS/B79U2P9unkSwYD4Ufq4vJSWQg0GSidwceD4Sb5NC1o8lCQ/A="/>
+        <activity android:name=".MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <uses-library android:name="com.google.android.maps" />
+        <service
+                android:name="com.here.android.mpa.service.MapService"
+                android:label="HereMapsService"
+                android:process="global.Here.Map.Service.v2"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="com.here.android.mpa.service.MapService"/>
+            </intent-filter>
+        </service>
     </application>
+
+    <!-- Permissions -->
+    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 </manifest>
