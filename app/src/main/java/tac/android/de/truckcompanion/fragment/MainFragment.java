@@ -423,7 +423,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             // (Re-)Calculate breaks
             float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
-            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP || false) {
+            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
 //                activity.showDialog(R.string.loading_journey_data_title, R.string.updating_pause_data_msg, ProgressDialog.STYLE_SPINNER, false);
                 progressDialog.setTitle(R.string.loading_journey_data_title);
                 progressDialog.setMessage(getString(R.string.updating_pause_data_msg));
