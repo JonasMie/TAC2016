@@ -19,9 +19,9 @@ public class Helper {
     }
 
     @Nullable
-    public static String getJsonStringFromAssets(Context context, String filename){
+    public static String getJsonStringFromAssets(Context context, String filename) {
         String json = null;
-        try{
+        try {
             InputStream is = context.getAssets().open(filename);
             int size = is.available();
             byte[] buffer = new byte[size];

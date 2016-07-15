@@ -2,13 +2,16 @@ package tac.android.de.truckcompanion.data;
 
 import android.content.Context;
 import android.os.AsyncTask;
-import com.google.android.gms.maps.model.LatLng;
+import android.util.Log;
+import com.here.android.mpa.common.GeoCoordinate;
+import com.here.android.mpa.routing.RouteElements;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
-import tac.android.de.truckcompanion.geo.Route;
+import tac.android.de.truckcompanion.geo.LatLng;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 
@@ -32,7 +35,7 @@ public class Journey implements SimulationEventListener {
     private Driver driver;
     private DispoInformation.StartPoint startPoint;
     private ArrayList<DispoInformation.DestinationPoint> destinationPoints;
-    private Route route;
+    private RouteWrapper routeWrapper;
     private int travelledDistance;
     private int travelledDuration;
 
@@ -56,8 +59,20 @@ public class Journey implements SimulationEventListener {
         return destinationPoints;
     }
 
-    public Route getRoute() {
-        return route;
+    public void setDestinationPoints(ArrayList<DispoInformation.DestinationPoint> destinationPoints) {
+        this.destinationPoints = destinationPoints;
+    }
+
+    public void addDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
+        this.destinationPoints.add(destinationPoint);
+    }
+
+    public void removeDestinationPoint(DispoInformation.DestinationPoint destinationPoint) {
+        this.destinationPoints.remove(destinationPoint);
+    }
+
+    public RouteWrapper getRouteWrapper() {
+        return routeWrapper;
     }
 
     public Journey(JSONObject journeyObj) throws JSONException, ParseException {
@@ -74,8 +89,6 @@ public class Journey implements SimulationEventListener {
         for (int i = 0; i < stopsObjs.length(); i++) {
             this.destinationPoints.add(new DispoInformation.DestinationPoint(stopsObjs.getJSONObject(i)));
         }
-
-        this.route = new Route();
     }
 
     @Override
@@ -93,8 +106,12 @@ public class Journey implements SimulationEventListener {
         }
     }
 
+    public RouteWrapper initRoute() {
+        this.routeWrapper = new RouteWrapper();
+        return routeWrapper;
+    }
 
-    public static class LoadJourneyData extends AsyncTask<Integer, Void, Journey> {
+    public static class LoadJourneyData extends AsyncTask<Object, Void, Journey> {
         private Context context;
         public AsyncResponse<Journey> callback = null;
 
@@ -104,11 +121,11 @@ public class Journey implements SimulationEventListener {
         }
 
         @Override
-        protected Journey doInBackground(Integer... params) {
+        protected Journey doInBackground(Object... params) {
             JSONArray journeys = null;
             try {
                 journeys = new JSONArray(getJsonStringFromAssets(context, "dispo.json"));
-                return new Journey(journeys.getJSONObject(params[0] - 1));
+                return new Journey(journeys.getJSONObject((int) (params[0]) - 1));
             } catch (JSONException | ParseException e) {
                 e.printStackTrace();
                 return null;
@@ -145,40 +162,18 @@ public class Journey implements SimulationEventListener {
     }
 
     public LatLng getPositionOnRouteByDistance(int distance) {
-        if (distance > route.getDistance() - getTravelledDistance()) {
-            // Chosen distance exceeds distance of remaining route.
-            // set it to the total route distance
-            distance = route.getDistance() - getTravelledDistance();
+        if (distance > routeWrapper.getDistance() - getTravelledDistance()) {
+            // Chosen distance exceeds distance of remaining routeWrapper.
+            // set it to the total routeWrapper distance
+            distance = routeWrapper.getDistance() - getTravelledDistance();
         }
-        return route.getWaypoints().get(Math.round(distance / Route.DISTANCE_INTERVAL));
+//        return routeWrapper.getWaypoints().get(Math.round(distance / RouteWrapper.DISTANCE_INTERVAL));
+        // TODO
+        return null;
     }
 
-    public LatLng getPositionOnRouteByTime(int time) {
-        if (time > route.getDuration() - getTravelledDuration()) {
-            // Chosen time exceeds duration of remaining route.
-            // set it to the total route duration
-            time = route.getDuration() - getTravelledDuration();
-        }
-        ArrayList<ArrayList> legs = route.getLegs();
-        int distance = 0;
-        float estimatedDistance = 0;
-        int duration = 0;
-        for (int i = 0; i < legs.size(); i++) {
-            ArrayList<HashMap> leg = legs.get(i);
-            for (int j = 0; j < leg.size(); j++) {
-                HashMap<String, Integer> step = leg.get(j);
-                int stepDuration = step.get("duration");
-                int stepDistance = step.get("distance");
-
-                if (duration + stepDuration >= time) {
-                    float remainer = (time - duration) / (float)(stepDuration);
-                    estimatedDistance = distance+ stepDistance*remainer;
-                    return route.getWaypoints().get(Math.round((estimatedDistance/1000) / Route.DISTANCE_INTERVAL));
-                }
-                duration += stepDuration;
-                distance += stepDistance;
-            }
-        }
-        return null;
+    public GeoCoordinate getPositionOnRouteByTime(int time) {
+        RouteElements durationElements = routeWrapper.getRoute().getRouteElementsFromDuration(time);
+        return durationElements.getElements().get(durationElements.getElements().size() - 1).getRoadElement().getGeometry().get(0);
     }
 }

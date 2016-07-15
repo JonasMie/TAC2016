@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion.geo;
 
 import android.location.Location;
+import com.here.android.mpa.common.GeoCoordinate;
 
 /**
  * Created by Jonas Miederer.
@@ -17,5 +18,13 @@ public class GeoHelper {
         loc.setLongitude(lng);
 
         return loc;
+    }
+
+    public static GeoCoordinate LatLngToGeoCoordinate(LatLng coord) {
+        return new GeoCoordinate(coord.latitude, coord.longitude);
+    }
+
+    public static LatLng GeoCoordinateToLatLng(GeoCoordinate coord) {
+        return new LatLng(coord.getLatitude(), coord.getLongitude());
     }
 }

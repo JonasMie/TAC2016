@@ -51,7 +51,7 @@ public class WheelEntry extends Entry {
         this.entryType = entryType;
         this.editModeActive = false;
         if (this.entryType == PAUSE_ENTRY) {
-            this.pause = new Break(elapsedTime, pauseIndex);
+            this.pause = new Break(elapsedTime, pauseIndex, this);
         }
     }
 
@@ -60,7 +60,7 @@ public class WheelEntry extends Entry {
         this.entryType = entryType;
         this.editModeActive = false;
         if (this.entryType == PAUSE_ENTRY && addBreak) {
-            this.pause = new Break(elapsedTime, pauseIndex);
+            this.pause = new Break(elapsedTime, pauseIndex, this);
         }
     }
 
@@ -88,15 +88,15 @@ public class WheelEntry extends Entry {
         }
     };
 
-    public static ArrayList<Entry> getEntries(ProgressDialog mProgressDialog) {
+    public static ArrayList<Entry> getEntries() {
         return new ArrayList<Entry>() {
             {
                 add(new WheelEntry(270*60, 0, DRIVE_ENTRY, 0));
                 add(new WheelEntry(45*60, 1, PAUSE_ENTRY, 270*60, 0));
                 add(new WheelEntry(270*60, 2, DRIVE_ENTRY, 315*60));
                 add(new WheelEntry(45*60, 3, PAUSE_ENTRY, 585*60, 1));
-                add(new WheelEntry(60*60, 6, DRIVE_ENTRY, 650*60));
-                add(new WheelEntry(30*60, 7, RECOVERY_ENTRY, 710*60));
+                add(new WheelEntry(60*60, 4, DRIVE_ENTRY, 650*60));
+                add(new WheelEntry(30*60, 5, RECOVERY_ENTRY, 710*60));
             }
         };
     }
