@@ -19,20 +19,19 @@ import android.widget.Toast;
 import com.here.android.mpa.common.OnEngineInitListener;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
-import tac.android.de.truckcompanion.data.DataCollector;
-import tac.android.de.truckcompanion.data.Journey;
-import tac.android.de.truckcompanion.data.TruckState;
-import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.CustomViewPager;
+import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
+import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
+public class MainActivity extends AppCompatActivity implements TruckStateEventListener, OnRoadhouseSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static FragmentManager fm;
@@ -195,7 +194,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                     mCurrentJourney = journey;
 
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
-                    final MapFragment mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
+                    mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
                         @Override
                         public void onEngineInitializationCompleted(Error error) {
@@ -283,4 +282,15 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
 
     }
+
+    @Override
+    public void onMainFragmentRoadhouseChanged(WheelEntry entry) {
+        mapFragment.setMainRoadhouse(entry);
+    }
+
+    @Override
+    public void onMapFragmentRoadhouseChanged(WheelEntry entry) {
+        mainFragment.setMainRoadhouse(entry);
+    }
+
 }

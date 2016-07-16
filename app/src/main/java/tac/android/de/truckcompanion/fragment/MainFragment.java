@@ -40,6 +40,7 @@ import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
@@ -88,6 +89,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private int totalBreaks;
 
     // Misc
+    OnRoadhouseSelectedListener listener;
     Vibrator vibrator;
     MainActivity activity;
     ProgressDialog progressDialog;
@@ -687,6 +689,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private void setRecommendations(int index, Integer item) {
         Break pause = ((WheelEntry) dataSet.getEntryForIndex(index)).getPause();
         if (pause.getMainRoadhouse() != null) {
+            listener.onMainFragmentRoadhouseChanged((WheelEntry) dataSet.getEntryForIndex(index));
             PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
             mainRecTitle.setText(placeLink.getTitle());
             mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
@@ -699,6 +702,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     private void setRecommendations(Integer item) {
         if (selectedEntry != null) {
+            listener.onMainFragmentRoadhouseChanged(selectedEntry);
             Break pause = selectedEntry.getPause();
             if (pause.getMainRoadhouse() != null) {
                 PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
@@ -715,11 +719,32 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             }
             setupCarousel(item);
         }
+
     }
 
     public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
         this.updateEntryPositions(updatedRouteWrapper);
         setRecommendations(1, null);
+        loadAllDetailInfosInBackground();
+    }
+
+    private void loadAllDetailInfosInBackground() {
+        // load details for first and second break (1st & 3rd wheel entry)
+        loadDetailInfosInBackground(1);
+        loadDetailInfosInBackground(3);
+    }
+
+    private void loadDetailInfosInBackground(int index) {
+        WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(index);
+        final Roadhouse mainRoadhouse = entry.getPause().getMainRoadhouse();
+        mainRoadhouse.setDetailsLoading(true);
+        mainRoadhouse.getPlaceLink().getDetailsRequest().execute(new ResultListener<Place>() {
+            @Override
+            public void onCompleted(Place place, ErrorCode errorCode) {
+                mainRoadhouse.setPlace(place);
+                mainRoadhouse.onDetailsLoaded();
+            }
+        });
     }
 
     private void setupCarousel(Integer item) {
@@ -773,6 +798,23 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             // update view
             setRecommendations(index);
         }
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (OnRoadhouseSelectedListener) context;
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (OnRoadhouseSelectedListener) activity;
+
+    }
+
+    public void setMainRoadhouse(WheelEntry entry) {
     }
 }
 
