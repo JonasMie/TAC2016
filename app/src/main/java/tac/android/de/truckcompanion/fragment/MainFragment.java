@@ -12,10 +12,7 @@ import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.*;
-import android.widget.LinearLayout;
-import android.widget.RatingBar;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
+import android.widget.*;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -699,7 +696,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.invalidate();
     }
 
-    private void setRecommendations(int index) {
+    private void setRecommendations(int index, Integer item) {
         Break pause = ((WheelEntry) dataSet.getEntryForIndex(index)).getPause();
         if (pause.getMainRoadhouse() != null) {
             PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
@@ -709,25 +706,48 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             mainRecBreaktime.setText((int) (dataSet.getEntryForIndex(index).getVal() / 60) + " min");
             mainRecRating.setRating((float) placeLink.getAverageRating());
         }
-        setupCarousel();
+        setupCarousel(item);
+    }
+
+    private void setRecommendations(Integer item) {
+        if (selectedEntry != null) {
+            Break pause = selectedEntry.getPause();
+            if (pause.getMainRoadhouse() != null) {
+                PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
+                mainRecTitle.setText(placeLink.getTitle());
+                if (pause.getMainRoadhouse().getETA() != null) {  // TODO
+                    mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
+
+                } else {
+                    mainRecETA.setText("12:30");
+                }
+                mainRecDistance.setText("20 km"); // TODO
+                mainRecBreaktime.setText((int) (selectedEntry.getVal() / 60) + " min");
+                mainRecRating.setRating((float) placeLink.getAverageRating());
+            }
+            setupCarousel(item);
+        }
     }
 
     public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
         this.updateEntryPositions(updatedRouteWrapper);
-        setRecommendations(1);
+        setRecommendations(1, null);
     }
 
-    private void setupCarousel() {
+    private void setupCarousel(Integer item) {
         altRecwrapper.removeAllViews();
         altRecwrapper.addView(getActivity().getLayoutInflater().inflate(R.layout.carousel, null));
         carouselView = (CarouselView) altRecwrapper.findViewById(R.id.carouselView);
         carouselView.setViewListener(carouselViewListener);
         carouselView.setPageCount(selectedEntry != null ? selectedEntry.getPause().getAlternativeRoadhouses().size() : 0);
+        if (item != null) {
+            carouselView.setCurrentItem(item);
+        }
     }
 
     ViewListener carouselViewListener = new ViewListener() {
         @Override
-        public View setViewForPosition(int index) {
+        public View setViewForPosition(final int index) {
             View alternativeView = getActivity().getLayoutInflater().inflate(R.layout.recommendation_alternative, null);
             //set view attributes here
 
@@ -738,14 +758,33 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 TextView eta = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_eta);
                 TextView distance = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_distance);
                 RatingBar rating = (RatingBar) alternativeView.findViewById(R.id.recommendations_alternative_rating);
+                Button choose = (Button) alternativeView.findViewById(R.id.recommendations_alternative_choose);
 
                 title.setText(pauseLink.getTitle());
                 eta.setText(dateFormat.format(rh.getDurationFromStart())); // TODO
                 distance.setText("25 km"); // TODO
                 rating.setRating((float) pauseLink.getAverageRating());
+                choose.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        chooseAlternativeRoadhouse(index);
+                    }
+                });
             }
             return alternativeView;
         }
     };
+
+    private void chooseAlternativeRoadhouse(int index) {
+        if (selectedEntry != null) {
+            Roadhouse mainRoadhouse = selectedEntry.getPause().getMainRoadhouse();
+            Roadhouse alternativeRoadhouse = selectedEntry.getPause().getAlternativeRoadhouses().get(index);
+            selectedEntry.getPause().setMainRoadhouse(alternativeRoadhouse);
+            selectedEntry.getPause().getAlternativeRoadhouses().set(index, mainRoadhouse);
+
+            // update view
+            setRecommendations(index);
+        }
+    }
 }
 
