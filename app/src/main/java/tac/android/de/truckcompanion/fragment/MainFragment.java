@@ -4,16 +4,18 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.Point;
 import android.graphics.PointF;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.MotionEvent;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
+import android.view.*;
+import android.widget.LinearLayout;
+import android.widget.RatingBar;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -26,11 +28,13 @@ import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
+import com.synnapps.carouselview.CarouselView;
+import com.synnapps.carouselview.ViewListener;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
-import tac.android.de.truckcompanion.adapter.AlternativesListViewAdapter;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Journey;
+import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
@@ -38,8 +42,10 @@ import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
 import static tac.android.de.truckcompanion.wheel.WheelEntry.PAUSE_ENTRY;
@@ -55,12 +61,26 @@ import static tac.android.de.truckcompanion.wheel.WheelEntry.PAUSE_ENTRY;
 public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, OnEntryGestureListener {
 
     // Chart-related members
+    private LinearLayout recommendationsWrapper;
+    private RelativeLayout chartWrapper;
     private PieChart mChart;
     private PieDataSet dataSet;
     private PieData data;
     private ArrayList<Entry> entries;
     private float mStartAngle = 0;
     private PointF mTouchStartPoint = new PointF();
+
+    // View-realted members
+    private RelativeLayout mainRecWrapper;
+    RelativeLayout altRecwrapper;
+    private TextView mainRecTitle;
+    private TextView mainRecRatingLabel;
+    private TextView mainRecETA;
+    private TextView mainRecDistance;
+    private TextView mainRecBreaktime;
+    private RatingBar mainRecRating;
+    private CarouselView carouselView;
+
 
     // Logic data
     private WheelEntry selectedEntry;
@@ -70,6 +90,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     Vibrator vibrator;
     MainActivity activity;
     ProgressDialog progressDialog;
+    SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
+    int NUMBER_OF_PAGES = 5;
+
     // Constants
     private static final String LOG = "TAC";
     private static final double ENTRY_LONGPRESS_TOLERANCE = .2;
@@ -87,14 +110,44 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_main2, container, false);
-        ListView listView=(ListView)view.findViewById(R.id.listViewAlternatives);
-        AlternativesListViewAdapter adapter=new AlternativesListViewAdapter(getActivity());
-        listView.setAdapter(adapter);
+        View view = inflater.inflate(R.layout.fragment_main, container, false);
+
+        mainRecWrapper = (RelativeLayout) view.findViewById(R.id.recommendations_main_wrapper);
+        altRecwrapper = (RelativeLayout) view.findViewById(R.id.recommendations_alternatives_wrapper);
+
+        chartWrapper = (RelativeLayout) view.findViewById(R.id.chartWrapper);
+
+        recommendationsWrapper = (LinearLayout) view.findViewById(R.id.recommendationsWrapper);
+        mainRecTitle = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_title);
+        mainRecETA = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_eta);
+        mainRecDistance = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_distance);
+        mainRecBreaktime = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_breaktime);
+        mainRecRatingLabel = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_rating_label);
+        mainRecRating = (RatingBar) recommendationsWrapper.findViewById(R.id.recommendations_main_rating);
+
+
+        mChart = (PieChart) view.findViewById(R.id.chart);
+
+
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                width,
+                (int) (height * .5)
+        );
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                width,
+                (int) (height * 1.5)
+        );
+
+        recommendationsWrapper.setLayoutParams(params1);
+        chartWrapper.setLayoutParams(params2);
 
         activity = ((MainActivity) getActivity());
         progressDialog = new ProgressDialog(activity);
-        mChart = (PieChart) view.findViewById(R.id.chart);
 
         vibrator = (Vibrator) getActivity().getSystemService(Context.VIBRATOR_SERVICE);
 
@@ -138,6 +191,10 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         dataSet.setColors(WheelEntry.getColors(entries));
         data.setDrawValues(false);
+
+        // Highlight 1st pause by default
+        mChart.highlightValue(1, 0);
+        selectedEntry = (WheelEntry) dataSet.getEntryForIndex(1);
 
         mChart.notifyDataSetChanged();
         mChart.invalidate();
@@ -329,6 +386,26 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         Log.i("Entry selected", e.toString());
         mChart.setRotationEnabled(false);
         selectedEntry = (WheelEntry) dataSet.getEntryForIndex(dataSetIndex);
+
+        chartWrapper = (RelativeLayout) getView().findViewById(R.id.chartWrapper);
+        recommendationsWrapper = (LinearLayout) getView().findViewById(R.id.recommendationsWrapper);
+        mChart = (PieChart) getView().findViewById(R.id.chart);
+        Display display = getActivity().getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int width = size.x;
+        int height = size.y;
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
+                width,
+                (int) (height * .5)
+        );
+        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
+                width,
+                (int) (height * .1)
+        );
+
+        recommendationsWrapper.setLayoutParams(params1);
+        chartWrapper.setLayoutParams(params2);
     }
 
     @Override
@@ -621,5 +698,54 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.notifyDataSetChanged();
         mChart.invalidate();
     }
+
+    private void setRecommendations(int index) {
+        Break pause = ((WheelEntry) dataSet.getEntryForIndex(index)).getPause();
+        if (pause.getMainRoadhouse() != null) {
+            PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
+            mainRecTitle.setText(placeLink.getTitle());
+            mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
+            mainRecDistance.setText("20 km"); // TODO
+            mainRecBreaktime.setText((int) (dataSet.getEntryForIndex(index).getVal() / 60) + " min");
+            mainRecRating.setRating((float) placeLink.getAverageRating());
+        }
+        setupCarousel();
+    }
+
+    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
+        this.updateEntryPositions(updatedRouteWrapper);
+        setRecommendations(1);
+    }
+
+    private void setupCarousel() {
+        altRecwrapper.removeAllViews();
+        altRecwrapper.addView(getActivity().getLayoutInflater().inflate(R.layout.carousel, null));
+        carouselView = (CarouselView) altRecwrapper.findViewById(R.id.carouselView);
+        carouselView.setViewListener(carouselViewListener);
+        carouselView.setPageCount(selectedEntry != null ? selectedEntry.getPause().getAlternativeRoadhouses().size() : 0);
+    }
+
+    ViewListener carouselViewListener = new ViewListener() {
+        @Override
+        public View setViewForPosition(int index) {
+            View alternativeView = getActivity().getLayoutInflater().inflate(R.layout.recommendation_alternative, null);
+            //set view attributes here
+
+            if (selectedEntry != null && selectedEntry.getEntryType() == PAUSE_ENTRY) {
+                Roadhouse rh = selectedEntry.getPause().getAlternativeRoadhouses().get(index);
+                PlaceLink pauseLink = rh.getPlaceLink();
+                TextView title = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_title);
+                TextView eta = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_eta);
+                TextView distance = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_distance);
+                RatingBar rating = (RatingBar) alternativeView.findViewById(R.id.recommendations_alternative_rating);
+
+                title.setText(pauseLink.getTitle());
+                eta.setText(dateFormat.format(rh.getDurationFromStart())); // TODO
+                distance.setText("25 km"); // TODO
+                rating.setRating((float) pauseLink.getAverageRating());
+            }
+            return alternativeView;
+        }
+    };
 }
 

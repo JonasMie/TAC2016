@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rasthof Alternative"
+            android:id="@+id/recommendations_alternative_title"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/recommendations_alternative_rating"
+            style="@style/Base.Widget.AppCompat.RatingBar.Small"
+            android:layout_toRightOf="@+id/recommendations_alternative_title"
+            android:layout_toEndOf="@+id/recommendations_alternative_title"
+            android:layout_marginLeft="26dp"
+            android:layout_marginStart="26dp" />
+
+    <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Auswählen"
+            android:id="@+id/recommendations_alternative_choose"
+            android:layout_below="@+id/recommendations_alternative_eta"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_eta"
+            android:layout_below="@+id/recommendations_alternative_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true" />
+
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_distance"
+            android:layout_below="@+id/recommendations_alternative_title"
+            android:layout_toRightOf="@+id/recommendations_alternative_eta"
+            android:layout_toEndOf="@+id/recommendations_alternative_eta"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin" />
+
+    <ImageView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView5"
+            android:layout_below="@+id/recommendations_alternative_eta"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/icon_parking_red"/>
+    <ImageView
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView6"
+            android:src="@drawable/icon_gas_green"
+            android:layout_alignTop="@+id/imageView5"
+            android:layout_toRightOf="@+id/imageView5"
+            android:layout_toEndOf="@+id/imageView5"
+            android:layout_alignBottom="@+id/imageView5" />
+
+</RelativeLayout>

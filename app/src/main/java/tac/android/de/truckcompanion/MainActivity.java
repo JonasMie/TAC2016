@@ -204,7 +204,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                 // Calculate first route
                                 calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                     @Override
-                                    public void processFinish(RouteWrapper routeWrapper) {
+                                    public void processFinish(final RouteWrapper routeWrapper) {
                                         // Setup Main-Fragment (wheel)
                                         mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
                                         mainFragment.setBreaks(routeWrapper, mProgressDialog, new AsyncResponse<ArrayList>() {
@@ -215,14 +215,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                 calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
                                                     @Override
                                                     public void processFinish(RouteWrapper updatedRouteWrapper) {
-                                                        if(updatedRouteWrapper==null) {
+                                                        if (updatedRouteWrapper == null) {
                                                             Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
                                                             if (mProgressDialog.isShowing()) {
                                                                 mProgressDialog.dismiss();
                                                             }
                                                         } else {
-                                                            mainFragment.updateEntryPositions(updatedRouteWrapper);
-                                                            // TODO : update pause entries!
+                                                            mainFragment.onStartupTaskReady(updatedRouteWrapper);
                                                             if (mProgressDialog.isShowing()) {
                                                                 mProgressDialog.dismiss();
                                                             }
@@ -281,4 +280,5 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
 
 
+    }
 }
