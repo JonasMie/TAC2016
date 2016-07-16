@@ -21,4 +21,7 @@
     <string name="entfernung">Entfernung</string>
     <string name="alternative">Alternative:</string>
     <string name="no_internet_connection">Berechnung fehlgeschlagen, keine Internetverbindung.</string>
+    <string name="eta">Ankunft</string>
+    <string name="distance">Entfernung</string>
+    <string name="breaktime">Pausenzeit</string>
 </resources>
