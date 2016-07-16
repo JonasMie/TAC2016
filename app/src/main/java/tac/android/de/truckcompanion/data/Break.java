@@ -96,10 +96,10 @@ public class Break {
                                     for (int i = 0; i < entries.length(); i++) {
                                         if (entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime") <= MainFragment.MAX_DRIVE_VAL + MainFragment.MAX_DRIVER_TOLERANCE) {
                                             if (mainRoadhouse == null) {
-                                                Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(0));
+                                                Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 Break.this.mainRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
                                             } else {
-                                                Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(0));
+                                                Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 altRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
                                                 Break.this.alternativeRoadhouses.add(altRoadhouse);
                                             }
