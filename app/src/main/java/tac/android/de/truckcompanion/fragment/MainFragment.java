@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.fragment;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -24,7 +25,10 @@ import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
+import com.here.android.mpa.search.ErrorCode;
+import com.here.android.mpa.search.Place;
 import com.here.android.mpa.search.PlaceLink;
+import com.here.android.mpa.search.ResultListener;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ViewListener;
 import tac.android.de.truckcompanion.MainActivity;
@@ -384,25 +388,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setRotationEnabled(false);
         selectedEntry = (WheelEntry) dataSet.getEntryForIndex(dataSetIndex);
 
-        chartWrapper = (RelativeLayout) getView().findViewById(R.id.chartWrapper);
-        recommendationsWrapper = (LinearLayout) getView().findViewById(R.id.recommendationsWrapper);
-        mChart = (PieChart) getView().findViewById(R.id.chart);
-        Display display = getActivity().getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        int width = size.x;
-        int height = size.y;
-        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
-                width,
-                (int) (height * .5)
-        );
-        LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
-                width,
-                (int) (height * .1)
-        );
-
-        recommendationsWrapper.setLayoutParams(params1);
-        chartWrapper.setLayoutParams(params2);
+        if (((WheelEntry) e).getEntryType() == PAUSE_ENTRY) {
+            listener.onMainFragmentRoadhouseChanged(selectedEntry);
+        }
     }
 
     @Override
