@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -29,6 +28,7 @@ import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.CustomViewPager;
 
 import java.util.ArrayList;
 
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     // View references
     private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
-    private ViewPager mViewPager;
+    private CustomViewPager mViewPager;
     public static ViewPagerAdapter mViewPagerAdapter;
 
     private DrawerLayout mDrawerLayout;
@@ -76,12 +76,14 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
 
         fm = getFragmentManager();
         setSupportActionBar(toolbar);
+
+        mViewPager.setPagingEnabled(false);
 
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
