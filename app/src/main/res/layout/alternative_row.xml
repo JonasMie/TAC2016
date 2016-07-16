@@ -8,7 +8,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Rasthof Alternative"
-        android:id="@+id/nameAlt"
+        android:id="@+id/recommendations_alternative_title"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -16,12 +16,10 @@
     <RatingBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/ratingBar3"
+        android:id="@+id/recommendations_alternative_rating"
         style="@style/Base.Widget.AppCompat.RatingBar.Small"
-        android:rating="3"
-        android:layout_alignTop="@+id/entfernungAlt"
-        android:layout_toRightOf="@+id/entfernungAlt"
-        android:layout_toEndOf="@+id/entfernungAlt"
+        android:layout_toRightOf="@+id/recommendations_alternative_title"
+        android:layout_toEndOf="@+id/recommendations_alternative_title"
         android:layout_marginLeft="26dp"
         android:layout_marginStart="26dp" />
 
@@ -30,8 +28,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Auswählen"
-        android:id="@+id/button2"
-        android:layout_below="@+id/entfernungAlt"
+        android:id="@+id/recommendations_alternative_choose"
+        android:layout_below="@+id/recommendations_alternative_eta"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -39,9 +37,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="12.30"
-        android:id="@+id/ankunftAlt"
-        android:layout_below="@+id/nameAlt"
+        android:id="@+id/recommendations_alternative_eta"
+        android:layout_below="@+id/recommendations_alternative_title"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -49,29 +46,27 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="80km"
-        android:id="@+id/entfernungAlt"
-        android:layout_below="@+id/nameAlt"
-        android:layout_toRightOf="@+id/ankunftAlt"
-        android:layout_toEndOf="@+id/ankunftAlt"
-        android:layout_marginLeft="28dp"
-        android:layout_marginStart="28dp" />
-
+        android:id="@+id/recommendations_alternative_distance"
+        android:layout_below="@+id/recommendations_alternative_title"
+        android:layout_toRightOf="@+id/recommendations_alternative_eta"
+        android:layout_toEndOf="@+id/recommendations_alternative_eta"
+        android:layout_marginLeft="@dimen/default_margin"
+        android:layout_marginStart="@dimen/default_margin" />
+<!--parking_red-->
     <ImageView
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:id="@+id/imageView5"
-        android:layout_below="@+id/ankunftAlt"
+        android:layout_below="@+id/recommendations_alternative_eta"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/icon_parking_red"
-        android:layout_alignBottom="@+id/button2" />
-
+        android:src="@drawable/marker"/>
+<!--parking_green-->
     <ImageView
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:id="@+id/imageView6"
-        android:src="@drawable/icon_gas_green"
+        android:src="@drawable/marker"
         android:layout_alignTop="@+id/imageView5"
         android:layout_toRightOf="@+id/imageView5"
         android:layout_toEndOf="@+id/imageView5"

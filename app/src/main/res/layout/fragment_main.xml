@@ -1,239 +1,256 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/content_frame"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:id="@+id/content_frame"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             android:orientation="vertical"
+             android:weightSum="2">
 
     <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_height="match_parent"
-        android:layout_width="match_parent"
-        android:orientation="vertical">
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
         <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="240dp"
-            android:weightSum="1"
-            android:padding="36dp"
-            android:showDividers="end"
-            android:divider="#000000">
+                android:id="@+id/recommendationsWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:weightSum="2"
+                android:orientation="horizontal">
 
-            <LinearLayout
-                android:orientation="vertical"
-                android:layout_width="486dp"
-                android:layout_height="match_parent"
-                android:layout_weight="0.83">
+            <!--Main recommendation-->
+            <RelativeLayout
+                    android:id="@+id/recommendations_main_wrapper"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+
 
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:id="@+id/NameOfService"
-                    android:textColor="@color/background_floating_material_dark"
-                    android:textSize="22dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="Rasthof Birkenweg" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceLarge"
+                        android:text="Shell Autohof Sittensen"
+                        android:id="@+id/recommendations_main_title"
+                        android:layout_alignParentTop="true"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:textSize="25sp"
+                        android:textIsSelectable="false"
+                        android:layout_marginStart="30dp"
+                        android:layout_marginLeft="30dp"/>
 
+                <RatingBar
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/recommendations_main_rating"
+                        android:layout_below="@+id/recommendations_main_title"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:rating="2"
+                        style="@style/Widget.AppCompat.RatingBar.Indicator"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginStart="30dp"/>
+
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+                <!--android:text="4 von 5"-->
+                <!--android:id="@+id/textView10"-->
+                <!--android:layout_below="@+id/textView9"-->
+                <!--android:layout_toRightOf="@+id/ratingBar2"-->
+                <!--android:layout_toEndOf="@+id/ratingBar2"-->
+                <!--android:layout_alignBottom="@+id/ratingBar2"-->
+                <!--android:gravity="center_vertical"/>-->
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="(256 Bewertungen)"
+                        android:id="@+id/recommendations_main_rating_label"
+                        android:layout_below="@+id/recommendations_main_rating"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_alignRight="@+id/recommendations_main_rating"
+                        android:layout_alignEnd="@+id/recommendations_main_rating"
+                        android:layout_marginLeft="@dimen/default_margin"
+                        android:layout_marginStart="@dimen/default_margin"/>
+                <!--<LinearLayout-->
+                <!--android:layout_below="@+id/recommendations_main_rating"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:orientation="vertical"-->
+                <!--android:weightSum="3">-->
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:weightSum="1">
-
-                    <LinearLayout
-                        android:layout_width="190dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="0.82"
-                        android:orientation="vertical"
-                        android:paddingRight="8dp">
-
-                        <LinearLayout
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/recommendations_main_rating"
+                        android:id="@+id/recommendations_main_info_wrapper"
+                        android:layout_marginTop="17dp"
+                >
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="-3dp">
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginStart="@dimen/default_margin">
 
-                            <RatingBar
+                        <TextView
+                                android:id="@+id/recommendations_main_info_eta"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:id="@+id/ratingBar"
-                                android:numStars="5"
-                                style="@style/Widget.AppCompat.RatingBar.Indicator"
-                                android:nestedScrollingEnabled="false"
-                                android:rating="3"
-                                android:stepSize="1"
-                                android:layout_gravity="top"
-                                android:mirrorForRtl="true" />
-
-                            <TextView
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="(122 Bewertungen)"
-                                android:id="@+id/ratingNumber"
-                                android:layout_gravity="center_vertical|right"
-                                android:textAlignment="gravity"
-                                android:gravity="right" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:orientation="horizontal"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:paddingTop="12dp"
-                            android:layout_marginTop="2dp">
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="12.40"
-                                android:id="@+id/arriveAt"
-                                android:textSize="23dp"
-                                android:textIsSelectable="true"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="80km"
-                                android:id="@+id/distance"
-                                android:textSize="23dp"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
-
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="20min"
-                                android:id="@+id/textView5"
-                                android:textSize="23dp"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="28dp">
-
-                            <TextView
-                                android:layout_width="0dp"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="12.30"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_centerHorizontal="true"
+                                android:textSize="25dp"/>
+                        <TextView
+                                android:id="@+id/recommendations_main_info_eta_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="Ankunft"
-                                android:id="@+id/labelArrive"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
+                                android:layout_below="@+id/recommendations_main_info_eta"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center_horizontal"/>
+                    </RelativeLayout>
 
-                            <TextView
-                                android:layout_width="0dp"
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginStart="@dimen/default_margin">
+
+                        <TextView
+                                android:id="@+id/recommendations_main_info_distance"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="80"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_centerHorizontal="true"
+                                android:textSize="25dp"/>
+                        <TextView
+                                android:id="@+id/recommendations_main_info_distance_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
                                 android:text="Entfernung"
-                                android:id="@+id/labelDistance"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
+                                android:layout_below="@+id/recommendations_main_info_distance"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center_horizontal"/>
+                    </RelativeLayout>
 
-                            <TextView
-                                android:layout_width="0dp"
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginStart="@dimen/default_margin">
+
+                        <TextView
+                                android:id="@+id/recommendations_main_info_breaktime"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceMedium"
+                                android:text="20 min"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_centerHorizontal="true"
+                                android:textSize="25dp"/>
+                        <TextView
+                                android:id="@+id/recommendations_main_info_breaktime_label"
+                                android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Pausendauer"
-                                android:id="@+id/labelBreak"
-                                android:layout_weight="1"
-                                android:textAlignment="center" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="212dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginLeft="15dp"
-                        android:gravity="center_horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="Small Text"
-                            android:id="@+id/textView3" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:textAppearance="?android:attr/textAppearanceSmall"
-                            android:text="Small Text"
-                            android:id="@+id/textView" />
-
-                        <Button
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="Details"
-                            android:id="@+id/buttonDetails"
-                            android:foregroundGravity="bottom" />
-                    </LinearLayout>
+                                android:text="Pause"
+                                android:layout_below="@+id/recommendations_main_info_breaktime"
+                                android:layout_centerHorizontal="true"
+                                android:gravity="center_horizontal"/>
+                    </RelativeLayout>
                 </LinearLayout>
 
-            </LinearLayout>
+                <LinearLayout
+                        android:orientation="horizontal"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentLeft="true"
+                        android:layout_alignParentStart="true"
+                        android:layout_below="@+id/recommendations_main_info_wrapper"
+                        android:id="@+id/recommendations_main_misc_wrapper"
+                        android:layout_marginTop="17dp"
+                >
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginStart="@dimen/default_margin">
+
+                        <ImageView
+                                android:id="@+id/recommendations_main_misc_parking_img"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="20dp"
+                                android:minHeight="20dp"
+                                android:src="@drawable/parking_true"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_centerHorizontal="true"
+                                 />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_marginStart="@dimen/default_margin">
+
+                        <ImageView
+                                android:id="@+id/recommendations_main_misc_gas_img"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:minWidth="20dp"
+                                android:minHeight="20dp"
+                                android:src="@drawable/gas_grey"
+                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_centerHorizontal="true"
+                        />
+                    </RelativeLayout>
+                </LinearLayout>
+            </RelativeLayout>
 
             <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="353dp"
-                android:layout_height="match_parent">
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1">
+                <RelativeLayout
+                        android:id="@+id/recommendations_alternatives_wrapper"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/textView2" />
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="Small Text"
-                    android:id="@+id/textView4" />
-
+                </RelativeLayout>
             </LinearLayout>
         </LinearLayout>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#cacaca" />
-        <TextView
-            android:id="@+id/testView"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            />
 
         <RelativeLayout
-            android:id="@+id/rLayout"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1.20"
-            android:paddingLeft="@dimen/activity_horizontal_margin"
-            android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
-            android:paddingBottom="@dimen/activity_vertical_margin"
-            tools:context="tac.android.de.truckcompanion.MainActivity">
+                android:id="@+id/chartWrapper"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1">
 
             <com.github.mikephil.charting.charts.PieChart
-                android:id="@+id/chart"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                />
-        </RelativeLayout>
+                    android:id="@+id/chart"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginTop="0dp"
+            />
 
+        </RelativeLayout>
     </LinearLayout>
+
 </FrameLayout>
