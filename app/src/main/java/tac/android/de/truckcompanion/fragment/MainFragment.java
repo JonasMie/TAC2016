@@ -679,6 +679,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             if (wheelEntry.getEntryType() == PAUSE_ENTRY) {
                 prevWheelEntry.setVal(wheelEntry.getPause().getMainRoadhouse().getDurationFromStart() - prevVal);
                 prevVal = wheelEntry.getPause().getMainRoadhouse().getDurationFromStart();
+                listener.onPauseDataChanged(wheelEntry);
             }
             prevWheelEntry = wheelEntry;
         }
@@ -814,7 +815,19 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void setMainRoadhouse(WheelEntry entry) {
+    public void setMainRoadhouse(WheelEntry entry, Roadhouse rh) {
+        highlightEntry(entry);
+        // TODO
+//        if(pause.getMainRoadhouse() != )
+//        Roadhouse prevMainRh = pause.getMainRoadhouse();
+//        int prevAltRhIndex = pause.getAlternativeRoadhouses().indexOf(pause);
+//        pause.setMainRoadhouse(pause.getAlternativeRoadhouses().get(prevAltRhIndex));
+//        pause.getAlternativeRoadhouses().set(prevAltRhIndex, prevMainRh);
+    }
+
+    private void highlightEntry(WheelEntry entry) {
+        // TODO
+        selectedEntry = entry;
     }
 }
 

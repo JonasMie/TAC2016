@@ -4,15 +4,23 @@ package tac.android.de.truckcompanion.fragment;
 import android.annotation.TargetApi;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import com.here.android.mpa.cluster.ClusterLayer;
+import com.here.android.mpa.common.Image;
 import com.here.android.mpa.common.OnEngineInitListener;
+import com.here.android.mpa.common.ViewObject;
 import com.here.android.mpa.mapping.Map;
+import com.here.android.mpa.mapping.MapGesture;
+import com.here.android.mpa.mapping.MapMarker;
+import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.search.PlaceLink;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
@@ -20,7 +28,10 @@ import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -30,9 +41,10 @@ import java.util.Locale;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class MapFragment extends Fragment {
+public class MapFragment extends Fragment implements MapGesture.OnGestureListener {
 
     private static final String MAP_TAG = "map_tag";
+    private static final String TAG = MapFragment.class.getSimpleName();
     private Map map;
     private com.here.android.mpa.mapping.MapFragment mapFragment;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
@@ -48,11 +60,18 @@ public class MapFragment extends Fragment {
     private RatingBar rh_rating;
     private ImageView rh_image;
 
+    private Image icon_main;
+    private Image icon_alt;
+
+    // this may be the ugliest thing i've ever written
+    private HashMap<MapMarker, EntryRoadhouseStruct> markerWheelEntryMap;
 
     @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        markerWheelEntryMap = new HashMap<>();
+
 
         if (mapFragment == null) {
             mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -68,6 +87,13 @@ public class MapFragment extends Fragment {
         rh_rating = (RatingBar) view.findViewById(R.id.map_rec_rating);
         rh_image = (ImageView) view.findViewById(R.id.map_rec_img);
         return view;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (OnRoadhouseSelectedListener) context;
+
     }
 
     public void init(OnEngineInitListener callback) {
@@ -91,14 +117,22 @@ public class MapFragment extends Fragment {
     }
 
     public void setMainRoadhouse(WheelEntry entry) {
-        Break pause = entry.getPause();
-        PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
+        setSidebarInfo(entry);
+    }
 
+    public void setSidebarInfo(WheelEntry entry) {
+        setSidebarInfo(entry, entry.getPause().getMainRoadhouse());
+    }
+
+    public void setSidebarInfo(WheelEntry entry, Roadhouse roadhouse) {
+        PlaceLink placeLink = roadhouse.getPlaceLink();
+
+        map.setCenter(placeLink.getPosition(), Map.Animation.BOW);
         rh_title.setText(placeLink.getTitle());
         rh_address.setText("01234 Adresse");
         rh_rating.setRating((float) placeLink.getAverageRating());
-        if (pause.getMainRoadhouse().getETA() != null) {
-            rh_eta.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
+        if (roadhouse.getETA() != null) {
+            rh_eta.setText(dateFormat.format(roadhouse.getETA()));
         } else {// TODO
             rh_eta.setText("12:30");
         }
@@ -131,6 +165,7 @@ public class MapFragment extends Fragment {
             MapMarker marker = new MapMarker();
             marker.setIcon(icon_main);
             marker.setCoordinate(pause.getMainRoadhouse().getPlaceLink().getPosition());
+            markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, pause.getMainRoadhouse()));
             cl.addMarker(marker);
         }
         if (pause.getAlternativeRoadhouses() != null) {
@@ -138,6 +173,7 @@ public class MapFragment extends Fragment {
                 MapMarker marker = new MapMarker();
                 marker.setIcon(icon_alt);
                 marker.setCoordinate(rh.getPlaceLink().getPosition());
+                markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, rh));
                 cl.addMarker(marker);
             }
         }
@@ -146,9 +182,97 @@ public class MapFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        listener = (OnRoadhouseSelectedListener) context;
+    public void onPanStart() {
 
     }
+
+    @Override
+    public void onPanEnd() {
+
+    }
+
+    @Override
+    public void onMultiFingerManipulationStart() {
+
+    }
+
+    @Override
+    public void onMultiFingerManipulationEnd() {
+
+    }
+
+    @Override
+    public boolean onMapObjectsSelected(List<ViewObject> objects) {
+        for (ViewObject viewObj : objects) {
+            if (viewObj.getBaseType() == ViewObject.Type.USER_OBJECT) {
+                if (((MapObject) viewObj).getType() == MapObject.Type.MARKER) {
+                    EntryRoadhouseStruct struct = markerWheelEntryMap.get(viewObj);
+                    setSidebarInfo(struct.entry, struct.rh);
+                }
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public boolean onTapEvent(PointF pointF) {
+        return false;
+    }
+
+    @Override
+    public boolean onDoubleTapEvent(PointF pointF) {
+        return false;
+    }
+
+    @Override
+    public void onPinchLocked() {
+
+    }
+
+    @Override
+    public boolean onPinchZoomEvent(float v, PointF pointF) {
+        return false;
+    }
+
+    @Override
+    public void onRotateLocked() {
+
+    }
+
+    @Override
+    public boolean onRotateEvent(float v) {
+        return false;
+    }
+
+    @Override
+    public boolean onTiltEvent(float v) {
+        return false;
+    }
+
+    @Override
+    public boolean onLongPressEvent(PointF pointF) {
+        return false;
+    }
+
+    @Override
+    public void onLongPressRelease() {
+
+    }
+
+    @Override
+    public boolean onTwoFingerTapEvent(PointF pointF) {
+        return false;
+    }
+
+    private class EntryRoadhouseStruct {
+        public WheelEntry entry;
+        public Roadhouse rh;
+
+
+        public EntryRoadhouseStruct(WheelEntry entry, Roadhouse rh) {
+            this.entry = entry;
+            this.rh = rh;
+        }
+    }
+
 }

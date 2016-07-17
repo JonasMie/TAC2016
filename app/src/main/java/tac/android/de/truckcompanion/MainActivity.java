@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.github.mikephil.charting.data.Entry;
 import com.here.android.mpa.common.OnEngineInitListener;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
@@ -200,6 +201,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                         public void onEngineInitializationCompleted(Error error) {
                             if (error == Error.NONE) {
                                 mapFragment.setMap(mapFragment.getMapFragment().getMap());
+                                mapFragment.getMapFragment().getMapGesture().addOnGestureListener(mapFragment);
                                 mCurrentJourney.initRoute();
 
                                 // Calculate first route
@@ -289,8 +291,12 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     }
 
     @Override
-    public void onMapFragmentRoadhouseChanged(WheelEntry entry) {
-        mainFragment.setMainRoadhouse(entry);
+    public void onMapFragmentRoadhouseChanged(WheelEntry entry, Roadhouse roadhouse) {
+        mainFragment.setMainRoadhouse(entry, roadhouse);
     }
 
+    @Override
+    public void onPauseDataChanged(WheelEntry entry) {
+        mapFragment.addMarkerCluster(entry);
+    }
 }

@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.utils;
 
+import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
@@ -13,5 +14,6 @@ import tac.android.de.truckcompanion.wheel.WheelEntry;
 public interface OnRoadhouseSelectedListener {
 
     void onMainFragmentRoadhouseChanged(WheelEntry entry);
-    void onMapFragmentRoadhouseChanged(WheelEntry entry);
+    void onMapFragmentRoadhouseChanged(WheelEntry entry, Roadhouse roadhouse);
+    void onPauseDataChanged(WheelEntry entry);
 }
