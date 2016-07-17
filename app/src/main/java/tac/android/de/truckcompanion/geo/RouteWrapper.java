@@ -60,7 +60,7 @@ public class RouteWrapper {
         map = mapFragment.getMap();
         marker = new Image();
         try {
-            marker.setImageResource(R.drawable.marker);
+            marker.setImageResource(R.drawable.marker_main);
         } catch (IOException e) {
             Log.e(TAG, "Marker image not found");
         }
@@ -72,16 +72,17 @@ public class RouteWrapper {
         routePlan.setRouteOptions(routeOptions);
     }
 
-    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
+    public void requestRoute(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
         this.callback = callback;
         routePlan.removeAllWaypoints();
         final List<MapObject> markers = new ArrayList<>();
         routePlan.addWaypoint(new RouteWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude)));
+
+
         for (DispoInformation.DestinationPoint destinationPoint :
                 destinationPoints) {
             GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
             routePlan.addWaypoint(new RouteWaypoint(coordinate));
-            markers.add(new MapMarker(coordinate, marker));
         }
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
@@ -104,7 +105,8 @@ public class RouteWrapper {
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
-                        map.addMapObjects(markers);
+                        map.setCenter(GeoHelper.LatLngToGeoCoordinate(destinationPoints.get(0).getCoordinate()), Map.Animation.BOW);
+                        mapRoute.setRenderType(MapRoute.RenderType.PRIMARY);
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {

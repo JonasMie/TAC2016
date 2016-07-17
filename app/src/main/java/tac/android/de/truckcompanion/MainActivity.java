@@ -7,7 +7,6 @@ import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,22 +16,23 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+import com.github.mikephil.charting.data.Entry;
 import com.here.android.mpa.common.OnEngineInitListener;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
-import tac.android.de.truckcompanion.data.DataCollector;
-import tac.android.de.truckcompanion.data.Journey;
-import tac.android.de.truckcompanion.data.TruckState;
-import tac.android.de.truckcompanion.data.TruckStateEventListener;
+import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
+import tac.android.de.truckcompanion.utils.CustomViewPager;
+import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
+import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity implements TruckStateEventListener {
+public class MainActivity extends AppCompatActivity implements TruckStateEventListener, OnRoadhouseSelectedListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     public static FragmentManager fm;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     // View references
     private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
-    private ViewPager mViewPager;
+    private CustomViewPager mViewPager;
     public static ViewPagerAdapter mViewPagerAdapter;
 
     private DrawerLayout mDrawerLayout;
@@ -76,12 +76,14 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPager = (ViewPager) findViewById(R.id.viewpager);
+        mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
 
         fm = getFragmentManager();
         setSupportActionBar(toolbar);
+
+        mViewPager.setPagingEnabled(false);
 
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
@@ -193,12 +195,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                     mCurrentJourney = journey;
 
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
-                    final MapFragment mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
+                    mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
                         @Override
                         public void onEngineInitializationCompleted(Error error) {
                             if (error == Error.NONE) {
                                 mapFragment.setMap(mapFragment.getMapFragment().getMap());
+                                mapFragment.getMapFragment().getMapGesture().addOnGestureListener(mapFragment);
                                 mCurrentJourney.initRoute();
 
                                 // Calculate first route
@@ -280,5 +283,20 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
 
 
+    }
+
+    @Override
+    public void onMainFragmentRoadhouseChanged(WheelEntry entry) {
+        mapFragment.setMainRoadhouse(entry);
+    }
+
+    @Override
+    public void onMapFragmentRoadhouseChanged(WheelEntry entry, Roadhouse roadhouse) {
+        mainFragment.setMainRoadhouse(entry, roadhouse);
+    }
+
+    @Override
+    public void onPauseDataChanged(WheelEntry entry) {
+        mapFragment.addMarkerCluster(entry);
     }
 }

@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion.data;
 
 import com.here.android.mpa.search.DiscoveryResult;
+import com.here.android.mpa.search.Place;
 import com.here.android.mpa.search.PlaceLink;
 import com.nokia.maps.PlacesLink;
 import tac.android.de.truckcompanion.geo.LatLng;
@@ -25,8 +26,10 @@ public class Roadhouse {
     private LatLng location;
     private ArrayList<String> types;
     private PlaceLink placeLink;
+    private Place place;
     private Date ETA;
     private long durationFromStart;
+    private boolean detailsLoading = false;
 
     public Roadhouse(String id, String place_id, String icon, String name, String rating, LatLng location, ArrayList<String> types) {
         this.id = id;
@@ -38,7 +41,7 @@ public class Roadhouse {
         this.types = types;
     }
 
-    public Roadhouse(PlaceLink placeLink){
+    public Roadhouse(PlaceLink placeLink) {
         this.placeLink = placeLink;
     }
 
@@ -92,5 +95,25 @@ public class Roadhouse {
 
     public void setDurationFromStart(long durationFromStart) {
         this.durationFromStart = durationFromStart;
+    }
+
+    public Place getPlace() {
+        return place;
+    }
+
+    public void setPlace(Place place) {
+        this.place = place;
+    }
+
+    public void onDetailsLoaded() {
+        detailsLoading = false;
+    }
+
+    public boolean isDetailsLoading() {
+        return detailsLoading;
+    }
+
+    public void setDetailsLoading(boolean detailsLoading) {
+        this.detailsLoading = detailsLoading;
     }
 }
