@@ -576,7 +576,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                         refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
                     } else {
                         // TODO
-                        refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
+                        refPoint = ((WheelEntry) dataSet.getEntryForIndex(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
                     }
                     final Break[] formerPause = {pause};
                     pause.update(getAccumulatedValue(entryIndex), refPoint, pauseEntry.getPause().getIndex(), new AsyncResponse<Break>() {
