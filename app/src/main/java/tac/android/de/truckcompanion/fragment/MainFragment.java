@@ -401,10 +401,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
         mChart.setRotationEnabled(false);
-        selectedEntry = (WheelEntry) dataSet.getEntryForIndex(dataSetIndex);
-
-        if (((WheelEntry) e).getEntryType() == PAUSE_ENTRY) {
-            listener.onMainFragmentRoadhouseChanged(selectedEntry);
+        WheelEntry entry = (WheelEntry) e;
+        if (entry.getEntryType() == PAUSE_ENTRY) {
+            if (entry != selectedEntry) {
+                selectedEntry = (WheelEntry) e;
+                setRecommendations(null);
+                listener.onMainFragmentRoadhouseChanged(selectedEntry);
+            }
         }
     }
 
