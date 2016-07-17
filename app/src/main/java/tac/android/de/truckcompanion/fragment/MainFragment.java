@@ -604,6 +604,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                         @Override
                                         public void processFinish(RouteWrapper routeWrapper) {
                                             updateEntryPositions(routeWrapper);
+                                            setRecommendations(null);
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
