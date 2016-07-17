@@ -52,7 +52,6 @@
         android:layout_toEndOf="@+id/recommendations_alternative_eta"
         android:layout_marginLeft="@dimen/default_margin"
         android:layout_marginStart="@dimen/default_margin" />
-<!--parking_red-->
     <ImageView
         android:layout_width="40dp"
         android:layout_height="wrap_content"
@@ -60,13 +59,12 @@
         android:layout_below="@+id/recommendations_alternative_eta"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:src="@drawable/marker"/>
-<!--parking_green-->
+        android:src="@drawable/icon_parking_red"/>
     <ImageView
         android:layout_width="40dp"
         android:layout_height="wrap_content"
         android:id="@+id/imageView6"
-        android:src="@drawable/marker"
+        android:src="@drawable/icon_gas_green"
         android:layout_alignTop="@+id/imageView5"
         android:layout_toRightOf="@+id/imageView5"
         android:layout_toEndOf="@+id/imageView5"
