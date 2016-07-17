@@ -7,7 +7,6 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.graphics.Rect;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
@@ -167,6 +166,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
 
+        mChart.setHighlightPerTapEnabled(false);
+
         // Listener
         mChart.setOnChartGestureListener(this);
         mChart.setOnChartValueSelectedListener(this);
@@ -277,16 +278,16 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             mStartAngle += diffAngle;
         }
         // un-highlight values after the gesture is finished and no single-tap
-        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
-            if (!mChart.isEditModeEnabled()) {
-                mChart.highlightValues(null);
-                mChart.setRotationEnabled(true);
-                if (selectedEntry != null) {
-                    selectedEntry.setEditModeActive(false);
-                    selectedEntry = null;
-                }
-            }
-        }
+//        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
+//            if (!mChart.isEditModeEnabled()) {
+//                mChart.highlightValues(null);
+//                mChart.setRotationEnabled(true);
+//                if (selectedEntry != null) {
+//                    selectedEntry.setEditModeActive(false);
+//                    selectedEntry = null;
+//                }
+//            }
+//        }
     }
 
     public void rotateIcons(float x, float y) {
@@ -380,6 +381,36 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public void onChartSingleTapped(MotionEvent me) {
         Log.i("SingleTap", "Chart single-tapped.");
+
+        float distance = mChart.distanceToCenter(me.getX(), me.getY());
+
+        // check if a slice was touched
+        if (distance > mChart.getRadius()) {
+
+            // if no slice was touched, do nothing
+            return;
+
+        } else {
+
+            float angle = mChart.getAngleForPoint(me.getX(), me.getY());
+            angle /= mChart.getAnimator().getPhaseY();
+
+            int index = mChart.getIndexForAngle(angle);
+
+            // check if the index could be found
+            if (index < 0) {
+                return;
+            } else {
+                // check if wheel entry is pause. if not, do nothing
+                WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(index);
+                if (entry.getEntryType() != PAUSE_ENTRY || entry == selectedEntry) {
+                    return;
+                }
+                Highlight h = new Highlight(index, 0);
+                mChart.highlightValue(h);
+                onValueSelected(entry, 0, h);
+            }
+        }
     }
 
     @Override
@@ -400,7 +431,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public void onValueSelected(Entry e, int dataSetIndex, Highlight h) {
         Log.i("Entry selected", e.toString());
-        mChart.setRotationEnabled(false);
         WheelEntry entry = (WheelEntry) e;
         if (entry.getEntryType() == PAUSE_ENTRY) {
             if (entry != selectedEntry) {
