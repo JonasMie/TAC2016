@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion.data;
 
 import android.util.Log;
+import com.here.android.mpa.cluster.ClusterLayer;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.search.*;
 import org.json.JSONArray;
@@ -39,6 +40,7 @@ public class Break {
 
     private static ArrayList<Break> breaks = new ArrayList<>();
     private int nTry = 1;
+    private ClusterLayer clusterLayer;
 
     public Break(int elapsedTime, int index, WheelEntry wheelEntry) {
         this.elapsedTime = elapsedTime;
@@ -196,5 +198,13 @@ public class Break {
 
     public void setWheelEntry(WheelEntry wheelEntry) {
         this.wheelEntry = wheelEntry;
+    }
+
+    public void setClusterLayer(ClusterLayer clusterLayer) {
+        this.clusterLayer = clusterLayer;
+    }
+
+    public ClusterLayer getClusterLayer() {
+        return clusterLayer;
     }
 }

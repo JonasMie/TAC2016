@@ -60,7 +60,7 @@ public class RouteWrapper {
         map = mapFragment.getMap();
         marker = new Image();
         try {
-            marker.setImageResource(R.drawable.marker);
+            marker.setImageResource(R.drawable.marker_main);
         } catch (IOException e) {
             Log.e(TAG, "Marker image not found");
         }
@@ -83,7 +83,6 @@ public class RouteWrapper {
                 destinationPoints) {
             GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
             routePlan.addWaypoint(new RouteWaypoint(coordinate));
-            markers.add(new MapMarker(coordinate, marker));
         }
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
@@ -106,7 +105,6 @@ public class RouteWrapper {
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
-                        map.addMapObjects(markers);
                         map.setCenter(GeoHelper.LatLngToGeoCoordinate(destinationPoints.get(0).getCoordinate()), Map.Animation.BOW);
                         mapRoute.setRenderType(MapRoute.RenderType.PRIMARY);
                         callback.processFinish(RouteWrapper.this);

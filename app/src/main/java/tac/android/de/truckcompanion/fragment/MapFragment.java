@@ -107,6 +107,43 @@ public class MapFragment extends Fragment {
 
     }
 
+    public void addMarkerCluster(WheelEntry entry) {
+        if (icon_main == null || icon_alt == null) {
+            icon_main = new Image();
+            icon_alt = new Image();
+            try {
+                icon_main.setImageResource(R.drawable.marker_main);
+                icon_alt.setImageResource(R.drawable.marker_alt);
+            } catch (IOException e) {
+                Log.e(TAG, "Marker image not found");
+            }
+
+        }
+
+        Break pause = entry.getPause();
+        // TODO: remove from hashmap
+        if (pause.getClusterLayer() != null) {
+            map.removeClusterLayer(pause.getClusterLayer());
+        }
+
+        ClusterLayer cl = new ClusterLayer();
+        if (pause.getMainRoadhouse() != null) {
+            MapMarker marker = new MapMarker();
+            marker.setIcon(icon_main);
+            marker.setCoordinate(pause.getMainRoadhouse().getPlaceLink().getPosition());
+            cl.addMarker(marker);
+        }
+        if (pause.getAlternativeRoadhouses() != null) {
+            for (Roadhouse rh : pause.getAlternativeRoadhouses()) {
+                MapMarker marker = new MapMarker();
+                marker.setIcon(icon_alt);
+                marker.setCoordinate(rh.getPlaceLink().getPosition());
+                cl.addMarker(marker);
+            }
+        }
+        pause.setClusterLayer(cl);
+        map.addClusterLayer(cl);
+    }
 
     @Override
     public void onAttach(Context context) {
