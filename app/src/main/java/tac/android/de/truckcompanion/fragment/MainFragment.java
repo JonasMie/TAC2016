@@ -178,6 +178,19 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        listener = (OnRoadhouseSelectedListener) context;
+
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (OnRoadhouseSelectedListener) activity;
+    }
+
     public void setupFragment() {
         entries = WheelEntry.getEntries();
 
@@ -801,28 +814,20 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         }
     }
 
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        listener = (OnRoadhouseSelectedListener) context;
-
-    }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        listener = (OnRoadhouseSelectedListener) activity;
-
-    }
-
     public void setMainRoadhouse(WheelEntry entry, Roadhouse rh) {
         highlightEntry(entry);
-        // TODO
-//        if(pause.getMainRoadhouse() != )
-//        Roadhouse prevMainRh = pause.getMainRoadhouse();
-//        int prevAltRhIndex = pause.getAlternativeRoadhouses().indexOf(pause);
-//        pause.setMainRoadhouse(pause.getAlternativeRoadhouses().get(prevAltRhIndex));
-//        pause.getAlternativeRoadhouses().set(prevAltRhIndex, prevMainRh);
+        // if the user chose the main roadhouse, a recalculation is not necessary (nothing changes)
+        if (rh != entry.getPause().getMainRoadhouse()) {
+            Break pause = entry.getPause();
+            Roadhouse prevMainRh = pause.getMainRoadhouse();
+            int prevAltRhIndex = pause.getAlternativeRoadhouses().indexOf(rh);
+            pause.setMainRoadhouse(pause.getAlternativeRoadhouses().get(prevAltRhIndex));
+            pause.getAlternativeRoadhouses().set(prevAltRhIndex, prevMainRh);
+
+            // recalculate route!
+            setRecommendations(null);
+        }
+
     }
 
     private void highlightEntry(WheelEntry entry) {

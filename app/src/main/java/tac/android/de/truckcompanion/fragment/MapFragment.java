@@ -2,12 +2,14 @@ package tac.android.de.truckcompanion.fragment;
 
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -59,6 +61,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private TextView rh_breaktime;
     private RatingBar rh_rating;
     private ImageView rh_image;
+    private FloatingActionButton rh_choose;
 
     private Image icon_main;
     private Image icon_alt;
@@ -86,6 +89,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         rh_breaktime = (TextView) view.findViewById(R.id.map_rec_info_breaktime);
         rh_rating = (RatingBar) view.findViewById(R.id.map_rec_rating);
         rh_image = (ImageView) view.findViewById(R.id.map_rec_img);
+        rh_choose = (FloatingActionButton) view.findViewById(R.id.map_rec_choose);
         return view;
     }
 
@@ -94,6 +98,12 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         super.onAttach(context);
         listener = (OnRoadhouseSelectedListener) context;
 
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        listener = (OnRoadhouseSelectedListener) activity;
     }
 
     public void init(OnEngineInitListener callback) {
@@ -124,7 +134,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         setSidebarInfo(entry, entry.getPause().getMainRoadhouse());
     }
 
-    public void setSidebarInfo(WheelEntry entry, Roadhouse roadhouse) {
+    public void setSidebarInfo(final WheelEntry entry, final Roadhouse roadhouse) {
         PlaceLink placeLink = roadhouse.getPlaceLink();
 
         map.setCenter(placeLink.getPosition(), Map.Animation.BOW);
@@ -138,6 +148,14 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         }
         rh_distance.setText("20 km"); // TODO
         rh_breaktime.setText(((int) entry.getVal() / 60) + " min");
+
+        rh_choose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onMapFragmentRoadhouseChanged(entry, roadhouse);
+            }
+        });
+
 
     }
 
