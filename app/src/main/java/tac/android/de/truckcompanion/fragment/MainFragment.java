@@ -44,9 +44,7 @@ import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 import static tac.android.de.truckcompanion.wheel.WheelEntry.COLORS;
 import static tac.android.de.truckcompanion.wheel.WheelEntry.PAUSE_ENTRY;
@@ -93,6 +91,10 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     MainActivity activity;
     ProgressDialog progressDialog;
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
+    Timer timer = new Timer();
+    TimerTask timerTask;
+
+    long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
 
     // Constants
@@ -388,10 +390,10 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         if (distance > mChart.getRadius()) {
 
             // if no slice was touched, do nothing
-            return;
-
+            selectedEntry.setEditModeActive(false);
+            mChart.setEditModeEnabled(false);
+            mChart.setRotationEnabled(true);
         } else {
-
             float angle = mChart.getAngleForPoint(me.getX(), me.getY());
             angle /= mChart.getAnimator().getPhaseY();
 
@@ -403,12 +405,17 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             } else {
                 // check if wheel entry is pause. if not, do nothing
                 WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(index);
-                if (entry.getEntryType() != PAUSE_ENTRY || entry == selectedEntry) {
+                if (entry.getEntryType() != PAUSE_ENTRY) {
                     return;
+                } else {
+                    if (entry == selectedEntry) {
+                        entry.setEditModeActive(false);
+                    } else {
+                        Highlight h = new Highlight(index, 0);
+                        mChart.highlightValue(h);
+                        onValueSelected(entry, 0, h);
+                    }
                 }
-                Highlight h = new Highlight(index, 0);
-                mChart.highlightValue(h);
-                onValueSelected(entry, 0, h);
             }
         }
     }
@@ -474,12 +481,16 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onEntryDragged(MotionEvent me, float diffAngle) {
         Log.i("ENTRY:DRAG", "Entry dragged");
         WheelEntry entry = WheelEntry.getActiveEntry();
+        if (timerTask != null) {
+            timerTask.cancel();
+        }
+
         boolean splitBreak = false;
         boolean mergeBreak = false;
 
         if (entry != null) {
             int nEntries = mChart.getXValCount();
-            int entryIndex = entry.getXIndex();
+            final int entryIndex = entry.getXIndex();
 
             // split the break
             if (entry.getVal() == COMPLETE_BREAK) {
@@ -497,7 +508,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             WheelEntry bufferEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex + 1);
             WheelEntry driveEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex - 1);
-            WheelEntry pauseEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex);
+            final WheelEntry pauseEntry = (WheelEntry) dataSet.getEntryForIndex(entryIndex);
 
             if (splitBreak) {
                 MainActivity.getmCurrentJourney().addDestinationPoint(pauseEntry.getPause().getDestinationPoint());
@@ -538,69 +549,78 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             mChart.invalidate();
 
             // (Re-)Calculate breaks
-            float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
-            if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
-//                activity.showDialog(R.string.loading_journey_data_title, R.string.updating_pause_data_msg, ProgressDialog.STYLE_SPINNER, false);
-                progressDialog.setTitle(R.string.loading_journey_data_title);
-                progressDialog.setMessage(getString(R.string.updating_pause_data_msg));
-                progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                progressDialog.setCancelable(false);
-                progressDialog.show();
-                Break pause = pauseEntry.getPause();
-                pauseEntry.setStepAngle(RECALCULATION_STEP * Math.round(mStartAngle / RECALCULATION_STEP));
-                final boolean finalSplitBreak = splitBreak;
-                final boolean finalMergeBreak = mergeBreak;
-                final DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
-
-                GeoCoordinate refPoint;
-
-                if (pause.getIndex() == 0) {
-                    // entry is first entry
-                    refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
-                } else {
-                    // TODO
-                    refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
-                }
-                final Break[] formerPause = {pause};
-                pause.update(getAccumulatedValue(entryIndex), refPoint, pauseEntry.getPause().getIndex(), new AsyncResponse<Break>() {
-                    @Override
-                    public void processFinish(Break pause) {
-                        Log.i(LOG, "Roadhouse updated. New Roadhouse");
-                        Break.removeBreak(formerPause[0]);
-                        formerPause[0] = pause;
-                        Break.addBreak(pause);
-
-                        progressDialog.setMessage(getString(R.string.updating_route_data_msg));
-                        final Journey journey = MainActivity.getmCurrentJourney();
-                        PlaceLink mainRoadhouse = pause.getMainRoadhouse().getPlaceLink();
-                        if (!journey.getDestinationPoints().contains(pause.getDestinationPoint())) {
-                            journey.addDestinationPoint(pause.getDestinationPoint());
-                            journey.removeDestinationPoint(formerDestinationPoint);
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
+//                    if (Math.abs(mStartAngle - pauseEntry.getStepAngle()) > RECALCULATION_STEP) {
+                    progressDialog.setTitle(R.string.loading_journey_data_title);
+                    progressDialog.setMessage(getString(R.string.updating_pause_data_msg));
+                    progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+                    progressDialog.setCancelable(false);
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            progressDialog.show();
                         }
+                    });
 
-                        // UPDATE ROUTE!
-                        RouteWrapper.getOrderedWaypoints(journey.getStartPoint(), journey.getDestinationPoints(), null, new AsyncResponse<ArrayList>() {
-                            @Override
-                            public void processFinish(ArrayList orderedDestinationPoints) {
-                                journey.setDestinationPoints(orderedDestinationPoints);
-                                activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
-                                    @Override
-                                    public void processFinish(RouteWrapper routeWrapper) {
-                                        updateEntryPositions(routeWrapper);
-                                        getActivity().runOnUiThread(new Runnable() {
-                                            @Override
-                                            public void run() {
-                                                progressDialog.dismiss();
-                                            }
-                                        });
-                                        progressDialog.dismiss();
-                                    }
-                                });
-                            }
-                        });
+                    Break pause = pauseEntry.getPause();
+                    pauseEntry.setStepAngle(RECALCULATION_STEP * Math.round(mStartAngle / RECALCULATION_STEP));
+                    final DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
+
+                    GeoCoordinate refPoint;
+
+                    if (pause.getIndex() == 0) {
+                        // entry is first entry
+                        refPoint = MainActivity.getmCurrentJourney().getRouteWrapper().getRoute().getStart();
+                    } else {
+                        // TODO
+                        refPoint = ((WheelEntry) mChart.getEntriesAtIndex(entryIndex).get(entryIndex - 2)).getPause().getMainRoadhouse().getPlaceLink().getPosition();
                     }
-                });
-            }
+                    final Break[] formerPause = {pause};
+                    pause.update(getAccumulatedValue(entryIndex), refPoint, pauseEntry.getPause().getIndex(), new AsyncResponse<Break>() {
+                        @Override
+                        public void processFinish(Break pause) {
+                            Log.i(LOG, "Roadhouse updated. New Roadhouse");
+                            Break.removeBreak(formerPause[0]);
+                            formerPause[0] = pause;
+                            Break.addBreak(pause);
+
+                            progressDialog.setMessage(getString(R.string.updating_route_data_msg));
+                            final Journey journey = MainActivity.getmCurrentJourney();
+                            PlaceLink mainRoadhouse = pause.getMainRoadhouse().getPlaceLink();
+                            if (!journey.getDestinationPoints().contains(pause.getDestinationPoint())) {
+                                journey.addDestinationPoint(pause.getDestinationPoint());
+                                journey.removeDestinationPoint(formerDestinationPoint);
+                            }
+
+                            // UPDATE ROUTE!
+                            RouteWrapper.getOrderedWaypoints(journey.getStartPoint(), journey.getDestinationPoints(), null, new AsyncResponse<ArrayList>() {
+                                @Override
+                                public void processFinish(ArrayList orderedDestinationPoints) {
+                                    journey.setDestinationPoints(orderedDestinationPoints);
+                                    activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
+                                        @Override
+                                        public void processFinish(RouteWrapper routeWrapper) {
+                                            updateEntryPositions(routeWrapper);
+                                            getActivity().runOnUiThread(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    progressDialog.dismiss();
+                                                }
+                                            });
+                                            progressDialog.dismiss();
+                                        }
+                                    });
+                                }
+                            });
+                        }
+                    });
+//                }
+                }
+            };
+            timer.schedule(timerTask, ROUTE_RECALCULATION_DELAY);
         }
     }
 
