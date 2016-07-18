@@ -24,4 +24,6 @@
     <string name="eta">Ankunft</string>
     <string name="distance">Entfernung</string>
     <string name="breaktime">Pausenzeit</string>
+    <string name="start_navigation_menu_item">Navigation starten</string>
+    <string name="stop_navigation_menu_item">Navigation stoppen</string>
 </resources>

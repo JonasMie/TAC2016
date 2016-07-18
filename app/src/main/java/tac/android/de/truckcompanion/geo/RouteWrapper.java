@@ -52,6 +52,7 @@ public class RouteWrapper {
     private Image marker;
     private int duration;
     private int distance;
+    private boolean calculationFinished = false;
 
     private ArrayList<ArrayList> legs = new ArrayList<>();
 
@@ -74,6 +75,7 @@ public class RouteWrapper {
 
     public void requestRoute(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
         this.callback = callback;
+        calculationFinished = false;
         routePlan.removeAllWaypoints();
         final List<MapObject> markers = new ArrayList<>();
         routePlan.addWaypoint(new RouteWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude)));
@@ -105,8 +107,8 @@ public class RouteWrapper {
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
-                        map.setCenter(GeoHelper.LatLngToGeoCoordinate(destinationPoints.get(0).getCoordinate()), Map.Animation.BOW);
-                        mapRoute.setRenderType(MapRoute.RenderType.PRIMARY);
+                        map.setCenter(route.getStart(), Map.Animation.BOW);
+                        calculationFinished = true;
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
@@ -289,5 +291,13 @@ public class RouteWrapper {
 
     public void setDepartureTime(Date departureTime) {
         this.departureTime = departureTime;
+    }
+
+    public boolean getCalculationFinished() {
+        return calculationFinished;
+    }
+
+    public void setCalculationFinished(boolean calculationFinished) {
+        this.calculationFinished = calculationFinished;
     }
 }

@@ -391,12 +391,27 @@
         </RelativeLayout>
     </ScrollView>
 
-    <fragment
+    <FrameLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
-            android:layout_weight="5"
-            class="com.here.android.mpa.mapping.MapFragment"
-            android:id="@+id/map"/>
+            android:layout_weight="5">
+
+        <fragment
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                class="com.here.android.mpa.mapping.MapFragment"
+                android:id="@+id/map"/>
+
+        <ImageView
+                android:id="@+id/map_relocate"
+                android:layout_width="50px"
+                android:layout_height="50px"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="@dimen/default_margin"
+                android:layout_gravity="bottom|right"
+
+                android:src="@drawable/locate"/>
+    </FrameLayout>
 
 
 </LinearLayout>

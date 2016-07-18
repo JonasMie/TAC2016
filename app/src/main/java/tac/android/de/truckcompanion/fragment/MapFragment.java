@@ -16,21 +16,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
 import com.here.android.mpa.cluster.ClusterLayer;
+import com.here.android.mpa.common.GeoPosition;
 import com.here.android.mpa.common.Image;
 import com.here.android.mpa.common.OnEngineInitListener;
 import com.here.android.mpa.common.ViewObject;
+import com.here.android.mpa.guidance.NavigationManager;
+import com.here.android.mpa.guidance.NavigationManager.NewInstructionEventListener;
 import com.here.android.mpa.mapping.Map;
 import com.here.android.mpa.mapping.MapGesture;
 import com.here.android.mpa.mapping.MapMarker;
 import com.here.android.mpa.mapping.MapObject;
+import com.here.android.mpa.routing.Maneuver;
+import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
+import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.List;
@@ -62,6 +69,12 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private RatingBar rh_rating;
     private ImageView rh_image;
     private FloatingActionButton rh_choose;
+    private ImageView map_relocate;
+    private NewInstructionEventListener newInstructionEventListener;
+    private NavigationManager.NavigationManagerEventListener navigationManagerEventListener;
+    private NavigationManager.PositionListener positionListener;
+
+    private MapMarker currentPositionMarker;
 
     private Image icon_main;
     private Image icon_alt;
@@ -74,7 +87,6 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         markerWheelEntryMap = new HashMap<>();
-
 
         if (mapFragment == null) {
             mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -90,6 +102,14 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         rh_rating = (RatingBar) view.findViewById(R.id.map_rec_rating);
         rh_image = (ImageView) view.findViewById(R.id.map_rec_img);
         rh_choose = (FloatingActionButton) view.findViewById(R.id.map_rec_choose);
+
+        map_relocate = (ImageView) view.findViewById(R.id.map_relocate);
+        map_relocate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.ROADVIEW);
+            }
+        });
         return view;
     }
 
@@ -160,24 +180,13 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     }
 
     public void addMarkerCluster(WheelEntry entry) {
-        if (icon_main == null || icon_alt == null) {
-            icon_main = new Image();
-            icon_alt = new Image();
-            try {
-                icon_main.setImageResource(R.drawable.marker_main);
-                icon_alt.setImageResource(R.drawable.marker_alt);
-            } catch (IOException e) {
-                Log.e(TAG, "Marker image not found");
-            }
-
-        }
-
         Break pause = entry.getPause();
         // TODO: remove from hashmap
         if (pause.getClusterLayer() != null) {
             map.removeClusterLayer(pause.getClusterLayer());
         }
 
+        prepareImages();
         ClusterLayer cl = new ClusterLayer();
         if (pause.getMainRoadhouse() != null) {
             MapMarker marker = new MapMarker();
@@ -201,26 +210,27 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     @Override
     public void onPanStart() {
-
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
     }
 
     @Override
     public void onPanEnd() {
-
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
     }
 
     @Override
     public void onMultiFingerManipulationStart() {
-
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
     }
 
     @Override
     public void onMultiFingerManipulationEnd() {
-
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
     }
 
     @Override
     public boolean onMapObjectsSelected(List<ViewObject> objects) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         for (ViewObject viewObj : objects) {
             if (viewObj.getBaseType() == ViewObject.Type.USER_OBJECT) {
                 if (((MapObject) viewObj).getType() == MapObject.Type.MARKER) {
@@ -234,11 +244,13 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     @Override
     public boolean onTapEvent(PointF pointF) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
     @Override
     public boolean onDoubleTapEvent(PointF pointF) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
@@ -249,6 +261,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     @Override
     public boolean onPinchZoomEvent(float v, PointF pointF) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
@@ -259,27 +272,96 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     @Override
     public boolean onRotateEvent(float v) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
     @Override
     public boolean onTiltEvent(float v) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
     @Override
     public boolean onLongPressEvent(PointF pointF) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
     }
 
     @Override
     public void onLongPressRelease() {
-
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
     }
 
     @Override
     public boolean onTwoFingerTapEvent(PointF pointF) {
+        NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
         return false;
+    }
+
+    public void onStartupTaskReady() {
+        prepareImages();
+
+        currentPositionMarker = new MapMarker();
+        currentPositionMarker.setIcon(icon_main);
+        map.addMapObject(currentPositionMarker);
+
+        newInstructionEventListener = new NewInstructionEventListener() {
+            @Override
+            public void onNewInstructionEvent() {
+                Maneuver maneuver = NavigationWrapper.getInstance().getNavigationManager().getNextManeuver();
+                if (maneuver != null) {
+
+                }
+            }
+        };
+
+        navigationManagerEventListener = new NavigationManager.NavigationManagerEventListener() {
+            @Override
+            public void onRunningStateChanged() {
+                if (NavigationWrapper.getInstance().getNavigationManager().getRunningState() == NavigationManager.NavigationState.RUNNING) {
+                    NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.ROADVIEW);
+                }
+                super.onRunningStateChanged();
+            }
+
+            @Override
+            public void onNavigationModeChanged() {
+                super.onNavigationModeChanged();
+            }
+
+            @Override
+            public void onEnded(NavigationManager.NavigationMode navigationMode) {
+                NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
+                super.onEnded(navigationMode);
+            }
+
+            @Override
+            public void onMapUpdateModeChanged(NavigationManager.MapUpdateMode mapUpdateMode) {
+                super.onMapUpdateModeChanged(mapUpdateMode);
+            }
+
+            @Override
+            public void onRouteUpdated(Route route) {
+                super.onRouteUpdated(route);
+            }
+
+            @Override
+            public void onCountryInfo(String s, String s1) {
+                super.onCountryInfo(s, s1);
+            }
+        };
+
+        positionListener = new NavigationManager.PositionListener() {
+            @Override
+            public void onPositionUpdated(GeoPosition geoPosition) {
+                currentPositionMarker.setCoordinate(geoPosition.getCoordinate());
+            }
+        };
+
+        NavigationWrapper.getInstance().getNavigationManager().addNewInstructionEventListener(new WeakReference<>(newInstructionEventListener));
+        NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
+        NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
     }
 
     private class EntryRoadhouseStruct {
@@ -290,6 +372,20 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         public EntryRoadhouseStruct(WheelEntry entry, Roadhouse rh) {
             this.entry = entry;
             this.rh = rh;
+        }
+    }
+
+    private void prepareImages() {
+        if (icon_main == null || icon_alt == null) {
+            icon_main = new Image();
+            icon_alt = new Image();
+            try {
+                icon_main.setImageResource(R.drawable.marker_main);
+                icon_alt.setImageResource(R.drawable.marker_alt);
+            } catch (IOException e) {
+                Log.e(TAG, "Marker image not found");
+            }
+
         }
     }
 
