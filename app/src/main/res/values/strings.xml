@@ -1,4 +1,4 @@
-<resources>
+﻿<resources>
     <string name="app_name">TruckCompanion</string>
     <string name="google_app_id">176842196711</string>
     <string name="drawer_open">Menü öffnen</string>
@@ -24,4 +24,12 @@
     <string name="eta">Ankunft</string>
     <string name="distance">Entfernung</string>
     <string name="breaktime">Pausenzeit</string>
+    <string name="day_stats_card_0_title">Heute,01.07.2016</string>
+    <string name="day_stats_card_1_title">Sonntag,30.06.2016</string>
+    <string name="day_stats_card_2_title">Samstag,29.06.2016</string>
+    <string name="day_stats_card_3_title">Freitag,28.06.2016</string>
+    <string name="day_stats_card_4_title">Donnerstag,27.06.2016</string>
+    <string name="day_stats_card_5_title">Mittwoch,26.06.2016</string>
+    <string name="day_stats_card_6_title">Dienstag,25.06.2016</string>
+
 </resources>

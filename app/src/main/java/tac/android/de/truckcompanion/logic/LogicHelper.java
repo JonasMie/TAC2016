@@ -19,7 +19,9 @@ public class LogicHelper implements SimulationEventListener, TruckStateEventList
     public static final int MAX_DAY_DRIVE_MINUTES_EXCEPTION = 600 ;  // 10 hours
     public static final int MAX_SESSION_DRIVE_MINUTES = 270;             // 4.5 hours
     public static final int MAX_SESSION_WORK_MINUTES_COMBINED = 360;      // 6 hours
-    public static final int MAX_DAY_WORK_MINUTES = 480;                   // 8 hours
+    public static final int MAX_DAY_WORK_MINUTES = 480;// 8 hours
+
+    public static final int MAX_DOUBLE_WEEK_DRIVE_MINUTES = 5400;                //90 hours
 
     public static final int MIN_WEEK_REST_MINUTES = 2700 ;            // 45 hours
     public static final int MIN_WEEK_REST_MINUTES_EXCEPTION = 1440 ;    // 24 hours
@@ -31,7 +33,9 @@ public class LogicHelper implements SimulationEventListener, TruckStateEventList
     public static final int MIN_DAY_REST_MINUTES_SPLIT_P2 = 540 ;           //9 hours
     public static final int MIN_DAY_REST_MINUTES_EXCEPTION = 540 ;             // 9 hours
 
+
     public static final int DAY_TIME = 1440;                //24 hours
+
 
     //not a 24h day. values are set to MIN and are decreased. example: if drivingMinutes is zero, driver has no driving time left for this day (only twice a week 10hours)
     public class Day {
@@ -86,6 +90,26 @@ public class LogicHelper implements SimulationEventListener, TruckStateEventList
             currActivity = DriverActivity.LAST;
 
         }
+
+        public void SetDayValues(float driveTime, float restTime, boolean driveMinutesEx)
+        {
+            maxDriveMinutes = MAX_DAY_DRIVE_MINUTES - driveTime;
+            minRestMinutes = MIN_DAY_REST_MINUTES - restTime;
+            driveMinutesException = driveMinutesEx;
+        }
+
+        public float GetDriveTime()
+        {
+            return driveMinutesException ? MAX_DAY_DRIVE_MINUTES_EXCEPTION - maxDriveMinutes : MAX_DAY_DRIVE_MINUTES - maxDriveMinutes;
+        }
+
+        public float GetRestTime()
+        {
+            return MIN_DAY_REST_MINUTES - minRestMinutes;
+        }
+
+        public boolean HasDriveTimeException()
+        {return driveMinutesException;}
 
         public void SetActivity(DriverActivity newActivity) {
             currActivity = newActivity;
@@ -232,7 +256,57 @@ public class LogicHelper implements SimulationEventListener, TruckStateEventList
     {
 
         workingDays = new Vector<Day>();
+
         currDay = new Day();
+        currDay.SetDayValues(6*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+        currDay.SetDayValues(6*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+        currDay.SetDayValues(6*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+        currDay.SetDayValues(8*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+        currDay.SetDayValues(8*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+        currDay.SetDayValues(8*60,MIN_DAY_REST_MINUTES,false);
+        workingDays.add(currDay);
+        currDay = new Day();
+
+    }
+
+    public Day GetCurrentDay()
+    {return currDay;}
+
+    public float GetDriveTimeSum()
+    { float driveTime = 0;
+        for(Day day : workingDays)
+        {
+            driveTime+= day.GetDriveTime();
+        }
+        return driveTime;}
+
+    public float GetRestTimeSum()
+    { float driveTime = 0;
+        for(Day day : workingDays)
+        {
+            driveTime+= day.GetRestTime();
+        }
+        return driveTime;}
+
+    public int GetDriveTimeExNum()
+    {
+        int exNum = 0;
+        for(Day day : workingDays) {
+            if (day.HasDriveTimeException()) {
+                ++exNum;
+            }
+        }
+        return exNum;
     }
 
 
