@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
+import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
@@ -51,8 +53,8 @@ import java.util.*;
  */
 public class MapFragment extends Fragment implements MapGesture.OnGestureListener {
 
-    private static final String MAP_TAG = "map_tag";
     private static final String TAG = MapFragment.class.getSimpleName();
+    private static final long SIMULATION_RATIO = 15;
     private Map map;
     private com.here.android.mpa.mapping.MapFragment mapFragment;
     private SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
@@ -72,6 +74,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private NewInstructionEventListener newInstructionEventListener;
     private NavigationManager.NavigationManagerEventListener navigationManagerEventListener;
     private NavigationManager.PositionListener positionListener;
+    private MainActivity activity;
+    private PointF anchorPoint;
 
     private List<TruckStateEventListener> listeners = new ArrayList<>();
 
@@ -90,6 +94,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+        activity = (MainActivity) getActivity();
         markerWheelEntryMap = new HashMap<>();
 
         timer = new Timer();
@@ -198,6 +203,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             MapMarker marker = new MapMarker();
             marker.setIcon(icon_main);
             marker.setCoordinate(pause.getMainRoadhouse().getPlaceLink().getPosition());
+            marker.setAnchorPoint(anchorPoint);
             markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, pause.getMainRoadhouse()));
             cl.addMarker(marker);
         }
@@ -206,6 +212,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
                 MapMarker marker = new MapMarker();
                 marker.setIcon(icon_alt);
                 marker.setCoordinate(rh.getPlaceLink().getPosition());
+                marker.setAnchorPoint(anchorPoint);
                 markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, rh));
                 cl.addMarker(marker);
             }
@@ -310,6 +317,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
         currentPositionMarker = new MapMarker();
         currentPositionMarker.setIcon(icon_main);
+        currentPositionMarker.setAnchorPoint(anchorPoint);
         map.addMapObject(currentPositionMarker);
 
         newInstructionEventListener = new NewInstructionEventListener() {
@@ -409,7 +417,6 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
     }
-
     private class EntryRoadhouseStruct {
         public WheelEntry entry;
         public Roadhouse rh;
@@ -432,10 +439,10 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             try {
                 icon_main.setImageResource(R.drawable.marker_main);
                 icon_alt.setImageResource(R.drawable.marker_alt);
+                anchorPoint = new PointF(icon_main.getWidth() / 2, icon_main.getHeight());
             } catch (IOException e) {
                 Log.e(TAG, "Marker image not found");
             }
-
         }
     }
 
