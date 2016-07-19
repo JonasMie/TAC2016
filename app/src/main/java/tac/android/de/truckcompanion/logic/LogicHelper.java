@@ -37,6 +37,9 @@ public class LogicHelper {
     public static final int DAY_TIME = 1440;                //24 hours
 
 
+    private final int updateCycle = 60;
+    private int currUpdateCycle = 0;
+
     //not a 24h day. values are set to MIN and are decreased. example: if drivingMinutes is zero, driver has no driving time left for this day (only twice a week 10hours)
     public class Day {
         //session related
@@ -334,14 +337,20 @@ public class LogicHelper {
     void SetActivity(DriverActivity newActivity)
     {
         currDay.SetActivity(newActivity);
-
-
     }
 
 
     public void onSimulationEvent()
     {
-        UpdateElapsedTime();
+        if(currUpdateCycle >= updateCycle)
+        {
+            UpdateElapsedTime();
+            currUpdateCycle = 0;
+        }
+        else
+        {
+             ++currUpdateCycle;
+        }
     }
 
 
