@@ -12,7 +12,7 @@ import tac.android.de.truckcompanion.simulator.SimulationEventListener;
 
 
 
-public class LogicHelper implements SimulationEventListener, TruckStateEventListener {
+public class LogicHelper {
 
     public static final int MAX_WEEK_DRIVE_MINUTES = 3360;        // 56 hours
     public static final int MAX_DAY_DRIVE_MINUTES = 540;           // 9 hours
@@ -338,14 +338,14 @@ public class LogicHelper implements SimulationEventListener, TruckStateEventList
 
     }
 
-    @Override
-    public void onSimulationEvent(JSONObject event)
+
+    public void onSimulationEvent()
     {
         UpdateElapsedTime();
     }
 
 
-    @Override
+
    public void onTruckStationaryStateChange(int state)
     {
         SetActivity(DriverActivity.values()[state]);

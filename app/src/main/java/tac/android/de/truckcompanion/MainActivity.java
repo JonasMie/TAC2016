@@ -26,6 +26,7 @@ import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.fragment.StatsFragment;
 import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
@@ -68,6 +69,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     // Fragments
     private MainFragment mainFragment;
     private MapFragment mapFragment;
+    private StatsFragment statsFragment;
 
     public static Context context;
 
@@ -198,6 +200,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 } else {
                     mCurrentJourney = journey;
 
+                    statsFragment= (StatsFragment) mViewPagerAdapter.getRegisteredFragment(2);
+
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
                     mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
@@ -295,11 +299,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     @Override
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
+        statsFragment.onTruckStationaryStateChange(state);
     }
 
     @Override
     public void onTruckMoved() {
         mainFragment.onTruckMoved();
+        statsFragment.onTruckMoved();
     }
 
     @Override

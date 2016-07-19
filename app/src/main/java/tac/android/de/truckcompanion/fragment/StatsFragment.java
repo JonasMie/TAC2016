@@ -36,7 +36,7 @@ import tac.android.de.truckcompanion.simulator.SimulationEventListener;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class StatsFragment extends Fragment implements SimulationEventListener{
+public class StatsFragment extends Fragment{
     private LogicHelper logHelp;
     private Vector<HorizontalBarChart> worktimeCharts;
     private Vector<HorizontalBarChart> restTimeCharts;
@@ -56,13 +56,6 @@ public class StatsFragment extends Fragment implements SimulationEventListener{
         InitCurrentDayChart();
 
         return view;
-    }
-
-   public void onSimulationEvent(JSONObject event)
-    {
-
-
-
     }
 
     void InitHeaderCharts()
@@ -390,5 +383,13 @@ public class StatsFragment extends Fragment implements SimulationEventListener{
         }
 
 
+    }
+
+    public void onTruckStationaryStateChange(int state) {
+        logHelp.onTruckStationaryStateChange(state);
+    }
+
+    public void onTruckMoved() {
+        logHelp.onSimulationEvent();
     }
 }
