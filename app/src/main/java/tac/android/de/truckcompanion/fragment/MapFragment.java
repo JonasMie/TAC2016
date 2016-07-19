@@ -32,6 +32,7 @@ import com.here.android.mpa.search.PlaceLink;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
+import tac.android.de.truckcompanion.data.TruckStateEventListener;
 import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
@@ -39,9 +40,7 @@ import tac.android.de.truckcompanion.wheel.WheelEntry;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 
 /**
  * Created by Jonas Miederer.
@@ -74,7 +73,12 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private NavigationManager.NavigationManagerEventListener navigationManagerEventListener;
     private NavigationManager.PositionListener positionListener;
 
+    private List<TruckStateEventListener> listeners = new ArrayList<>();
+
     private MapMarker currentPositionMarker;
+
+    private Timer timer;
+    private TimerTask timerTask;
 
     private Image icon_main;
     private Image icon_alt;
@@ -87,6 +91,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
         markerWheelEntryMap = new HashMap<>();
+
+        timer = new Timer();
 
         if (mapFragment == null) {
             mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
@@ -321,7 +327,23 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             public void onRunningStateChanged() {
                 if (NavigationWrapper.getInstance().getNavigationManager().getRunningState() == NavigationManager.NavigationState.RUNNING) {
                     NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.ROADVIEW);
+
+                    timerTask = new TimerTask() {
+                        @Override
+                        public void run() {
+                            if (NavigationWrapper.getInstance().getNavigationManager().getRunningState() == NavigationManager.NavigationState.RUNNING) {
+                                for (TruckStateEventListener listener : listeners) {
+                                    listener.onTruckMoved();
+                                }
+                            }
+                        }
+                    };
+                    timer.schedule(timerTask, 0, 1000);
                 }
+                for (TruckStateEventListener listener : listeners) {
+                    listener.onTruckStationaryStateChange(NavigationWrapper.getInstance().getNavigationManager().getRunningState() != NavigationManager.NavigationState.RUNNING ? 1 : 0);
+                }
+
                 super.onRunningStateChanged();
             }
 
@@ -333,6 +355,11 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             @Override
             public void onEnded(NavigationManager.NavigationMode navigationMode) {
                 NavigationWrapper.getInstance().getNavigationManager().setMapUpdateMode(NavigationManager.MapUpdateMode.NONE);
+
+                for (TruckStateEventListener listener : listeners) {
+                    listener.onJourneyFinished();
+                }
+                timerTask.cancel();
                 super.onEnded(navigationMode);
             }
 
@@ -356,6 +383,9 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             @Override
             public void onPositionUpdated(GeoPosition geoPosition) {
                 currentPositionMarker.setCoordinate(geoPosition.getCoordinate());
+                if (NavigationWrapper.getInstance().getNavigationManager().getRunningState() == NavigationManager.NavigationState.RUNNING) {
+
+                }
             }
         };
 
@@ -373,6 +403,10 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             this.entry = entry;
             this.rh = rh;
         }
+    }
+
+    public void addTruckStateEventListener(TruckStateEventListener listener) {
+        listeners.add(listener);
     }
 
     private void prepareImages() {

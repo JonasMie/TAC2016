@@ -232,6 +232,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                             }
                                                         } else {
                                                             // TODO: change this to a listener interface
+                                                            onStartupTaskReady();
                                                             mainFragment.onStartupTaskReady(updatedRouteWrapper);
                                                             mapFragment.onStartupTaskReady();
                                                             if (mProgressDialog.isShowing()) {
@@ -252,6 +253,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 }
             }
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
+    }
+
+    private void onStartupTaskReady() {
+        mapFragment.addTruckStateEventListener(this);
     }
 
     @Override
@@ -290,6 +295,16 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     @Override
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
+    }
+
+    @Override
+    public void onTruckMoved() {
+        mainFragment.onTruckMoved();
+    }
+
+    @Override
+    public void onJourneyFinished() {
+
     }
 
     public static Journey getmCurrentJourney() {

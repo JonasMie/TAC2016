@@ -8,6 +8,8 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.os.Vibrator;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -93,6 +95,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
     Timer timer = new Timer();
     TimerTask timerTask;
+    Handler refresh;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
@@ -178,6 +181,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setDescription("");
         mChart.setDrawSliceText(false);
         mChart.getLegend().setEnabled(false);
+
+        refresh = new Handler(Looper.getMainLooper());
         return view;
     }
 
@@ -882,6 +887,20 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             setRecommendations(null);
         }
 
+    }
+
+    public void onTruckMoved() {
+        mChart.setRotationAngle(mChart.getRotationAngle() - (getAngle() - mChart.getRotationAngle()));
+        refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                mChart.invalidate();
+            }
+        });
+    }
+
+    private float getAngle() {
+        return ((((mChart.getRotationAngle() / 360) * SECONDS_PER_DAY) + 1000) / SECONDS_PER_DAY) * 360;
     }
 
     private void highlightEntry(WheelEntry entry) {

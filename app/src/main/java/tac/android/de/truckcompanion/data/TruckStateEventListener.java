@@ -10,4 +10,6 @@ package tac.android.de.truckcompanion.data;
 public interface TruckStateEventListener {
 
     void onTruckStationaryStateChange(int state);
+    void onTruckMoved();
+    void onJourneyFinished();
 }
