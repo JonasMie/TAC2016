@@ -274,7 +274,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             float diffAngle = pointAngle - mStartAngle;
             // this is fixing the undesired behaviour that the pause jumps around when the entry crosses the 0°-mark
             if (diffAngle > 180) {
-                diffAngle = -360;
+                diffAngle -= 360;
             }
             if (mChart.isEditModeEnabled()) {
                 if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
@@ -519,7 +519,11 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 MainActivity.getmCurrentJourney().addDestinationPoint(pauseEntry.getPause().getDestinationPoint());
                 pauseEntry.setStepAngle(RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP)));
             }
-            double ratio = diffAngle / 360;
+
+            while (diffAngle < -180) {
+                diffAngle += 360;
+            }
+            double ratio = (diffAngle % 360) / 360;
 
             float newBufferVal = (float) (bufferEntry.getVal() - SECONDS_PER_DAY * ratio);
             float newDriveVal = (float) (driveEntry.getVal() + SECONDS_PER_DAY * ratio);
