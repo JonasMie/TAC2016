@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/start_simulation_menu_item"
-        android:title="@string/start_simulation_menu_item"
+            android:id="@+id/start_navigation_menu_item"
+            android:title="@string/start_navigation_menu_item"
+            android:enabled="false"
+    >
+    </item>
+
+    <item
+            android:id="@+id/stop_navigation_menu_item"
+            android:title="@string/stop_navigation_menu_item"
     >
     </item>
 </menu>

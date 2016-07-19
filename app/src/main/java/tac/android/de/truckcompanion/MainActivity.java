@@ -18,12 +18,15 @@ import android.view.View;
 import android.widget.Toast;
 import com.github.mikephil.charting.data.Entry;
 import com.here.android.mpa.common.OnEngineInitListener;
+import com.here.android.mpa.guidance.NavigationManager;
+import com.here.android.mpa.mapping.Map;
 import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.CustomViewPager;
@@ -40,6 +43,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
     private static final int TRUCK_ID = 1;
+    private static final double NAVIGATION_DRIVING_SPEED = 22.222;
 
     // View references
     private ProgressDialog mProgressDialog;
@@ -202,6 +206,9 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                             if (error == Error.NONE) {
                                 mapFragment.setMap(mapFragment.getMapFragment().getMap());
                                 mapFragment.getMapFragment().getMapGesture().addOnGestureListener(mapFragment);
+
+                                // set the map for navigation
+                                NavigationWrapper.getInstance().getNavigationManager().setMap(mapFragment.getMap());
                                 mCurrentJourney.initRoute();
 
                                 // Calculate first route
@@ -224,7 +231,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                                                 mProgressDialog.dismiss();
                                                             }
                                                         } else {
+                                                            // TODO: change this to a listener interface
+                                                            onStartupTaskReady();
                                                             mainFragment.onStartupTaskReady(updatedRouteWrapper);
+                                                            mapFragment.onStartupTaskReady();
                                                             if (mProgressDialog.isShowing()) {
                                                                 mProgressDialog.dismiss();
                                                             }
@@ -245,6 +255,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         }).execute(DRIVER_ID, TOUR_ID, TRUCK_ID);
     }
 
+    private void onStartupTaskReady() {
+        mapFragment.addTruckStateEventListener(this);
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu. This adds items to the action bar if it is present
@@ -256,23 +270,41 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
-            case R.id.start_simulation_menu_item:
-                // add journey event listener
-                try {
-                    mCurrentTruckState = new TruckState(this);
-                    mCurrentTruckState.addTruckStateEventListener(this);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+            case R.id.start_navigation_menu_item:
+                // start navigation
+                NavigationManager.Error error = NavigationWrapper.getInstance().getNavigationManager().simulate(mCurrentJourney.getRouteWrapper().getRoute(), (long) NAVIGATION_DRIVING_SPEED);
+                if (error != NavigationManager.Error.NONE) {
+                    Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
                 }
-                return true;
+                break;
+            case R.id.stop_navigation_menu_item:
+                NavigationWrapper.getInstance().getNavigationManager().stop();
+                break;
             default:
                 return super.onOptionsItemSelected(item);
         }
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.getItem(0).setEnabled(mCurrentJourney != null && mCurrentJourney.getRouteWrapper() != null && mCurrentJourney.getRouteWrapper().getCalculationFinished() && mCurrentJourney.getRouteWrapper().getRoute() != null);
+        return true;
     }
 
     @Override
     public void onTruckStationaryStateChange(int state) {
         Log.d("TAC", "State changed: " + state);
+    }
+
+    @Override
+    public void onTruckMoved() {
+        mainFragment.onTruckMoved();
+    }
+
+    @Override
+    public void onJourneyFinished() {
+
     }
 
     public static Journey getmCurrentJourney() {
@@ -281,8 +313,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
     public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
         mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
-
-
     }
 
     @Override
