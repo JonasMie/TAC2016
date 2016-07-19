@@ -70,6 +70,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private ArrayList<Entry> entries;
     private float mStartAngle = 0;
     private PointF mTouchStartPoint = new PointF();
+    private float currentTimeAngle;
 
     // View-realted members
     private RelativeLayout mainRecWrapper;
@@ -112,6 +113,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final float MAX_DRIVE_VAL = 270 * 60;
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
+    private WheelEntry previousBreakEntry;
 
     @Nullable
     @Override
@@ -150,8 +152,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 (int) (height * 1.5)
         );
 
-        recommendationsWrapper.setLayoutParams(params1);
-        chartWrapper.setLayoutParams(params2);
+//        recommendationsWrapper.setLayoutParams(params1);
+//        chartWrapper.setLayoutParams(params2);
 
         activity = ((MainActivity) getActivity());
         progressDialog = new ProgressDialog(activity);
@@ -803,6 +805,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         this.updateEntryPositions(updatedRouteWrapper);
         setRecommendations(1, null);
         loadAllDetailInfosInBackground();
+        currentTimeAngle = mChart.getRotationAngle();
     }
 
     private void loadAllDetailInfosInBackground() {
@@ -911,5 +914,33 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         // TODO
         selectedEntry = entry;
     }
+
+    public WheelEntry getNextBreak() {
+        // TODO
+//        return (WheelEntry) dataSet.getEntryForIndex(mChart.getIndexForAngle(currentTimeAngle));
+        return (WheelEntry) dataSet.getEntryForIndex(1);
+    }
+
+    public void setPrevBreak() {
+        int index = mChart.getIndexForAngle(currentTimeAngle);
+        for (int i = index; i >= 0; i--) {
+            WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(i);
+            if (entry.getEntryType() == PAUSE_ENTRY) {
+                previousBreakEntry = entry;
+                return;
+            }
+        }
+    }
+
+    public WheelEntry getPrevBreak() {
+        //TODO
+//        return previousBreakEntry;
+        return (WheelEntry) dataSet.getEntryForIndex(1);
+    }
+
+    public void onBreakFinished() {
+        setPrevBreak();
+    }
+
 }
 

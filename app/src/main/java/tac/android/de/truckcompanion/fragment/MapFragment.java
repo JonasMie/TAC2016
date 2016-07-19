@@ -317,7 +317,23 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             public void onNewInstructionEvent() {
                 Maneuver maneuver = NavigationWrapper.getInstance().getNavigationManager().getNextManeuver();
                 if (maneuver != null) {
-
+                    Log.d(TAG, maneuver.getAction().name());
+                    if (maneuver.getAction() == Maneuver.Action.STOPOVER) {
+                        // the driver reached one of his waypoints along the route
+                        NavigationWrapper.getInstance().getNavigationManager().pause();
+                        timer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                activity.runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        NavigationWrapper.getInstance().getNavigationManager().resume();
+                                        listener.onBreakFinished();
+                                    }
+                                });
+                            }
+                        }, (long) (((MainActivity) getActivity()).getNextBreak().getVal() * 1000) / SIMULATION_RATIO);
+                    }
                 }
             }
         };
