@@ -89,6 +89,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     // Logic data
     private WheelEntry selectedEntry;
     private int totalBreaks;
+    private float autoUpdateArcAngle;
 
     // Misc
     OnRoadhouseSelectedListener listener;
@@ -116,7 +117,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
     private WheelEntry previousBreakEntry;
-    CustomCanvas canvas;
+    private CustomCanvas canvas;
+
 
     @TargetApi(Build.VERSION_CODES.M)
     @Nullable
@@ -190,6 +192,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setDrawSliceText(false);
         mChart.getLegend().setEnabled(false);
         refresh = new Handler(Looper.getMainLooper());
+
+        mChart.setDragDecelerationEnabled(false);
+        autoUpdateArcAngle = mChart.getRotationAngle();
         return view;
     }
 
@@ -306,8 +311,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     }
 
     private void rotateCanvas(float mStartAngle, float diffAngle) {
-        Animation a = new RotateAnimation(mStartAngle, mStartAngle + diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        a.setDuration(1000);
+        Animation a = new RotateAnimation(mChart.getRotationAngle() + 90, mChart.getRotationAngle() + 90 + diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
         a.setInterpolator(new LinearInterpolator());
         a.setFillAfter(true);
         canvas.startAnimation(a);
