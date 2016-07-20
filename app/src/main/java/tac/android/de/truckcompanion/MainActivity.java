@@ -1,6 +1,5 @@
 package tac.android.de.truckcompanion;
 
-import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.app.ProgressDialog;

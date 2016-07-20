@@ -1,5 +1,6 @@
 package tac.android.de.truckcompanion.fragment;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
@@ -7,13 +8,14 @@ import android.content.Context;
 import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.PointF;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Looper;
-import android.os.Vibrator;
+import android.graphics.RectF;
+import android.os.*;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.*;
+import android.view.animation.Animation;
+import android.view.animation.LinearInterpolator;
+import android.view.animation.RotateAnimation;
 import android.widget.*;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -59,11 +61,11 @@ import static tac.android.de.truckcompanion.wheel.WheelEntry.PAUSE_ENTRY;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, OnEntryGestureListener {
+public class MainFragment extends Fragment implements OnChartGestureListener, OnChartValueSelectedListener, OnEntryGestureListener, View.OnLayoutChangeListener {
 
     // Chart-related members
     private LinearLayout recommendationsWrapper;
-    private RelativeLayout chartWrapper;
+    private FrameLayout chartWrapper;
     private PieChart mChart;
     private PieDataSet dataSet;
     private PieData data;
@@ -114,7 +116,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
     private WheelEntry previousBreakEntry;
+    CustomCanvas canvas;
 
+    @TargetApi(Build.VERSION_CODES.M)
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -124,7 +128,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mainRecWrapper = (RelativeLayout) view.findViewById(R.id.recommendations_main_wrapper);
         altRecwrapper = (RelativeLayout) view.findViewById(R.id.recommendations_alternatives_wrapper);
 
-        chartWrapper = (RelativeLayout) view.findViewById(R.id.chartWrapper);
+        chartWrapper = (FrameLayout) view.findViewById(R.id.chartWrapper);
+        canvas = (CustomCanvas) view.findViewById(R.id.canvas);
 
         recommendationsWrapper = (LinearLayout) view.findViewById(R.id.recommendationsWrapper);
         mainRecTitle = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_title);
@@ -155,6 +160,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //        recommendationsWrapper.setLayoutParams(params1);
 //        chartWrapper.setLayoutParams(params2);
 
+        mChart.addOnLayoutChangeListener(this);
         activity = ((MainActivity) getActivity());
         progressDialog = new ProgressDialog(activity);
 
@@ -183,7 +189,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setDescription("");
         mChart.setDrawSliceText(false);
         mChart.getLegend().setEnabled(false);
-
         refresh = new Handler(Looper.getMainLooper());
         return view;
     }
@@ -283,6 +288,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     onEntryDragged(me, diffAngle);
                 }
             }
+            rotateCanvas(mStartAngle, diffAngle);
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
         }
@@ -297,6 +303,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //                }
 //            }
 //        }
+    }
+
+    private void rotateCanvas(float mStartAngle, float diffAngle) {
+        Animation a = new RotateAnimation(mStartAngle, mStartAngle + diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        a.setDuration(1000);
+        a.setInterpolator(new LinearInterpolator());
+        a.setFillAfter(true);
+        canvas.startAnimation(a);
     }
 
     public void rotateIcons(float x, float y) {
@@ -898,10 +912,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     public void onTruckMoved() {
         mChart.setRotationAngle(mChart.getRotationAngle() - (getAngle() - mChart.getRotationAngle()));
+        canvas.setArcAngle(canvas.getArcAngle() + (1000 / SECONDS_PER_DAY) * 360);
         refresh.post(new Runnable() {
             @Override
             public void run() {
                 mChart.invalidate();
+                canvas.invalidate();
             }
         });
     }
@@ -940,6 +956,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     public void onBreakFinished() {
         setPrevBreak();
+    }
+
+    @Override
+    public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+        float radius = (float) (mChart.getRadius() - ((mChart.getRadius() - mChart.getHoleRadius() * .01 * mChart.getRadius()) / 2));
+        canvas.setBoundingBox(new RectF(mChart.getCenter().x - radius, mChart.getCenter().y - radius, mChart.getCenter().x + radius, mChart.getCenter().y + radius));
+        canvas.invalidate();
     }
 
 }

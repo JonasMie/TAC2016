@@ -14,9 +14,9 @@
 
         <LinearLayout
                 android:id="@+id/recommendationsWrapper"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_weight="0"
                 android:weightSum="2"
                 android:orientation="horizontal">
 
@@ -199,7 +199,7 @@
                                 android:src="@drawable/parking_true"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
-                                 />
+                        />
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -236,7 +236,7 @@
             </LinearLayout>
         </LinearLayout>
 
-        <RelativeLayout
+        <FrameLayout
                 android:id="@+id/chartWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -246,11 +246,16 @@
                     android:id="@+id/chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
             />
 
-        </RelativeLayout>
+            <tac.android.de.truckcompanion.fragment.CustomCanvas
+                    android:id="@+id/canvas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"/>
+
+        </FrameLayout>
     </LinearLayout>
 
 </FrameLayout>
