@@ -90,6 +90,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private WheelEntry selectedEntry;
     private int totalBreaks;
     private float autoUpdateArcAngle;
+    private boolean autoUpdateWheelAngle = true;
 
     // Misc
     OnRoadhouseSelectedListener listener;
@@ -98,7 +99,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     ProgressDialog progressDialog;
     SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm", Locale.GERMAN);
     Timer timer = new Timer();
-    TimerTask timerTask;
+    TimerTask entryDraggedTimerTask;
+    TimerTask wheelMovedTimerTask;
     Handler refresh;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
@@ -116,6 +118,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final float MAX_DRIVE_VAL = 270 * 60;
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
+    private static final long AUTO_UPDATE_WHEEL_MOVED_DELAY = 2000;
     private WheelEntry previousBreakEntry;
     private CustomCanvas canvas;
 
@@ -280,6 +283,10 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     @Override
     public void onChartGestureEnd(MotionEvent me, ChartTouchListener.ChartGesture lastPerformedGesture) {
         Log.i("Gesture", "END, lastGesture: " + lastPerformedGesture);
+        autoUpdateWheelAngle = false;
+        if (wheelMovedTimerTask != null) {
+            wheelMovedTimerTask.cancel();
+        }
 
         if (lastPerformedGesture == ChartTouchListener.ChartGesture.ROTATE) {
             float pointAngle = mChart.getAngleForPoint(me.getX(), me.getY());
@@ -296,6 +303,14 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             rotateCanvas(mStartAngle, diffAngle);
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
+            wheelMovedTimerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    autoUpdateWheelAngle = true;
+                }
+            };
+
+            timer.schedule(wheelMovedTimerTask, AUTO_UPDATE_WHEEL_MOVED_DELAY);
         }
         // un-highlight values after the gesture is finished and no single-tap
 //        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
@@ -506,8 +521,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onEntryDragged(MotionEvent me, float diffAngle) {
         Log.i("ENTRY:DRAG", "Entry dragged");
         WheelEntry entry = WheelEntry.getActiveEntry();
-        if (timerTask != null) {
-            timerTask.cancel();
+        if (entryDraggedTimerTask != null) {
+            entryDraggedTimerTask.cancel();
         }
 
         boolean splitBreak = false;
@@ -578,7 +593,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             mChart.invalidate();
 
             // (Re-)Calculate breaks
-            timerTask = new TimerTask() {
+            entryDraggedTimerTask = new TimerTask() {
                 @Override
                 public void run() {
                     float roundedDiff = RECALCULATION_STEP * (Math.round(mStartAngle / RECALCULATION_STEP));
@@ -650,7 +665,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //                }
                 }
             };
-            timer.schedule(timerTask, ROUTE_RECALCULATION_DELAY);
+            timer.schedule(entryDraggedTimerTask, ROUTE_RECALCULATION_DELAY);
         }
     }
 
@@ -915,19 +930,22 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     }
 
     public void onTruckMoved() {
-        mChart.setRotationAngle(mChart.getRotationAngle() - (getAngle() - mChart.getRotationAngle()));
+        autoUpdateArcAngle = autoUpdateArcAngle - (getAngle() - autoUpdateArcAngle);
+        mChart.setRotationAngle(autoUpdateArcAngle);
         canvas.setArcAngle(canvas.getArcAngle() + (1000 / SECONDS_PER_DAY) * 360);
         refresh.post(new Runnable() {
             @Override
             public void run() {
-                mChart.invalidate();
+                if (autoUpdateWheelAngle) {
+                    mChart.invalidate();
+                }
                 canvas.invalidate();
             }
         });
     }
 
     private float getAngle() {
-        return ((((mChart.getRotationAngle() / 360) * SECONDS_PER_DAY) + 1000) / SECONDS_PER_DAY) * 360;
+        return ((((autoUpdateArcAngle / 360) * SECONDS_PER_DAY) + 1000) / SECONDS_PER_DAY) * 360;
     }
 
     private void highlightEntry(WheelEntry entry) {
