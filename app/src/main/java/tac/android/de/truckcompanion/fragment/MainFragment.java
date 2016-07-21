@@ -123,6 +123,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
     private static final long AUTO_UPDATE_WHEEL_MOVED_DELAY = 2000;
+    private static final int CHART_ANGLE_OFFSET = 40;
     private WheelEntry previousBreakEntry;
 
 
@@ -188,7 +189,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
 
-        mChart.setRotationAngle(mChart.getRotationAngle() - 40);
+        mChart.setRotationAngle(mChart.getRotationAngle() - CHART_ANGLE_OFFSET);
 
         mChart.setHighlightPerTapEnabled(false);
 
