@@ -25,8 +25,8 @@ public class CustomCanvas extends View {
     Rect rect = new Rect();
     Paint paint;
 
-    float rotation = 0;
-    float arcAngle = 90;
+    float rotation = -90;
+    float arcAngle = 0;
 
     public CustomCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -72,7 +72,7 @@ public class CustomCanvas extends View {
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onDraw(Canvas canvas) {
-        canvas.drawArc(boundingBox, -90, arcAngle, false, paint);
+        canvas.drawArc(boundingBox, rotation, arcAngle, false, paint);
     }
 
     public void setBoundingBox(RectF boundingBox) {

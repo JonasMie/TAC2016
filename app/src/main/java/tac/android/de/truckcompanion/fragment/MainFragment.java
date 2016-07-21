@@ -932,6 +932,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public void onTruckMoved() {
         autoUpdateArcAngle = autoUpdateArcAngle - (getAngle() - autoUpdateArcAngle);
         mChart.setRotationAngle(autoUpdateArcAngle);
+        canvas.setRotation(autoUpdateArcAngle);
         canvas.setArcAngle(canvas.getArcAngle() + (1000 / SECONDS_PER_DAY) * 360);
         refresh.post(new Runnable() {
             @Override
