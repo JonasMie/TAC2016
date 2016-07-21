@@ -36,14 +36,14 @@ import tac.android.de.truckcompanion.simulator.SimulationEventListener;
  * Project: TruckCompanion
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-public class StatsFragment extends Fragment{
+public class StatsFragment extends Fragment {
     private LogicHelper logHelp;
     private Vector<HorizontalBarChart> worktimeCharts;
     private Vector<HorizontalBarChart> restTimeCharts;
     private Vector<PieChart> headerCharts;
     private View view ;
-
-
+    private final int updateCycle = 600;
+    private int currUpdateCycle = 0;
 
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -67,7 +67,7 @@ public class StatsFragment extends Fragment{
 
 
         float degree = LogicHelper.MAX_WEEK_DRIVE_MINUTES / 360;
-        degree = logHelp.GetDriveTimeSum() / degree;
+        degree = ((logHelp.GetDriveTimeSum()+logHelp.GetCurrentDay().GetDriveTime()) / degree);
 
         ArrayList<Entry> entriesPie = new ArrayList<>();
         entriesPie.add(new Entry(1f, 0));
@@ -88,11 +88,11 @@ public class StatsFragment extends Fragment{
         headerCharts.elementAt(0).setDrawSliceText(false);
         headerCharts.elementAt(0).setMaxAngle(degree);
         headerCharts.elementAt(0).getLegend().setEnabled(false);
-
+        headerCharts.elementAt(0).setTouchEnabled(false);
 
 
         entriesPie = new ArrayList<>();
-        entriesPie.add(new Entry(1f, 0));
+        entriesPie.add(new Entry(0f, 0));
 
         testDataSetPie = new PieDataSet(entriesPie,"");
         testDataSetPie.setColor(ColorTemplate.JOYFUL_COLORS[0]);
@@ -106,13 +106,14 @@ public class StatsFragment extends Fragment{
         headerCharts.elementAt(1).setMinimumWidth(40);
         headerCharts.elementAt(1).setMinimumHeight(40);
         headerCharts.elementAt(1).setDescription("Wochenruhezeit");
-        headerCharts.elementAt(1).setCenterText(logHelp.MIN_WEEK_REST_MINUTES / 60 +" / "+ 00);
+        headerCharts.elementAt(1).setCenterText(0 +" / "+ 45);
         headerCharts.elementAt(1).setDrawSliceText(false);
+        headerCharts.elementAt(1).setMaxAngle(0);
         headerCharts.elementAt(1).getLegend().setEnabled(false);
-
+        headerCharts.elementAt(1).setTouchEnabled(false);
 
         degree = LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 360;
-        degree = 360 - logHelp.GetDriveTimeSum() / degree;
+        degree = logHelp.GetDriveTimeSum() / degree;
 
         entriesPie = new ArrayList<>();
         entriesPie.add(new Entry(1f, 0));
@@ -129,10 +130,11 @@ public class StatsFragment extends Fragment{
         headerCharts.elementAt(2).setMinimumWidth(40);
         headerCharts.elementAt(2).setMinimumHeight(40);
         headerCharts.elementAt(2).setDescription("Doppelwochenlenkzeit");
-        headerCharts.elementAt(2).setCenterText((int)(LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES - logHelp.GetDriveTimeSum() + logHelp.GetCurrentDay().GetDriveTime()) / 60 +" / "+ 00);
+        headerCharts.elementAt(2).setCenterText((int)(logHelp.GetDriveTimeSum() + logHelp.GetCurrentDay().GetDriveTime()) / 60 +" / "+ LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 60);
         headerCharts.elementAt(2).setDrawSliceText(false);
         headerCharts.elementAt(2).setMaxAngle(degree);
         headerCharts.elementAt(2).getLegend().setEnabled(false);
+        headerCharts.elementAt(2).setTouchEnabled(false);
     }
     void InitCurrentDayChart()
     {
@@ -165,7 +167,7 @@ public class StatsFragment extends Fragment{
         worktimeCharts.elementAt(0).setDrawGridBackground(false);
 
         worktimeCharts.elementAt(0).setAutoScaleMinMaxEnabled(false);
-        worktimeCharts.elementAt(0).getAxisLeft().setAxisMaxValue(10);
+        worktimeCharts.elementAt(0).getAxisLeft().setAxisMaxValue(11);
         worktimeCharts.elementAt(0).getAxisLeft().setAxisMinValue(0);
         worktimeCharts.elementAt(0).getAxisRight().setDrawLabels(false);
 
@@ -176,16 +178,16 @@ public class StatsFragment extends Fragment{
         worktimeCharts.elementAt(0).getAxisLeft().setDrawAxisLine(false);
         worktimeCharts.elementAt(0).getAxisRight().setDrawAxisLine(false);
         worktimeCharts.elementAt(0).getLegend().setEnabled(false);
-
+        worktimeCharts.elementAt(0).setTouchEnabled(false);
         //add limit line
         LimitLine limit = new LimitLine(LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
         limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
-        limit.setLabel((int)logHelp.GetCurrentDay().GetDriveTime() / 60 +" / "+ LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
+        limit.setLabel(logHelp.GetCurrentDay().GetDriveTime() / 60 +" / "+ LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
         limit.setTextSize(11);
         worktimeCharts.elementAt(0).getAxisLeft().addLimitLine(limit);
 
         entries = new ArrayList<>();
-        entries.add(new BarEntry((LogicHelper.MIN_DAY_REST_MINUTES - logHelp.GetCurrentDay().GetRestTime()) / 60, 0));
+        entries.add(new BarEntry((logHelp.GetCurrentDay().GetRestTime()) / 60, 0));
 
         testDataSet = new BarDataSet(entries,"Zeit");
         testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[3]);
@@ -212,7 +214,7 @@ public class StatsFragment extends Fragment{
        restTimeCharts.elementAt(0).setDrawGridBackground(false);
 
        restTimeCharts.elementAt(0).setAutoScaleMinMaxEnabled(false);
-       restTimeCharts.elementAt(0).getAxisLeft().setAxisMaxValue(11);
+       restTimeCharts.elementAt(0).getAxisLeft().setAxisMaxValue(13);
        restTimeCharts.elementAt(0).getAxisLeft().setAxisMinValue(0);
        restTimeCharts.elementAt(0).getAxisRight().setDrawLabels(false);
 
@@ -223,13 +225,14 @@ public class StatsFragment extends Fragment{
        restTimeCharts.elementAt(0).getAxisLeft().setDrawAxisLine(false);
        restTimeCharts.elementAt(0).getAxisRight().setDrawAxisLine(false);
        restTimeCharts.elementAt(0).getLegend().setEnabled(false);
-
+        restTimeCharts.elementAt(0).setTouchEnabled(false);
         //add limit line
-        limit = new LimitLine(0);
+        limit = new LimitLine(11);
         limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
-        limit.setLabel((int)(LogicHelper.MIN_DAY_REST_MINUTES - logHelp.GetCurrentDay().GetRestTime() + logHelp.GetCurrentDay().GetRestTime()) / 60 +" / "+ 0);
+        limit.setLabel(logHelp.GetCurrentDay().GetRestTime() / 60 +" / "+ LogicHelper.MIN_DAY_REST_MINUTES / 60 );
         limit.setTextSize(11);
         restTimeCharts.elementAt(0).getAxisLeft().addLimitLine(limit);
+
 
     }
     void InitWorkTimeCharts()
@@ -283,7 +286,7 @@ public class StatsFragment extends Fragment{
             mChart.setDrawGridBackground(false);
 
             mChart.setAutoScaleMinMaxEnabled(false);
-            mChart.getAxisLeft().setAxisMaxValue(10);
+            mChart.getAxisLeft().setAxisMaxValue(11);
             mChart.getAxisLeft().setAxisMinValue(0);
             mChart.getAxisRight().setDrawLabels(false);
 
@@ -294,11 +297,11 @@ public class StatsFragment extends Fragment{
             mChart.getAxisLeft().setDrawAxisLine(false);
             mChart.getAxisRight().setDrawAxisLine(false);
             mChart.getLegend().setEnabled(false);
-
+            mChart.setTouchEnabled(false);
             //add limit line
             LimitLine limit = new LimitLine(LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
             limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
-            limit.setLabel((int)logHelp.workingDays.elementAt(counter).GetDriveTime() / 60 +" / "+ LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
+            limit.setLabel(logHelp.workingDays.elementAt(counter).GetDriveTime() / 60 +" / "+ LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
             limit.setTextSize(11);
             mChart.getAxisLeft().addLimitLine(limit);
 
@@ -332,7 +335,7 @@ public class StatsFragment extends Fragment{
             }
 
             ArrayList<BarEntry> entries = new ArrayList<>();
-            entries.add(new BarEntry((LogicHelper.MIN_DAY_REST_MINUTES - logHelp.workingDays.elementAt(counter).GetRestTime()) / 60, 0));
+            entries.add(new BarEntry(logHelp.workingDays.elementAt(counter).GetRestTime() / 60, 0));
 
             BarDataSet testDataSet = new BarDataSet(entries,"Zeit");
             testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[3]);
@@ -359,7 +362,7 @@ public class StatsFragment extends Fragment{
             mChart.setDrawGridBackground(false);
 
             mChart.setAutoScaleMinMaxEnabled(false);
-            mChart.getAxisLeft().setAxisMaxValue(11);
+            mChart.getAxisLeft().setAxisMaxValue(13);
             mChart.getAxisLeft().setAxisMinValue(0);
             mChart.getAxisRight().setDrawLabels(false);
 
@@ -370,11 +373,11 @@ public class StatsFragment extends Fragment{
             mChart.getAxisLeft().setDrawAxisLine(false);
             mChart.getAxisRight().setDrawAxisLine(false);
             mChart.getLegend().setEnabled(false);
-
+            mChart.setTouchEnabled(false);
             //add limit line
-            LimitLine limit = new LimitLine(0);
+            LimitLine limit = new LimitLine(11);
             limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
-            limit.setLabel((int)(LogicHelper.MIN_DAY_REST_MINUTES - logHelp.workingDays.elementAt(counter).GetRestTime()) / 60 +" / "+ 0);
+            limit.setLabel(logHelp.workingDays.elementAt(counter).GetRestTime() / 60 +" / "+ LogicHelper.MIN_DAY_REST_MINUTES / 60);
             limit.setTextSize(11);
             mChart.getAxisLeft().addLimitLine(limit);
 
@@ -384,12 +387,57 @@ public class StatsFragment extends Fragment{
 
 
     }
+       public void onTruckStationaryStateChange(int state)
+       {
+           logHelp.onTruckStationaryStateChange(state);
+       }
 
-    public void onTruckStationaryStateChange(int state) {
-        logHelp.onTruckStationaryStateChange(state);
-    }
 
-    public void onTruckMoved() {
-        logHelp.onSimulationEvent();
-    }
+       public void onTruckMoved()
+       {
+           if(currUpdateCycle >= updateCycle)
+           {
+               //update header charts
+               float degree = LogicHelper.MAX_WEEK_DRIVE_MINUTES / 360;
+               degree = ((logHelp.GetDriveTimeSum()+logHelp.GetCurrentDay().GetDriveTime()) / degree);
+
+               headerCharts.elementAt(0).setCenterText((int)(logHelp.GetDriveTimeSum()  + logHelp.GetCurrentDay().GetDriveTime()) / 60 +" / "+ LogicHelper.MAX_WEEK_DRIVE_MINUTES / 60);
+               headerCharts.elementAt(0).setMaxAngle(degree);
+
+               degree = LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 360;
+               degree = logHelp.GetDriveTimeSum() / degree;
+
+               headerCharts.elementAt(2).setCenterText((int)(logHelp.GetDriveTimeSum() + logHelp.GetCurrentDay().GetDriveTime()) / 60 +" / "+ LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 60);
+               headerCharts.elementAt(2).setMaxAngle(degree);
+
+                //update current day worktime
+
+               BarEntry entry = new BarEntry(logHelp.GetCurrentDay().GetDriveTime() / 60, 0);
+
+               //set data
+               worktimeCharts.elementAt(0).getData().removeEntry(0,0);
+               worktimeCharts.elementAt(0).getData().addEntry(entry,0);
+               worktimeCharts.elementAt(0).getAxisLeft().getLimitLines().get(0).setLabel(logHelp.GetCurrentDay().GetDriveTime() / 60 +" / "+ LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
+               worktimeCharts.elementAt(0).notifyDataSetChanged();
+               worktimeCharts.elementAt(0).invalidate();
+
+               entry = new BarEntry(logHelp.GetCurrentDay().GetRestTime() / 60, 0);
+
+               //set data
+               restTimeCharts.elementAt(0).getData().removeEntry(0,0);
+               restTimeCharts.elementAt(0).getData().addEntry(entry,0);
+               restTimeCharts.elementAt(0).getAxisLeft().getLimitLines().get(0).setLabel(logHelp.GetCurrentDay().GetRestTime() / 60 +" / "+ LogicHelper.MIN_DAY_REST_MINUTES / 60 );
+               restTimeCharts.elementAt(0).notifyDataSetChanged();
+               restTimeCharts.elementAt(0).invalidate();
+
+               currUpdateCycle = 0;
+           }
+           else
+           {
+            ++currUpdateCycle;
+           }
+
+            logHelp.onSimulationEvent();
+       }
+
 }
