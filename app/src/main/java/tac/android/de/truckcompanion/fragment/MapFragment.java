@@ -159,6 +159,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     public void setMainRoadhouse(WheelEntry entry) {
         setSidebarInfo(entry);
+        addMarkerCluster(entry);
     }
 
     public void setSidebarInfo(WheelEntry entry) {
@@ -195,6 +196,13 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         // TODO: remove from hashmap
         if (pause.getClusterLayer() != null) {
             map.removeClusterLayer(pause.getClusterLayer());
+            for (MapMarker marker : pause.getClusterLayer().getMarkers()) {
+                markerWheelEntryMap.remove(marker);
+            }
+        }
+        if (pause.getMainRoadhouseMarker() != null) {
+            map.removeMapObject(pause.getMainRoadhouseMarker());
+            markerWheelEntryMap.remove(pause.getMainRoadhouseMarker());
         }
 
         prepareImages();
@@ -205,7 +213,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             marker.setCoordinate(pause.getMainRoadhouse().getPlaceLink().getPosition());
             marker.setAnchorPoint(anchorPoint);
             markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, pause.getMainRoadhouse()));
-            cl.addMarker(marker);
+            pause.setMainRoadhouseMarker(marker);
+            map.addMapObject(marker);
         }
         if (pause.getAlternativeRoadhouses() != null) {
             for (Roadhouse rh : pause.getAlternativeRoadhouses()) {
@@ -417,6 +426,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
     }
+
     private class EntryRoadhouseStruct {
         public WheelEntry entry;
         public Roadhouse rh;
