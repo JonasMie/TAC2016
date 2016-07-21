@@ -162,8 +162,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 (int) (height * 1.5)
         );
 
-//        recommendationsWrapper.setLayoutParams(params1);
-//        chartWrapper.setLayoutParams(params2);
+        recommendationsWrapper.setLayoutParams(params1);
+        chartWrapper.setLayoutParams(params2);
 
         mChart.addOnLayoutChangeListener(this);
         activity = ((MainActivity) getActivity());
@@ -183,6 +183,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setHoleRadius(80f);
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
+
+        mChart.setRotationAngle(mChart.getRotationAngle() - 40);
 
         mChart.setHighlightPerTapEnabled(false);
 
