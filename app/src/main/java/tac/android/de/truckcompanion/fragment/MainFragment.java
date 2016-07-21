@@ -41,6 +41,7 @@ import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
+import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
@@ -309,7 +310,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     onEntryDragged(me, diffAngle);
                 }
             }
-            rotateCanvas(diffAngle);
+            rotateViews(diffAngle);
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
             wheelMovedTimerTask = new TimerTask() {
@@ -334,26 +335,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //        }
     }
 
-    private void rotateCanvas(float diffAngle) {
+    private void rotateViews(float diffAngle) {
         canvas.setRotation(mChart.getRawRotationAngle());
-        Animation a = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        a.setInterpolator(new LinearInterpolator());
-        a.setFillAfter(true);
-        canvas.startAnimation(a);
-    }
-
-    public void rotateIcons(float x, float y) {
-//        float dif = mChart.getAngleForPoint(x, y) - mStartAngle;
-//        mStartAngle = mChart.getAngleForPoint(x, y);
-//        for (ImageView icon : symbols) {
-//            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) icon.getLayoutParams();
-//            float oldAngle = mChart.getAngleForPoint(icon.getX(), icon.getY());
-//            float newAngle = oldAngle + dif;
-//            PointD point = getPoint(mChart.getCenter(), mChart.getRadius(), newAngle);
-//            params.leftMargin = (int) (point.x);
-//            params.topMargin = (int) (point.y);
-//            icon.setLayoutParams(params);
-//        }
 
         Animation canvasRotation = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         canvasRotation.setInterpolator(interpolator);
