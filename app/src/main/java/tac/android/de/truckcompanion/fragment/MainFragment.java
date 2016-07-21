@@ -300,7 +300,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     onEntryDragged(me, diffAngle);
                 }
             }
-            rotateCanvas(mStartAngle, diffAngle);
+            rotateCanvas(diffAngle);
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
             wheelMovedTimerTask = new TimerTask() {
@@ -325,8 +325,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //        }
     }
 
-    private void rotateCanvas(float mStartAngle, float diffAngle) {
-        Animation a = new RotateAnimation(mChart.getRotationAngle() + 90, mChart.getRotationAngle() + 90 + diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
+    private void rotateCanvas(float diffAngle) {
+        canvas.setRotation(mChart.getRawRotationAngle());
+        Animation a = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
         a.setInterpolator(new LinearInterpolator());
         a.setFillAfter(true);
         canvas.startAnimation(a);
@@ -939,8 +940,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             public void run() {
                 if (autoUpdateWheelAngle) {
                     mChart.invalidate();
+                    canvas.invalidate();
                 }
-                canvas.invalidate();
             }
         });
     }
