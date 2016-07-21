@@ -5,14 +5,18 @@
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:orientation="vertical"
+>
 
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="100dp"
         android:id="@+id/header"
-        android:layout_marginBottom="10dp">
+        android:background="&quot;@color/windowBackground&quot;"
+        android:paddingBottom="5dp"
+        android:clickable="false"
+        android:backGround="@color/windowBackground">
 
         <LinearLayout
             android:id="@+id/header_charts"
@@ -40,7 +44,8 @@
                 android:layout_alignLeft="@+id/week_stats_resttime_text"
                 android:layout_alignStart="@+id/week_stats_resttime_text"
                 android:layout_marginLeft="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:layout_width="wrap_content"
@@ -68,7 +73,8 @@
     <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/scrollView" >
+        android:id="@+id/scrollView"
+        android:backGround="@color/windowBackground">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -79,7 +85,7 @@
                     android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/day_0_layout"
-                >
+                android:backGround="@color/windowBackground">
 
 
 
@@ -93,7 +99,8 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
 
                         <TextView
                         android:layout_width="wrap_content"
@@ -101,7 +108,8 @@
                         android:text="@string/day_stats_card_0_title"
                         android:id="@+id/day_stats_card_0_title"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/textColorPrimary" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -115,7 +123,8 @@
                                 android:layout_gravity="center_vertical"
                                 android:translationZ="0dp"
                                 android:layout_marginTop="0dp"
-                                android:layout_weight="1" />
+                                android:layout_weight="1"
+                                 />
 
                             <TextView
                                 android:layout_width="match_parent"
@@ -157,7 +166,8 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_1_layout"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/day_0_layout">
+                android:layout_below="@+id/day_0_layout"
+                android:backGround="@color/windowBackground">
 
                 <android.support.v7.widget.CardView
                         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -166,18 +176,21 @@
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
+
                         >
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/day_stats_card_1_title"
                             android:id="@+id/day_stats_card_1_title"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/textColorPrimary" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -231,7 +244,8 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_2_layout"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@+id/day_1_layout">
+                android:layout_below="@+id/day_1_layout"
+                android:backGround="@color/windowBackground">
 
                 <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -244,14 +258,16 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/day_stats_card_2_title"
                             android:id="@+id/day_stats_card_2_title"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/textColorPrimary" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -307,7 +323,7 @@
             android:orientation="horizontal"
             android:id="@+id/day_3_layout"
                 android:layout_below="@+id/day_2_layout"
-            >
+                android:backGround="@color/windowBackground">
 
 
 
@@ -321,7 +337,8 @@
                 <LinearLayout
                     android:orientation="vertical"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+                    android:layout_height="match_parent"
+                    android:backGround="@color/windowBackground">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -329,7 +346,8 @@
                         android:text="@string/day_stats_card_3_title"
                         android:id="@+id/day_stats_card_3_title"
                         android:textSize="12sp"
-                        android:textStyle="bold" />
+                        android:textStyle="bold"
+                        android:textColor="@color/textColorPrimary" />
 
                     <LinearLayout
                         android:orientation="horizontal"
@@ -386,7 +404,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_4_layout"
                 android:layout_below="@+id/day_3_layout"
-                >
+                android:backGround="@color/windowBackground">
 
 
 
@@ -400,7 +418,8 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -408,7 +427,8 @@
                             android:text="@string/day_stats_card_4_title"
                             android:id="@+id/day_stats_card_4_title"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/textColorPrimary" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -465,7 +485,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_5_layout"
                 android:layout_below="@+id/day_4_layout"
-                >
+                android:backGround="@color/windowBackground">
 
 
 
@@ -479,7 +499,8 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -487,7 +508,8 @@
                             android:text="@string/day_stats_card_5_title"
                             android:id="@+id/day_stats_card_5_title"
                             android:textSize="12sp"
-                            android:textStyle="bold" />
+                            android:textStyle="bold"
+                            android:textColor="@color/textColorPrimary" />
 
                         <LinearLayout
                             android:orientation="horizontal"
@@ -544,7 +566,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_6_layout"
                 android:layout_below="@+id/day_5_layout"
-                >
+                android:backGround="@color/windowBackground">
 
 
 
@@ -558,7 +580,8 @@
                     <LinearLayout
                         android:orientation="vertical"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                        android:layout_height="match_parent"
+                        android:backGround="@color/windowBackground">
 
                         <TextView
                             android:layout_width="wrap_content"

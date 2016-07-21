@@ -1,10 +1,12 @@
 package tac.android.de.truckcompanion.fragment;
 
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -73,7 +75,7 @@ public class StatsFragment extends Fragment {
         entriesPie.add(new Entry(1f, 0));
 
         PieDataSet testDataSetPie = new PieDataSet(entriesPie,"");
-        testDataSetPie.setColor(ColorTemplate.JOYFUL_COLORS[0]);
+        testDataSetPie.setColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.wheelDriveEntry));
         testDataSetPie.setDrawValues(false);
 
         ArrayList<String> labelsPie = new ArrayList<>();
@@ -83,19 +85,22 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(0).setData(testDataPie);
         headerCharts.elementAt(0).setMinimumWidth(40);
         headerCharts.elementAt(0).setMinimumHeight(40);
-        headerCharts.elementAt(0).setDescription("Wochenlenkzeit");
         headerCharts.elementAt(0).setCenterText((int)(logHelp.GetDriveTimeSum()  + logHelp.GetCurrentDay().GetDriveTime()) / 60 +" / "+ LogicHelper.MAX_WEEK_DRIVE_MINUTES / 60);
         headerCharts.elementAt(0).setDrawSliceText(false);
         headerCharts.elementAt(0).setMaxAngle(degree);
         headerCharts.elementAt(0).getLegend().setEnabled(false);
         headerCharts.elementAt(0).setTouchEnabled(false);
-
+        headerCharts.elementAt(0).setTransparentCircleAlpha(0);
+        headerCharts.elementAt(0).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.colorPrimary));
+        headerCharts.elementAt(0).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
+        headerCharts.elementAt(0).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
+        headerCharts.elementAt(0).setDescription("Wochenlenkzeit");
 
         entriesPie = new ArrayList<>();
         entriesPie.add(new Entry(0f, 0));
 
         testDataSetPie = new PieDataSet(entriesPie,"");
-        testDataSetPie.setColor(ColorTemplate.JOYFUL_COLORS[0]);
+        testDataSetPie.setColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.wheelDriveEntry));
         testDataSetPie.setDrawValues(false);
 
         labelsPie = new ArrayList<>();
@@ -111,6 +116,10 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(1).setMaxAngle(0);
         headerCharts.elementAt(1).getLegend().setEnabled(false);
         headerCharts.elementAt(1).setTouchEnabled(false);
+        headerCharts.elementAt(1).setTransparentCircleAlpha(0);
+        headerCharts.elementAt(1).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.colorPrimary));
+        headerCharts.elementAt(1).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
+        headerCharts.elementAt(1).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
 
         degree = LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 360;
         degree = logHelp.GetDriveTimeSum() / degree;
@@ -119,8 +128,7 @@ public class StatsFragment extends Fragment {
         entriesPie.add(new Entry(1f, 0));
 
         testDataSetPie = new PieDataSet(entriesPie,"");
-        testDataSetPie.setColor(ColorTemplate.JOYFUL_COLORS[0]);
-        testDataSetPie.setDrawValues(false);
+        testDataSetPie.setColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.wheelDriveEntry));        testDataSetPie.setDrawValues(false);
 
         labelsPie = new ArrayList<>();
         labelsPie.add("");
@@ -135,6 +143,10 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(2).setMaxAngle(degree);
         headerCharts.elementAt(2).getLegend().setEnabled(false);
         headerCharts.elementAt(2).setTouchEnabled(false);
+        headerCharts.elementAt(2).setTransparentCircleAlpha(0);
+        headerCharts.elementAt(2).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.colorPrimary));
+        headerCharts.elementAt(2).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
+        headerCharts.elementAt(2).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(),R.color.textColorPrimary));
     }
     void InitCurrentDayChart()
     {
