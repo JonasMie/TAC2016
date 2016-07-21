@@ -947,6 +947,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setRotationAngle(autoUpdateArcAngle);
         canvas.setRotation(autoUpdateArcAngle);
         canvas.setArcAngle(canvas.getArcAngle() + (1000 / SECONDS_PER_DAY) * 360);
+        canvas.setArcAngle((float) (canvas.getArcAngle() + (MainActivity.VELOCITY_FACTOR * 10 / SECONDS_PER_DAY) * 360));
         refresh.post(new Runnable() {
             @Override
             public void run() {
@@ -960,6 +961,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     private float getAngle() {
         return ((((autoUpdateArcAngle / 360) * SECONDS_PER_DAY) + 1000) / SECONDS_PER_DAY) * 360;
+        return (float) (((((autoUpdateArcAngle / 360) * SECONDS_PER_DAY) + MainActivity.VELOCITY_FACTOR * 10) / SECONDS_PER_DAY) * 360);
     }
 
     private void highlightEntry(WheelEntry entry) {

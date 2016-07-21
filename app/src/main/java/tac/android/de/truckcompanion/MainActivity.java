@@ -43,8 +43,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
     private static final int TRUCK_ID = 1;
-    //    private static final double NAVIGATION_DRIVING_SPEED = 22.222;
-    private static final double NAVIGATION_DRIVING_SPEED = 300;
+    public static final double NAVIGATION_DRIVING_SPEED = 22.222;
+    public static final double VELOCITY_FACTOR = 13.5;
 
     // View references
     private ProgressDialog mProgressDialog;
@@ -277,7 +277,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         switch (item.getItemId()) {
             case R.id.start_navigation_menu_item:
                 // start navigation
-                NavigationManager.Error error = NavigationWrapper.getInstance().getNavigationManager().simulate(mCurrentJourney.getRouteWrapper().getRoute(), (long) NAVIGATION_DRIVING_SPEED);
+                NavigationManager.Error error = NavigationWrapper.getInstance().getNavigationManager().simulate(mCurrentJourney.getRouteWrapper().getRoute(), (long) (NAVIGATION_DRIVING_SPEED * VELOCITY_FACTOR));
                 if (error != NavigationManager.Error.NONE) {
                     Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
                 }
