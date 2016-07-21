@@ -102,6 +102,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     TimerTask entryDraggedTimerTask;
     TimerTask wheelMovedTimerTask;
     Handler refresh;
+    LinearInterpolator interpolator;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
@@ -200,6 +201,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         mChart.setDragDecelerationEnabled(false);
         autoUpdateArcAngle = mChart.getRotationAngle();
+
+        interpolator = new LinearInterpolator();
         return view;
     }
 
@@ -347,6 +350,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //            params.topMargin = (int) (point.y);
 //            icon.setLayoutParams(params);
 //        }
+
+        Animation canvasRotation = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        canvasRotation.setInterpolator(interpolator);
+        canvasRotation.setFillAfter(true);
+        canvasRotation.setFillEnabled(true);
+        canvas.startAnimation(canvasRotation);
+
     }
 
     @Override
