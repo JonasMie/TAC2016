@@ -984,8 +984,10 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        float radius = (float) (mChart.getRadius() - ((mChart.getRadius() - mChart.getHoleRadius() * .01 * mChart.getRadius()) / 2));
+        double pieElementsWidth = mChart.getRadius() - mChart.getHoleRadius() * .01 * mChart.getRadius();
+        float radius = (float) (mChart.getRadius() - pieElementsWidth / 2);
         canvas.setBoundingBox(new RectF(mChart.getCenter().x - radius, mChart.getCenter().y - radius, mChart.getCenter().x + radius, mChart.getCenter().y + radius));
+        canvas.setStrokeWidth(pieElementsWidth);
         canvas.invalidate();
     }
 

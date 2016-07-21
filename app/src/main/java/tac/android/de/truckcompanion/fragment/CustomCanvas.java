@@ -27,6 +27,7 @@ public class CustomCanvas extends View {
 
     float rotation = -90;
     float arcAngle = 0;
+    private double strokeWidth = 0;
 
     public CustomCanvas(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -55,7 +56,7 @@ public class CustomCanvas extends View {
             paint.setColor(Color.parseColor("#5FBA7D"));
             paint.setAlpha(128);
             paint.setStyle(Paint.Style.STROKE);
-            paint.setStrokeWidth(50);
+            paint.setStrokeWidth((float) strokeWidth);
             paint.setAntiAlias(true);
         }
         mDrawable = new ShapeDrawable(new OvalShape());
@@ -99,5 +100,16 @@ public class CustomCanvas extends View {
 
     public void setArcAngle(float arcAngle) {
         this.arcAngle = arcAngle;
+    }
+
+    public void setStrokeWidth(double strokeWidth) {
+        this.strokeWidth = strokeWidth;
+        if (paint != null) {
+            paint.setStrokeWidth((float) strokeWidth);
+        }
+    }
+
+    public double getStrokeWidth() {
+        return strokeWidth;
     }
 }
