@@ -33,4 +33,10 @@
     <string name="day_stats_card_6_title">Dienstag,25.06.2016</string>
     <string name="start_navigation_menu_item">Navigation starten</string>
     <string name="stop_navigation_menu_item">Navigation stoppen</string>
+    <string name="roadhouse_query_text">Wie hat dir die Raststätte %1$s gefallen?</string>
+    <string name="alert_dialog_ok">Speichern</string>
+    <string name="alert_dialog_cancel">Abbrechen</string>
+    <string name="alert_dialog_rate_more">Mehr bewerten</string>
+    <string name="alert_dialog_rate_title">Rasthof bewerten</string>
+    <string name="rating_heading_text">Wir hoffen, du hattest eine angenehme Pause.</string>
 </resources>

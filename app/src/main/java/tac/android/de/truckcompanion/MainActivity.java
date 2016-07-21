@@ -1,11 +1,12 @@
 package tac.android.de.truckcompanion;
 
+import android.app.DialogFragment;
+import android.app.FragmentManager;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
-import android.app.FragmentManager;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -16,16 +17,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
-import com.github.mikephil.charting.data.Entry;
 import com.here.android.mpa.common.OnEngineInitListener;
 import com.here.android.mpa.guidance.NavigationManager;
-import com.here.android.mpa.mapping.Map;
-import org.json.JSONException;
 import tac.android.de.truckcompanion.adapter.ViewPagerAdapter;
 import tac.android.de.truckcompanion.data.*;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.fragment.MainFragment;
 import tac.android.de.truckcompanion.fragment.MapFragment;
+import tac.android.de.truckcompanion.fragment.RatingDialogFragment;
 import tac.android.de.truckcompanion.fragment.StatsFragment;
 import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
@@ -44,7 +43,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private static final int DRIVER_ID = 1;
     private static final int TOUR_ID = 1;
     private static final int TRUCK_ID = 1;
-    private static final double NAVIGATION_DRIVING_SPEED = 22.222;
+    //    private static final double NAVIGATION_DRIVING_SPEED = 22.222;
+    private static final double NAVIGATION_DRIVING_SPEED = 300;
 
     // View references
     private ProgressDialog mProgressDialog;
@@ -90,6 +90,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         setSupportActionBar(toolbar);
 
         mViewPager.setPagingEnabled(false);
+        mViewPager.setOffscreenPageLimit(2);
 
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
         mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
@@ -200,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 } else {
                     mCurrentJourney = journey;
 
-                    statsFragment= (StatsFragment) mViewPagerAdapter.getRegisteredFragment(2);
+                    statsFragment = (StatsFragment) mViewPagerAdapter.getRegisteredFragment(2);
 
                     mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
                     mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
@@ -334,5 +335,27 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     @Override
     public void onPauseDataChanged(WheelEntry entry) {
         mapFragment.addMarkerCluster(entry);
+    }
+
+    @Override
+    public void onBreakFinished() {
+        mainFragment.onBreakFinished();
+        WheelEntry lastBreakEntry = mainFragment.getPrevBreak();
+        DialogFragment ratingDialog = RatingDialogFragment.newInstance(R.string.alert_dialog_rate_title, lastBreakEntry.getPause().getMainRoadhouse().getPlaceLink().getTitle());
+
+        ratingDialog.show(getFragmentManager(), "dialog");
+    }
+
+    public WheelEntry getNextBreak() {
+        return mainFragment.getNextBreak();
+    }
+
+    public void doPositiveClick() {
+    }
+
+    public void doNegativeClick() {
+    }
+
+    public void doRateMore() {
     }
 }
