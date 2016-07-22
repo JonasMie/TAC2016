@@ -46,6 +46,7 @@ import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
 import tac.android.de.truckcompanion.geo.GeoHelper;
+import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
@@ -90,6 +91,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private TextView mainRecBreaktime;
     private RatingBar mainRecRating;
     private CarouselView carouselView;
+    private CustomCanvas canvas;
+    private ImageView clock;
 
 
     // Logic data
@@ -109,6 +112,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     TimerTask wheelMovedTimerTask;
     Handler refresh;
     DataCollector dc;
+    LinearInterpolator interpolator;
+    private float clockOffsetAngle = 0;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
@@ -126,8 +131,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
     private static final long AUTO_UPDATE_WHEEL_MOVED_DELAY = 2000;
+    private static final int CHART_ANGLE_OFFSET = 40;
     private WheelEntry previousBreakEntry;
-    private CustomCanvas canvas;
 
 
     @TargetApi(Build.VERSION_CODES.M)
@@ -142,6 +147,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         chartWrapper = (FrameLayout) view.findViewById(R.id.chartWrapper);
         canvas = (CustomCanvas) view.findViewById(R.id.canvas);
+        clock = (ImageView) view.findViewById(R.id.clock);
 
         recommendationsWrapper = (LinearLayout) view.findViewById(R.id.recommendationsWrapper);
         mainRecTitle = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_title);
@@ -191,7 +197,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
 
-        mChart.setRotationAngle(mChart.getRotationAngle() - 40);
+        mChart.setRotationAngle(mChart.getRotationAngle() - CHART_ANGLE_OFFSET);
 
         mChart.setHighlightPerTapEnabled(false);
 
@@ -207,6 +213,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         mChart.setDragDecelerationEnabled(false);
         autoUpdateArcAngle = mChart.getRotationAngle();
+
+        interpolator = new LinearInterpolator();
         return view;
     }
 
@@ -243,6 +251,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         // Highlight 1st pause by default
         mChart.highlightValue(1, 0);
         selectedEntry = (WheelEntry) dataSet.getEntryForIndex(1);
+
+//        RotateAnimation a = new RotateAnimation(-2, 2, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
+//        a.setDuration(10);
+//        a.setRepeatCount(Animation.INFINITE);
+//        a.setRepeatMode(Animation.REVERSE);
+//        mChart.startAnimation(a);
 
         mChart.notifyDataSetChanged();
         mChart.invalidate();
@@ -309,7 +323,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     onEntryDragged(me, diffAngle);
                 }
             }
-            rotateCanvas(diffAngle);
+            rotateViews(diffAngle);
             // diff-angle is incremental, but we only need the difference regarding the last change, so adapt startAngle
             mStartAngle += diffAngle;
             wheelMovedTimerTask = new TimerTask() {
@@ -334,26 +348,45 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //        }
     }
 
-    private void rotateCanvas(float diffAngle) {
-        canvas.setRotation(mChart.getRawRotationAngle());
-        Animation a = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        a.setInterpolator(new LinearInterpolator());
+    public void onTruckMoved() {
+        float diffAngle = getAngle() - autoUpdateArcAngle;
+        autoUpdateArcAngle -= diffAngle;
+        mChart.setRotationAngle(autoUpdateArcAngle);
+        canvas.setRotation(autoUpdateArcAngle);
+
+        final RotateAnimation a = new RotateAnimation(mChart.getRotationAngle() + 90 + clockOffsetAngle, mChart.getRotationAngle() + 90 + clockOffsetAngle - diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        a.setFillEnabled(true);
         a.setFillAfter(true);
-        canvas.startAnimation(a);
+        a.setInterpolator(interpolator);
+        long elapsedDistance = NavigationWrapper.getInstance().getNavigationManager().getElapsedDistance();
+
+
+        canvas.setArcAngle((float) (canvas.getArcAngle() + (MainActivity.VELOCITY_FACTOR * 10 / SECONDS_PER_DAY) * 360));
+        refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                if (autoUpdateWheelAngle) {
+                    mChart.invalidate();
+                    canvas.invalidate();
+                    clock.startAnimation(a);
+                }
+            }
+        });
     }
 
-    public void rotateIcons(float x, float y) {
-//        float dif = mChart.getAngleForPoint(x, y) - mStartAngle;
-//        mStartAngle = mChart.getAngleForPoint(x, y);
-//        for (ImageView icon : symbols) {
-//            RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) icon.getLayoutParams();
-//            float oldAngle = mChart.getAngleForPoint(icon.getX(), icon.getY());
-//            float newAngle = oldAngle + dif;
-//            PointD point = getPoint(mChart.getCenter(), mChart.getRadius(), newAngle);
-//            params.leftMargin = (int) (point.x);
-//            params.topMargin = (int) (point.y);
-//            icon.setLayoutParams(params);
-//        }
+    private void rotateViews(float diffAngle) {
+        canvas.setRotation(mChart.getRawRotationAngle());
+
+        Animation canvasRotation = new RotateAnimation(0, diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        canvasRotation.setInterpolator(interpolator);
+        canvasRotation.setFillAfter(true);
+        canvasRotation.setFillEnabled(true);
+        canvas.startAnimation(canvasRotation);
+
+        Animation clockRotation = new RotateAnimation(mChart.getRotationAngle() + 90 + clockOffsetAngle, mChart.getRotationAngle() + 90 + clockOffsetAngle + diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        clockRotation.setInterpolator(interpolator);
+        clockRotation.setFillAfter(true);
+        clock.startAnimation(clockRotation);
     }
 
     @Override
@@ -659,6 +692,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                         public void processFinish(RouteWrapper routeWrapper) {
                                             updateEntryPositions(routeWrapper);
                                             setRecommendations(null);
+                                            onNothingSelected();
                                             getActivity().runOnUiThread(new Runnable() {
                                                 @Override
                                                 public void run() {
@@ -921,13 +955,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
-        this.updateEntryPositions(updatedRouteWrapper);
-        setRecommendations(1, null);
-        loadAllDetailInfosInBackground();
-        currentTimeAngle = mChart.getRotationAngle();
-    }
-
     private void loadAllDetailInfosInBackground() {
         // load details for first and second break (1st & 3rd wheel entry)
         loadDetailInfosInBackground(1);
@@ -1105,24 +1132,34 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void onTruckMoved() {
-        autoUpdateArcAngle = autoUpdateArcAngle - (getAngle() - autoUpdateArcAngle);
-        mChart.setRotationAngle(autoUpdateArcAngle);
-        canvas.setRotation(autoUpdateArcAngle);
-        canvas.setArcAngle(canvas.getArcAngle() + (1000 / SECONDS_PER_DAY) * 360);
-        refresh.post(new Runnable() {
-            @Override
-            public void run() {
-                if (autoUpdateWheelAngle) {
-                    mChart.invalidate();
-                    canvas.invalidate();
-                }
-            }
-        });
+    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
+        this.updateEntryPositions(updatedRouteWrapper);
+        setRecommendations(1, null);
+        loadAllDetailInfosInBackground();
+        currentTimeAngle = mChart.getRotationAngle();
+
+        // set clock to current time
+        Calendar cal = Calendar.getInstance();
+        long now = cal.getTimeInMillis();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long passed = ((now - cal.getTimeInMillis()) / 1000) % (60 * 60 * 12);
+        long angle = (long) ((passed / (SECONDS_PER_DAY * 0.5f) * 360));
+        clockOffsetAngle = (-angle - CHART_ANGLE_OFFSET) % 360;
+        if (clockOffsetAngle < 0) {
+            clockOffsetAngle = 360 + clockOffsetAngle;
+        }
+        clockOffsetAngle -= (mChart.getRotationAngle() + 90);
+        RotateAnimation a = new RotateAnimation(0, mChart.getRotationAngle() + 90 + clockOffsetAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        a.setInterpolator(interpolator);
+        a.setFillAfter(true);
+        clock.startAnimation(a);
     }
 
     private float getAngle() {
-        return ((((autoUpdateArcAngle / 360) * SECONDS_PER_DAY) + 1000) / SECONDS_PER_DAY) * 360;
+        return (float) (((((autoUpdateArcAngle / 360) * SECONDS_PER_DAY) + MainActivity.VELOCITY_FACTOR * 10) / SECONDS_PER_DAY) * 360);
     }
 
     private void highlightEntry(WheelEntry entry) {
@@ -1159,11 +1196,19 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        double pieElementsWidth = mChart.getRadius() - mChart.getHoleRadius() * .01 * mChart.getRadius();
+        int minuteIndicatorSize = 15;
+        double innerCircleRadius = mChart.getHoleRadius() * .01 * mChart.getRadius();
+        double pieElementsWidth = mChart.getRadius() - innerCircleRadius;
         float radius = (float) (mChart.getRadius() - pieElementsWidth / 2);
+
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int) (2 * innerCircleRadius + 2 * minuteIndicatorSize), (int) (2 * innerCircleRadius + 2 * minuteIndicatorSize));
+        params.setMargins((int) (mChart.getCenter().x - innerCircleRadius - minuteIndicatorSize), (int) (mChart.getCenter().y - innerCircleRadius - minuteIndicatorSize), (int) (mChart.getCenter().x + innerCircleRadius + minuteIndicatorSize), (int) (mChart.getCenter().y + innerCircleRadius + minuteIndicatorSize));
+        clock.setLayoutParams(params);
+        clock.setScaleType(ImageView.ScaleType.FIT_CENTER);
         canvas.setBoundingBox(new RectF(mChart.getCenter().x - radius, mChart.getCenter().y - radius, mChart.getCenter().x + radius, mChart.getCenter().y + radius));
         canvas.setStrokeWidth(pieElementsWidth);
         canvas.invalidate();
+        clock.invalidate();
     }
 
 }
