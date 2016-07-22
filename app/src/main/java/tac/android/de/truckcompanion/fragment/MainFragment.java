@@ -85,7 +85,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private RelativeLayout mainRecWrapper;
     RelativeLayout altRecwrapper;
     private TextView mainRecTitle;
-    private TextView mainRecRatingLabel;
     private TextView mainRecETA;
     private TextView mainRecDistance;
     private TextView mainRecBreaktime;
@@ -151,7 +150,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mainRecETA = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_eta);
         mainRecDistance = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_distance);
         mainRecBreaktime = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_breaktime);
-        mainRecRatingLabel = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_rating_label);
         mainRecRating = (RatingBar) recommendationsWrapper.findViewById(R.id.recommendations_main_rating);
         mainRecGasPrice = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_misc_gas_price);
         mainRecGasImg = (ImageView) recommendationsWrapper.findViewById(R.id.recommendations_main_misc_gas_img);
