@@ -155,7 +155,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         int height = size.y;
         LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(
                 width,
-                (int) (height * .5)
+                (int) (height * .4)
         );
         LinearLayout.LayoutParams params2 = new LinearLayout.LayoutParams(
                 width,
@@ -180,7 +180,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.setTransparentCircleColor(Color.WHITE);
         mChart.setTransparentCircleAlpha(110);
 
-        mChart.setHoleRadius(80f);
+        mChart.setHoleRadius(80f); //80
         mChart.setTransparentCircleRadius(61f);
         mChart.setLogEnabled(true);
 
