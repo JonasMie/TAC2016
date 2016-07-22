@@ -1056,6 +1056,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             int prevAltRhIndex = pause.getAlternativeRoadhouses().indexOf(rh);
             pause.setMainRoadhouse(pause.getAlternativeRoadhouses().get(prevAltRhIndex));
             pause.getAlternativeRoadhouses().set(prevAltRhIndex, prevMainRh);
+
+            listener.onMainFragmentRoadhouseChanged(entry);
             setRecommendations(null);
 
             DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
