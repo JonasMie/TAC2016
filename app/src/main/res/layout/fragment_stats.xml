@@ -6,7 +6,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
->
+    android:background="@color/colorPrimary">
 
     <RelativeLayout
         android:orientation="horizontal"
@@ -15,7 +15,7 @@
         android:id="@+id/header"
         android:paddingBottom="5dp"
         android:clickable="false"
-        android:background="@color/windowBackground"
+        android:background="@color/colorPrimary"
         android:layout_marginTop="30dp">
 
         <LinearLayout
@@ -36,7 +36,8 @@
                     android:layout_alignStart="@+id/week_stats_drivetime_text"
                     android:layout_weight="1"
                     android:layout_alignLeft="@+id/week_stats_drivetime_text"
-                    android:layout_alignParentLeft="false"/>
+                    android:layout_alignParentLeft="false"
+                android:background="@color/colorPrimary" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:layout_width="wrap_content"
@@ -47,7 +48,7 @@
                 android:layout_alignStart="@+id/week_stats_resttime_text"
                 android:layout_marginLeft="0dp"
                 android:layout_weight="1"
-                />
+                android:background="@color/colorPrimary" />
 
             <com.github.mikephil.charting.charts.PieChart
                 android:layout_width="wrap_content"
@@ -58,7 +59,8 @@
                 android:layout_alignStart="@+id/week_stats_drivetime_text_double"
                 android:layout_marginLeft="0dp"
                 android:layout_marginStart="0dp"
-                android:layout_weight="1" />
+                android:layout_weight="1"
+                android:background="@color/colorPrimary" />
         </LinearLayout>
 
     </RelativeLayout>
@@ -77,7 +79,8 @@
             android:text="wöchentliche Fahrtzeit"
             android:id="@+id/label_week_drivetime"
             android:layout_weight="1"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:textColor="@color/textColorPrimary" />
 
         <TextView
             android:layout_width="0dp"
@@ -86,7 +89,8 @@
             android:text="wöchentliche Ruhezeit"
             android:id="@+id/label_week_resttime"
             android:layout_weight="1"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:textColor="@color/textColorPrimary" />
 
         <TextView
             android:layout_width="0dp"
@@ -95,7 +99,8 @@
             android:text="Fahrtzeit Doppelwoche"
             android:id="@+id/label_drivetime_double"
             android:layout_weight="1"
-            android:gravity="center_horizontal" />
+            android:gravity="center_horizontal"
+            android:textColor="@color/textColorPrimary" />
     </LinearLayout>
 
     <ScrollView
