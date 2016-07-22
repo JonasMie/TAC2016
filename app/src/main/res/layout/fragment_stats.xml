@@ -11,11 +11,12 @@
     <RelativeLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="200dp"
         android:id="@+id/header"
         android:paddingBottom="5dp"
         android:clickable="false"
-        android:background="@color/windowBackground">
+        android:background="@color/windowBackground"
+        android:layout_marginTop="30dp">
 
         <LinearLayout
             android:id="@+id/header_charts"
@@ -60,16 +61,42 @@
                 android:layout_weight="1" />
         </LinearLayout>
 
-        <LinearLayout
-            android:id="@+id/header_text"
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true">
-        </LinearLayout>
-
     </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/header_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="wöchentliche Fahrtzeit"
+            android:id="@+id/label_week_drivetime"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="wöchentliche Ruhezeit"
+            android:id="@+id/label_week_resttime"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Fahrtzeit Doppelwoche"
+            android:id="@+id/label_drivetime_double"
+            android:layout_weight="1"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
 
     <ScrollView
         android:layout_width="wrap_content"
@@ -106,7 +133,7 @@
                         <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/day_stats_card_0_title"
+                        android:text="Heute"
                         android:id="@+id/day_stats_card_0_title"
                         android:textSize="12sp"
                             android:textStyle="bold"

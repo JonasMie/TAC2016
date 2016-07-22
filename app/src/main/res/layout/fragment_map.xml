@@ -18,12 +18,12 @@
 
             <ImageView
                     android:layout_width="match_parent"
-                    android:layout_height="@dimen/rhImageHeight"
+                    android:layout_height="wrap_content"
                     android:id="@+id/map_rec_img"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/dummy"/>
+                    android:src="@drawable/lorry_icon"/>
 
             <android.support.design.widget.FloatingActionButton
                     android:id="@+id/map_rec_choose"
@@ -34,7 +34,7 @@
                     android:layout_alignRight="@+id/map_rec_img"
                     android:layout_alignEnd="@+id/map_rec_img"
                     android:layout_marginRight="10dp"
-                    android:layout_marginTop="-50dp">
+                android:src="@drawable/ic_add_location_white_24dp">
             </android.support.design.widget.FloatingActionButton>
 
             <TextView
@@ -44,17 +44,20 @@
                     android:id="@+id/map_rec_title"
                     android:layout_below="@+id/map_rec_img"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:layout_alignParentStart="true"
+                android:layout_marginLeft="12dp"
+                android:layout_marginTop="12dp" />
 
             <RatingBar
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:id="@+id/map_rec_rating"
                     android:layout_below="@+id/map_rec_title"
-                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                    style="@style/Base.Widget.AppCompat.RatingBar.Indicator"
                     android:numStars="5"
                     android:layout_alignParentLeft="true"
-                    android:layout_alignParentStart="true"/>
+                    android:layout_alignParentStart="true"
+                android:layout_marginLeft="12dp" />
 
             <TextView
                     android:layout_width="wrap_content"
@@ -63,7 +66,8 @@
                     android:id="@+id/map_rec_rating_label"
                     android:layout_alignBottom="@+id/map_rec_rating"
                     android:layout_toRightOf="@+id/map_rec_rating"
-                    android:layout_toEndOf="@+id/map_rec_rating"/>
+                    android:layout_toEndOf="@+id/map_rec_rating"
+                android:layout_marginLeft="12dp" />
 
 
             <TextView
@@ -74,7 +78,8 @@
                     android:layout_below="@+id/map_rec_rating_label"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:layout_marginTop="25dp"/>
+                    android:layout_marginTop="25dp"
+                android:layout_marginLeft="12dp" />
 
             <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
@@ -204,17 +209,17 @@
                     android:layout_marginTop="@dimen/default_margin">
                 <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:id="@+id/map_rec_img_parking"
-                        android:src="@drawable/parking_true"
+                        android:src="@drawable/icon_parking_green"
                         android:paddingLeft="@dimen/default_margin"
                         android:paddingStart="@dimen/default_margin"/>
 
                 <ImageView
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_height="40dp"
                         android:id="@+id/map_rec_img_gas"
-                        android:src="@drawable/gas_grey"
+                        android:src="@drawable/icon_gas_normal"
                         android:paddingLeft="@dimen/default_margin"
                         android:paddingStart="@dimen/default_margin"/>
             </LinearLayout>
