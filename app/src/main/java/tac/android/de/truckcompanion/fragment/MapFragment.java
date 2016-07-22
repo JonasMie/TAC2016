@@ -102,6 +102,9 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         if (mapFragment == null) {
             mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         }
+        if (mapFragment == null) {
+            mapFragment = (com.here.android.mpa.mapping.MapFragment) getFragmentManager().findFragmentById(R.id.map);
+        }
 
         sidebar = (ScrollView) view.findViewById(R.id.map_rec_sidebar);
         rh_title = (TextView) view.findViewById(R.id.map_rec_title);
