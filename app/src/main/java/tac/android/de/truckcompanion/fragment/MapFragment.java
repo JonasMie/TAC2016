@@ -159,6 +159,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     public void setMainRoadhouse(WheelEntry entry) {
         setSidebarInfo(entry);
+        addMarkerCluster(entry);
     }
 
     public void setSidebarInfo(WheelEntry entry) {
@@ -170,14 +171,18 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
         map.setCenter(placeLink.getPosition(), Map.Animation.BOW);
         rh_title.setText(placeLink.getTitle());
-        rh_address.setText("01234 Adresse");
+        rh_address.setText(placeLink.getVicinity().replace("<br/>", "\n"));
         rh_rating.setRating((float) placeLink.getAverageRating());
         if (roadhouse.getETA() != null) {
             rh_eta.setText(dateFormat.format(roadhouse.getETA()));
         } else {// TODO
             rh_eta.setText("12:30");
         }
-        rh_distance.setText("20 km"); // TODO
+        if (roadhouse.getDistanceFromStart() != 0) {
+            rh_distance.setText(String.format(Locale.GERMAN, "%.1f", roadhouse.getDistanceFromStart() / 1000f));
+        } else {
+            rh_distance.setText("n/a");
+        }
         rh_breaktime.setText(((int) entry.getVal() / 60) + " min");
 
         rh_choose.setOnClickListener(new View.OnClickListener() {
@@ -195,6 +200,13 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         // TODO: remove from hashmap
         if (pause.getClusterLayer() != null) {
             map.removeClusterLayer(pause.getClusterLayer());
+            for (MapMarker marker : pause.getClusterLayer().getMarkers()) {
+                markerWheelEntryMap.remove(marker);
+            }
+        }
+        if (pause.getMainRoadhouseMarker() != null) {
+            map.removeMapObject(pause.getMainRoadhouseMarker());
+            markerWheelEntryMap.remove(pause.getMainRoadhouseMarker());
         }
 
         prepareImages();
@@ -205,7 +217,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             marker.setCoordinate(pause.getMainRoadhouse().getPlaceLink().getPosition());
             marker.setAnchorPoint(anchorPoint);
             markerWheelEntryMap.put(marker, new EntryRoadhouseStruct(entry, pause.getMainRoadhouse()));
-            cl.addMarker(marker);
+            pause.setMainRoadhouseMarker(marker);
+            map.addMapObject(marker);
         }
         if (pause.getAlternativeRoadhouses() != null) {
             for (Roadhouse rh : pause.getAlternativeRoadhouses()) {
@@ -417,6 +430,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
     }
+
     private class EntryRoadhouseStruct {
         public WheelEntry entry;
         public Roadhouse rh;

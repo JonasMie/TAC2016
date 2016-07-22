@@ -3,6 +3,7 @@ package tac.android.de.truckcompanion.data;
 import android.util.Log;
 import com.here.android.mpa.cluster.ClusterLayer;
 import com.here.android.mpa.common.GeoCoordinate;
+import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.search.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -41,6 +42,7 @@ public class Break {
     private static ArrayList<Break> breaks = new ArrayList<>();
     private int nTry = 1;
     private ClusterLayer clusterLayer;
+    private MapObject mainRoadhouseMarker;
 
     public Break(int elapsedTime, int index, WheelEntry wheelEntry) {
         this.elapsedTime = elapsedTime;
@@ -100,6 +102,7 @@ public class Break {
                                             if (mainRoadhouse == null) {
                                                 Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 Break.this.mainRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                                                Break.this.mainRoadhouse.setDistanceFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("distance"));
                                             } else {
                                                 Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 altRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
@@ -206,5 +209,13 @@ public class Break {
 
     public ClusterLayer getClusterLayer() {
         return clusterLayer;
+    }
+
+    public MapObject getMainRoadhouseMarker() {
+        return mainRoadhouseMarker;
+    }
+
+    public void setMainRoadhouseMarker(MapObject mainRoadhouseMarker) {
+        this.mainRoadhouseMarker = mainRoadhouseMarker;
     }
 }

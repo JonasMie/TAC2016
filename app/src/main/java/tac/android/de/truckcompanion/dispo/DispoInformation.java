@@ -18,6 +18,13 @@ import java.util.Locale;
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
 public abstract class DispoInformation {
+    @Override
+    public boolean equals(Object obj) {
+        DispoInformation o = (DispoInformation) obj;
+        return o.getCoordinate().latitude == this.getCoordinate().latitude && o.getCoordinate().longitude == this.getCoordinate().longitude;
+    }
+
+    abstract public LatLng getCoordinate();
 
     private static final DateFormat df = new SimpleDateFormat("EEE MMM dd kk:mm:ss yyyy", Locale.ENGLISH);
 
@@ -73,6 +80,12 @@ public abstract class DispoInformation {
             this.coordinate = dest;
             this.time = time;
 
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            DestinationPoint o = (DestinationPoint) obj;
+            return obj != null && o.getCoordinate().latitude == this.getCoordinate().latitude && o.getCoordinate().longitude == this.getCoordinate().longitude;
         }
     }
 
