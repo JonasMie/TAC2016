@@ -92,7 +92,7 @@ public class StatsFragment extends Fragment {
         entriesPie.add(new Entry(0f, 0));
 
         testDataSetPie = new PieDataSet(entriesPie, "");
-        testDataSetPie.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelDriveEntry));
+        testDataSetPie.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelPauseEntry));
         testDataSetPie.setDrawValues(false);
 
         labelsPie = new ArrayList<>();
@@ -148,7 +148,7 @@ public class StatsFragment extends Fragment {
         entries.add(new BarEntry(logHelp.GetCurrentDay().GetDriveTime() / 60, 0));
 
         BarDataSet testDataSet = new BarDataSet(entries, "Zeit");
-        testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[4]);
+        testDataSet.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelDriveEntry));
         testDataSet.setDrawValues(false);
 
         //add label
@@ -158,6 +158,7 @@ public class StatsFragment extends Fragment {
 
         //create dataset
         BarData testData = new BarData(labels, testDataSet);
+        testData.setValueTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
 
         //set data
         worktimeCharts.elementAt(0).setData(testData);
@@ -184,18 +185,23 @@ public class StatsFragment extends Fragment {
         worktimeCharts.elementAt(0).getAxisRight().setDrawAxisLine(false);
         worktimeCharts.elementAt(0).getLegend().setEnabled(false);
         worktimeCharts.elementAt(0).setTouchEnabled(false);
+        worktimeCharts.elementAt(0).getAxisRight().setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
+        worktimeCharts.elementAt(0).getAxisLeft().setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
+        worktimeCharts.elementAt(0).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
+
         //add limit line
         LimitLine limit = new LimitLine(LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
-        limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
+        limit.setLineColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.indicator));
         limit.setLabel(logHelp.GetCurrentDay().GetDriveTime() / 60 + " / " + LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
         limit.setTextSize(11);
+        limit.setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorSecondary));
         worktimeCharts.elementAt(0).getAxisLeft().addLimitLine(limit);
 
         entries = new ArrayList<>();
         entries.add(new BarEntry((logHelp.GetCurrentDay().GetRestTime()) / 60, 0));
 
         testDataSet = new BarDataSet(entries, "Zeit");
-        testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[3]);
+        testDataSet.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelPauseEntry));
         testDataSet.setDrawValues(false);
 
         //add label
@@ -205,6 +211,7 @@ public class StatsFragment extends Fragment {
 
         //create dataset
         testData = new BarData(labels, testDataSet);
+        testData.setValueTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
 
         //set data
         restTimeCharts.elementAt(0).setData(testData);
@@ -233,9 +240,12 @@ public class StatsFragment extends Fragment {
         restTimeCharts.elementAt(0).setTouchEnabled(false);
         //add limit line
         limit = new LimitLine(11);
-        limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
+
+        limit.setLineColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.indicator));
+
         limit.setLabel(logHelp.GetCurrentDay().GetRestTime() / 60 + " / " + LogicHelper.MIN_DAY_REST_MINUTES / 60);
         limit.setTextSize(11);
+        limit.setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorSecondary));
         restTimeCharts.elementAt(0).getAxisLeft().addLimitLine(limit);
 
 
@@ -266,7 +276,7 @@ public class StatsFragment extends Fragment {
             entries.add(new BarEntry(logHelp.workingDays.elementAt(counter).GetDriveTime() / 60, 0));
 
             BarDataSet testDataSet = new BarDataSet(entries, "Zeit");
-            testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[4]);
+            testDataSet.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelDriveEntry));
             testDataSet.setDrawValues(false);
 
             //add label
@@ -276,7 +286,7 @@ public class StatsFragment extends Fragment {
 
             //create dataset
             BarData testData = new BarData(labels, testDataSet);
-
+            testData.setValueTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
             //set data
             mChart.setData(testData);
 
@@ -304,9 +314,10 @@ public class StatsFragment extends Fragment {
             mChart.setTouchEnabled(false);
             //add limit line
             LimitLine limit = new LimitLine(LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
-            limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
+            limit.setLineColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.indicator));
             limit.setLabel(logHelp.workingDays.elementAt(counter).GetDriveTime() / 60 + " / " + LogicHelper.MAX_DAY_DRIVE_MINUTES / 60);
             limit.setTextSize(11);
+            limit.setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorSecondary));
             mChart.getAxisLeft().addLimitLine(limit);
 
 
@@ -341,7 +352,7 @@ public class StatsFragment extends Fragment {
             entries.add(new BarEntry(logHelp.workingDays.elementAt(counter).GetRestTime() / 60, 0));
 
             BarDataSet testDataSet = new BarDataSet(entries, "Zeit");
-            testDataSet.setColor(ColorTemplate.JOYFUL_COLORS[3]);
+            testDataSet.setColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.wheelPauseEntry));
             testDataSet.setDrawValues(false);
 
             //add label
@@ -351,6 +362,7 @@ public class StatsFragment extends Fragment {
 
             //create dataset
             BarData testData = new BarData(labels, testDataSet);
+            testData.setValueTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
 
             //set data
             mChart.setData(testData);
@@ -379,9 +391,10 @@ public class StatsFragment extends Fragment {
             mChart.setTouchEnabled(false);
             //add limit line
             LimitLine limit = new LimitLine(11);
-            limit.setLineColor(ColorTemplate.JOYFUL_COLORS[1]);
+            limit.setLineColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.indicator));
             limit.setLabel(logHelp.workingDays.elementAt(counter).GetRestTime() / 60 + " / " + LogicHelper.MIN_DAY_REST_MINUTES / 60);
             limit.setTextSize(11);
+            limit.setTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorSecondary));
             mChart.getAxisLeft().addLimitLine(limit);
 
 

@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.*;
 import android.support.annotation.Nullable;
+import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.Animation;
@@ -188,9 +189,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         // Layout + appearance
         mChart.setDrawHoleEnabled(true);
-        mChart.setHoleColor(Color.WHITE);
+        mChart.setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.windowBackground));
 
-        mChart.setTransparentCircleColor(Color.WHITE);
+        mChart.setTransparentCircleColor(Color.TRANSPARENT);
         mChart.setTransparentCircleAlpha(110);
 
         mChart.setHoleRadius(80f); //80
