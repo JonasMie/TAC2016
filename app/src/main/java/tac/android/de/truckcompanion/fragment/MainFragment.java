@@ -895,6 +895,18 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             }
         });
 
+        dc.getGasPrices(pause.getMainRoadhouse().getPlaceLink().getPosition().getLatitude(), pause.getMainRoadhouse().getPlaceLink().getPosition().getLongitude(), 20, DataCollector.ORDER_BY_DISTANCE_DESC, -1, new ResponseCallback() {
+            @Override
+            public void onSuccess(JSONObject result) {
+                Log.d("test","test");
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        });
+
         setupCarousel(item);
     }
 
