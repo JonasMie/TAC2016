@@ -21,7 +21,7 @@ import android.view.animation.Animation;
 public class CustomCanvas extends View {
 
     private ShapeDrawable mDrawable;
-    RectF boundingBox;
+    RectF boundingBox = new RectF(0, 0, 0, 0);
     Rect rect = new Rect();
     Paint paint;
 

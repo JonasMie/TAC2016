@@ -106,7 +106,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     TimerTask wheelMovedTimerTask;
     Handler refresh;
     LinearInterpolator interpolator;
-    private float clockAngle = 0;
+    private float clockOffsetAngle = 0;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
@@ -335,6 +335,32 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 //        }
     }
 
+    public void onTruckMoved() {
+        float diffAngle = getAngle() - autoUpdateArcAngle;
+        autoUpdateArcAngle -= diffAngle;
+        mChart.setRotationAngle(autoUpdateArcAngle);
+        canvas.setRotation(autoUpdateArcAngle);
+
+        final RotateAnimation a = new RotateAnimation(mChart.getRotationAngle() + 90 + clockOffsetAngle, mChart.getRotationAngle() + 90 + clockOffsetAngle - diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
+        a.setFillEnabled(true);
+        a.setFillAfter(true);
+        a.setInterpolator(interpolator);
+        long elapsedDistance = NavigationWrapper.getInstance().getNavigationManager().getElapsedDistance();
+
+
+        canvas.setArcAngle((float) (canvas.getArcAngle() + (MainActivity.VELOCITY_FACTOR * 10 / SECONDS_PER_DAY) * 360));
+        refresh.post(new Runnable() {
+            @Override
+            public void run() {
+                if (autoUpdateWheelAngle) {
+                    mChart.invalidate();
+                    canvas.invalidate();
+                    clock.startAnimation(a);
+                }
+            }
+        });
+    }
+
     private void rotateViews(float diffAngle) {
         canvas.setRotation(mChart.getRawRotationAngle());
 
@@ -344,8 +370,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         canvasRotation.setFillEnabled(true);
         canvas.startAnimation(canvasRotation);
 
-        Animation clockRotation = new RotateAnimation(clockAngle, clockAngle + diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        clockAngle += diffAngle;
+        Animation clockRotation = new RotateAnimation(mChart.getRotationAngle() + 90 + clockOffsetAngle, mChart.getRotationAngle() + 90 + clockOffsetAngle + diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         clockRotation.setInterpolator(interpolator);
         clockRotation.setFillAfter(true);
         clock.startAnimation(clockRotation);
@@ -839,28 +864,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
-        this.updateEntryPositions(updatedRouteWrapper);
-        setRecommendations(1, null);
-        loadAllDetailInfosInBackground();
-        currentTimeAngle = mChart.getRotationAngle();
-
-        // set clock to current time
-        Calendar cal = Calendar.getInstance();
-        long now = cal.getTimeInMillis();
-        cal.set(Calendar.HOUR_OF_DAY, 0);
-        cal.set(Calendar.MINUTE, 0);
-        cal.set(Calendar.SECOND, 0);
-        cal.set(Calendar.MILLISECOND, 0);
-        long passed = ((now - cal.getTimeInMillis()) / 1000) % (60 * 60 * 12);
-        long angle = (long) ((passed / (SECONDS_PER_DAY * 0.5f) * 360));
-        RotateAnimation a = new RotateAnimation(0, -angle - CHART_ANGLE_OFFSET, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        clockAngle = clockAngle - angle - CHART_ANGLE_OFFSET;
-        a.setInterpolator(interpolator);
-        a.setFillAfter(true);
-        clock.startAnimation(a);
-    }
-
     private void loadAllDetailInfosInBackground() {
         // load details for first and second break (1st & 3rd wheel entry)
         loadDetailInfosInBackground(1);
@@ -949,31 +952,30 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void onTruckMoved() {
-        float diffAngle = getAngle() - autoUpdateArcAngle;
-        autoUpdateArcAngle -= diffAngle;
-        mChart.setRotationAngle(autoUpdateArcAngle);
-        canvas.setRotation(autoUpdateArcAngle);
+    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
+        this.updateEntryPositions(updatedRouteWrapper);
+        setRecommendations(1, null);
+        loadAllDetailInfosInBackground();
+        currentTimeAngle = mChart.getRotationAngle();
 
-        final RotateAnimation a = new RotateAnimation(clockAngle, clockAngle - diffAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
-        clockAngle -= diffAngle;
-        a.setFillEnabled(true);
-        a.setFillAfter(true);
+        // set clock to current time
+        Calendar cal = Calendar.getInstance();
+        long now = cal.getTimeInMillis();
+        cal.set(Calendar.HOUR_OF_DAY, 0);
+        cal.set(Calendar.MINUTE, 0);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        long passed = ((now - cal.getTimeInMillis()) / 1000) % (60 * 60 * 12);
+        long angle = (long) ((passed / (SECONDS_PER_DAY * 0.5f) * 360));
+        clockOffsetAngle = (-angle - CHART_ANGLE_OFFSET) % 360;
+        if (clockOffsetAngle < 0) {
+            clockOffsetAngle = 360 + clockOffsetAngle;
+        }
+        clockOffsetAngle -= (mChart.getRotationAngle() + 90);
+        RotateAnimation a = new RotateAnimation(0, mChart.getRotationAngle() + 90 + clockOffsetAngle, Animation.RELATIVE_TO_SELF, 0.5f, Animation.RELATIVE_TO_SELF, 0.5f);
         a.setInterpolator(interpolator);
-        long elapsedDistance = NavigationWrapper.getInstance().getNavigationManager().getElapsedDistance();
-
-
-        canvas.setArcAngle((float) (canvas.getArcAngle() + (MainActivity.VELOCITY_FACTOR * 10 / SECONDS_PER_DAY) * 360));
-        refresh.post(new Runnable() {
-            @Override
-            public void run() {
-                if (autoUpdateWheelAngle) {
-                    mChart.invalidate();
-                    canvas.invalidate();
-                    clock.startAnimation(a);
-                }
-            }
-        });
+        a.setFillAfter(true);
+        clock.startAnimation(a);
     }
 
     private float getAngle() {
