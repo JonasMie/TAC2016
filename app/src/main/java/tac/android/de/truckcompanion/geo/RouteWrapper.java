@@ -103,6 +103,7 @@ public class RouteWrapper {
                     } else {
                         Log.i(TAG, "Routing successful");
                         route = routeResults.get(0).getRoute();
+                        MainActivity.getmCurrentJourney().getRouteWrapper().setRoute(route);
                         departureTime = new Date();
                         map.removeMapObject(mapRoute);
                         mapRoute = new MapRoute(route);
