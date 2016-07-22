@@ -1,113 +1,112 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@color/colorAlternatives"
-    android:padding="25dp"
-    android:paddingTop="20dp"
-    android:paddingBottom="15dp">
-
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/colorAlternatives"
+                android:padding="25dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="15dp">
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Rasthof Alternative"
-        android:id="@+id/recommendations_alternative_title"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:textSize="21dp"
-        android:layout_toLeftOf="@+id/recommendations_alternative_choose"
-        android:layout_toStartOf="@+id/recommendations_alternative_choose" />
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rasthof Alternative"
+            android:id="@+id/recommendations_alternative_title"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:textSize="21dp"
+            android:layout_toLeftOf="@+id/recommendations_alternative_choose"
+            android:layout_toStartOf="@+id/recommendations_alternative_choose"/>
 
     <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/recommendations_alternative_rating"
-        style="@style/Base.Widget.AppCompat.RatingBar.Indicator"
-        android:layout_below="@+id/recommendations_alternative_title"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="12dp" />
-
-    <Button
-        style="?android:attr/buttonStyleSmall"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Auswählen"
-        android:id="@+id/recommendations_alternative_choose"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/recommendations_alternative_rating"
+            style="@style/Base.Widget.AppCompat.RatingBar.Indicator"
+            android:layout_below="@+id/recommendations_alternative_title"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_marginBottom="12dp"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/recommendations_alternative_eta_label"
-        android:layout_below="@+id/recommendations_alternative_rating"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:text="Ankunft:"
-        android:layout_alignBottom="@+id/recommendations_alternative_eta"
-        android:gravity="center" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_eta_label"
+            android:layout_below="@+id/recommendations_alternative_rating"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:text="Ankunft:"
+            android:layout_alignBottom="@+id/recommendations_alternative_eta"
+            android:gravity="center"/>
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/recommendations_alternative_eta"
-        android:layout_below="@+id/recommendations_alternative_rating"
-        android:layout_toRightOf="@+id/recommendations_alternative_eta_label"
-        android:layout_marginLeft="13dp"
-        android:text="20.00"
-        android:textSize="20dp"
-        android:textIsSelectable="true" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_eta"
+            android:layout_below="@+id/recommendations_alternative_rating"
+            android:layout_toRightOf="@+id/recommendations_alternative_eta_label"
+            android:layout_marginLeft="13dp"
+            android:text="20.00"
+            android:textSize="20dp"
+            android:textIsSelectable="true"/>
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/recommendations_alternative_distance_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_distance_label"
 
-        android:layout_marginLeft="@dimen/default_margin"
-        android:layout_marginStart="@dimen/default_margin"
+            android:layout_marginLeft="@dimen/default_margin"
+            android:layout_marginStart="@dimen/default_margin"
 
-        android:text="Entfernung:"
-        android:layout_below="@+id/recommendations_alternative_rating"
-        android:layout_toRightOf="@+id/recommendations_alternative_eta"
-        android:layout_toEndOf="@+id/recommendations_alternative_eta"
-        android:layout_alignBottom="@+id/recommendations_alternative_eta"
-        android:gravity="center" />
+            android:text="Entfernung:"
+            android:layout_below="@+id/recommendations_alternative_rating"
+            android:layout_toRightOf="@+id/recommendations_alternative_eta"
+            android:layout_toEndOf="@+id/recommendations_alternative_eta"
+            android:layout_alignBottom="@+id/recommendations_alternative_eta"
+            android:gravity="center"/>
 
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:id="@+id/recommendations_alternative_distance"
-        android:layout_below="@+id/recommendations_alternative_rating"
-        android:layout_toRightOf="@+id/recommendations_alternative_distance_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:id="@+id/recommendations_alternative_distance"
+            android:layout_below="@+id/recommendations_alternative_rating"
+            android:layout_toRightOf="@+id/recommendations_alternative_distance_label"
 
-        android:layout_marginLeft="13dp"
-        android:text="245km"
-        android:textSize="20dp" />
+            android:layout_marginLeft="13dp"
+            android:text="245km"
+            android:textSize="20dp"/>
 
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView5"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:src="@drawable/icon_parking_red"
-        android:layout_below="@+id/recommendations_alternative_eta" />
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView5"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:src="@drawable/icon_parking_red"
+            android:layout_below="@+id/recommendations_alternative_eta"/>
     <ImageView
-        android:layout_width="40dp"
-        android:layout_height="wrap_content"
-        android:id="@+id/imageView6"
-        android:src="@drawable/icon_gas_green"
-        android:layout_alignTop="@+id/imageView5"
-        android:layout_toRightOf="@+id/imageView5"
-        android:layout_toEndOf="@+id/imageView5"
-        android:layout_alignBottom="@+id/imageView5" />
+            android:layout_width="40dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/imageView6"
+            android:src="@drawable/icon_gas_green"
+            android:layout_alignTop="@+id/imageView5"
+            android:layout_toRightOf="@+id/imageView5"
+            android:layout_toEndOf="@+id/imageView5"
+            android:layout_alignBottom="@+id/imageView5"/>
+
+    <android.support.design.widget.FloatingActionButton
+            android:id="@+id/recommendations_alternative_choose"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/ic_add_location_white_24dp"/>
 
 </RelativeLayout>

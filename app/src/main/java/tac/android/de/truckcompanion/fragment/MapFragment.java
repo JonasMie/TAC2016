@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.graphics.Point;
 import android.graphics.PointF;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,7 +14,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.*;
+import android.widget.ImageView;
+import android.widget.RatingBar;
+import android.widget.ScrollView;
+import android.widget.TextView;
 import com.here.android.mpa.cluster.ClusterLayer;
 import com.here.android.mpa.common.GeoPosition;
 import com.here.android.mpa.common.Image;
@@ -70,6 +72,9 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private RatingBar rh_rating;
     private ImageView rh_image;
     private FloatingActionButton rh_choose;
+    private ImageView rh_gas_image;
+    private TextView rh_gas_price;
+
     private ImageView map_relocate;
     private NewInstructionEventListener newInstructionEventListener;
     private NavigationManager.NavigationManagerEventListener navigationManagerEventListener;
@@ -116,6 +121,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         rh_rating = (RatingBar) view.findViewById(R.id.map_rec_rating);
         rh_image = (ImageView) view.findViewById(R.id.map_rec_img);
         rh_choose = (FloatingActionButton) view.findViewById(R.id.map_rec_choose);
+        rh_gas_image = (ImageView) view.findViewById(R.id.map_rec_img_gas);
+        rh_gas_price = (TextView) view.findViewById(R.id.map_rec_price_gas);
 
         map_relocate = (ImageView) view.findViewById(R.id.map_relocate);
         map_relocate.setOnClickListener(new View.OnClickListener() {
@@ -178,8 +185,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         rh_rating.setRating((float) placeLink.getAverageRating());
         if (roadhouse.getETA() != null) {
             rh_eta.setText(dateFormat.format(roadhouse.getETA()));
-        } else {// TODO
-            rh_eta.setText("12:30");
+        } else {
+            rh_eta.setText("n/a");
         }
         if (roadhouse.getDistanceFromStart() != 0) {
             rh_distance.setText(String.format(Locale.GERMAN, "%.1f", roadhouse.getDistanceFromStart() / 1000f));
@@ -187,6 +194,20 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
             rh_distance.setText("n/a");
         }
         rh_breaktime.setText(((int) entry.getVal() / 60) + " min");
+
+        if (roadhouse.getGasPrice() > 0) {
+            rh_gas_price.setText(String.format(Locale.GERMAN, "%1.3f €", roadhouse.getGasPrice()));
+            if (entry.getPause().getMeanGasPrice() > 0) {
+                if (entry.getPause().getMeanGasPrice() > roadhouse.getGasPrice()) {
+                    rh_gas_image.setImageResource(R.drawable.icon_gas_green);
+                } else {
+                    rh_gas_image.setImageResource(R.drawable.icon_gas_red);
+                }
+            }
+        } else {
+            rh_gas_price.setText("");
+            rh_gas_image.setImageResource(R.drawable.icon_gas_normal);
+        }
 
         rh_choose.setOnClickListener(new View.OnClickListener() {
             @Override
