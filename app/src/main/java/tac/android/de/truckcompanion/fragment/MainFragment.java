@@ -245,6 +245,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.highlightValue(1, 0);
         selectedEntry = (WheelEntry) dataSet.getEntryForIndex(1);
 
+//        RotateAnimation a = new RotateAnimation(-2, 2, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
+//        a.setDuration(10);
+//        a.setRepeatCount(Animation.INFINITE);
+//        a.setRepeatMode(Animation.REVERSE);
+//        mChart.startAnimation(a);
+
         mChart.notifyDataSetChanged();
         mChart.invalidate();
     }
