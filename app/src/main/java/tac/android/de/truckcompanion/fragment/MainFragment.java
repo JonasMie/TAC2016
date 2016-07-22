@@ -11,6 +11,7 @@ import android.graphics.PointF;
 import android.graphics.RectF;
 import android.os.*;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.util.Log;
 import android.view.*;
 import android.view.animation.Animation;
@@ -1011,7 +1012,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 TextView eta = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_eta);
                 TextView distance = (TextView) alternativeView.findViewById(R.id.recommendations_alternative_distance);
                 RatingBar rating = (RatingBar) alternativeView.findViewById(R.id.recommendations_alternative_rating);
-                Button choose = (Button) alternativeView.findViewById(R.id.recommendations_alternative_choose);
+                FloatingActionButton choose = (FloatingActionButton) alternativeView.findViewById(R.id.recommendations_alternative_choose);
 
                 title.setText(pauseLink.getTitle());
                 if (rh.getETA() != null) {
