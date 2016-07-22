@@ -778,6 +778,17 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     if (maneuvers.get(i).getCoordinate().distanceTo(pause.getMainRoadhouse().getPlaceLink().getPosition()) < 50) {
                         pause.getMainRoadhouse().setETA(maneuvers.get(i).getStartTime());
                         pause.getMainRoadhouse().setDurationFromStart((maneuvers.get(i).getStartTime().getTime() - timeSinceLastStop) / 1000);
+                        if (pause.getIndex() > 0) {
+                            WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(1);
+                            if (entry.getEntryType() == PAUSE_ENTRY && (entry.getVal() == SECOND_SPLIT || entry.getVal() == COMPLETE_BREAK)) {
+                                pause.getMainRoadhouse().setDistanceFromStart(pause.getMainRoadhouse().getDistanceFromStart() + entry.getPause().getMainRoadhouse().getDistanceFromStart());
+                            } else {
+                                entry = (WheelEntry) dataSet.getEntryForIndex(3);
+                                if (entry.getEntryType() == PAUSE_ENTRY && (entry.getVal() == SECOND_SPLIT || entry.getVal() == COMPLETE_BREAK)) {
+                                    pause.getMainRoadhouse().setDistanceFromStart(pause.getMainRoadhouse().getDistanceFromStart() + entry.getPause().getMainRoadhouse().getDistanceFromStart());
+                                }
+                            }
+                        }
 //                        timeSinceLastStop = maneuvers.get(i).getStartTime().getTime();
                         break;
                     }
@@ -890,8 +901,12 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 Button choose = (Button) alternativeView.findViewById(R.id.recommendations_alternative_choose);
 
                 title.setText(pauseLink.getTitle());
-                eta.setText(dateFormat.format(rh.getDurationFromStart())); // TODO
-                distance.setText("25 km"); // TODO
+                if (rh.getETA() != null) {
+                    eta.setText(dateFormat.format(rh.getETA()));
+                }
+                if (rh.getDistanceFromStart() != 0) {
+                    distance.setText(String.format(Locale.GERMAN, "%.1f", rh.getDistanceFromStart() / 1000f));
+                }
                 rating.setRating((float) pauseLink.getAverageRating());
                 choose.setOnClickListener(new View.OnClickListener() {
                     @Override

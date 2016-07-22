@@ -30,6 +30,7 @@ public class Roadhouse {
     private Date ETA;
     private long durationFromStart;
     private boolean detailsLoading = false;
+    private int distanceFromStart;
 
     public Roadhouse(String id, String place_id, String icon, String name, String rating, LatLng location, ArrayList<String> types) {
         this.id = id;
@@ -115,5 +116,13 @@ public class Roadhouse {
 
     public void setDetailsLoading(boolean detailsLoading) {
         this.detailsLoading = detailsLoading;
+    }
+
+    public void setDistanceFromStart(int distanceFromStart) {
+        this.distanceFromStart = distanceFromStart;
+    }
+
+    public int getDistanceFromStart() {
+        return distanceFromStart;
     }
 }

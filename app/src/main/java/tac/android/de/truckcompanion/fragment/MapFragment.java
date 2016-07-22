@@ -178,7 +178,11 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         } else {// TODO
             rh_eta.setText("12:30");
         }
-        rh_distance.setText("20 km"); // TODO
+        if (roadhouse.getDistanceFromStart() != 0) {
+            rh_distance.setText(String.format(Locale.GERMAN, "%.1f", roadhouse.getDistanceFromStart() / 1000f));
+        } else {
+            rh_distance.setText("n/a");
+        }
         rh_breaktime.setText(((int) entry.getVal() / 60) + " min");
 
         rh_choose.setOnClickListener(new View.OnClickListener() {

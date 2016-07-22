@@ -102,6 +102,7 @@ public class Break {
                                             if (mainRoadhouse == null) {
                                                 Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 Break.this.mainRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                                                Break.this.mainRoadhouse.setDistanceFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("distance"));
                                             } else {
                                                 Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 altRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
