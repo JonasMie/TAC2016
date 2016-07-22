@@ -31,6 +31,7 @@ public class Roadhouse {
     private long durationFromStart;
     private boolean detailsLoading = false;
     private int distanceFromStart;
+    private double gasPrice;
 
     public Roadhouse(String id, String place_id, String icon, String name, String rating, LatLng location, ArrayList<String> types) {
         this.id = id;
@@ -124,5 +125,13 @@ public class Roadhouse {
 
     public int getDistanceFromStart() {
         return distanceFromStart;
+    }
+
+    public void setGasPrice(double gasPrice) {
+        this.gasPrice = gasPrice;
+    }
+
+    public double getGasPrice() {
+        return gasPrice;
     }
 }

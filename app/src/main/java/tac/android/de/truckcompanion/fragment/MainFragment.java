@@ -89,6 +89,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     private TextView mainRecDistance;
     private TextView mainRecBreaktime;
     private RatingBar mainRecRating;
+    private TextView mainRecGasPrice;
+    private ImageView mainRecGasImg;
     private CarouselView carouselView;
 
 
@@ -150,6 +152,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mainRecBreaktime = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_info_breaktime);
         mainRecRatingLabel = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_rating_label);
         mainRecRating = (RatingBar) recommendationsWrapper.findViewById(R.id.recommendations_main_rating);
+        mainRecGasPrice = (TextView) recommendationsWrapper.findViewById(R.id.recommendations_main_misc_gas_price);
+        mainRecGasImg = (ImageView) recommendationsWrapper.findViewById(R.id.recommendations_main_misc_gas_img);
 
 
         mChart = (PieChart) view.findViewById(R.id.chart);
@@ -864,7 +868,31 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         dc.getGasPrices(pause.getMainRoadhouse().getPlaceLink().getPosition().getLatitude(), pause.getMainRoadhouse().getPlaceLink().getPosition().getLongitude(), 20, DataCollector.ORDER_BY_DISTANCE_DESC, -1, new ResponseCallback() {
             @Override
             public void onSuccess(JSONObject result) {
-                Log.d("test","test");
+                try {
+                    JSONArray stations = result.getJSONArray("stations");
+                    double totalPrices = 0;
+                    for (int i = 0; i < stations.length(); i++) {
+                        totalPrices += stations.getJSONObject(i).getDouble("price");
+                        if (stations.getJSONObject(i).getDouble("dist") == 0) {
+                            pause.getMainRoadhouse().setGasPrice(stations.getJSONObject(i).getDouble("price"));
+                        }
+                    }
+                    pause.setMeanGasPrice(totalPrices / stations.length());
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                // set main roadhouse gas properties
+                if (pause.getMainRoadhouse().getGasPrice() != 0) {
+                    mainRecGasPrice.setText(String.format(Locale.GERMAN, "%1.3f €", pause.getMainRoadhouse().getGasPrice()));
+                    if (pause.getMainRoadhouse().getGasPrice() > pause.getMeanGasPrice()) {
+                        mainRecGasImg.setImageResource(R.drawable.icon_gas_red);
+                    } else {
+                        mainRecGasImg.setImageResource(R.drawable.icon_gas_green);
+                    }
+                    listener.onMainFragmentRoadhouseChanged(selectedEntry);
+                }
+                // TODO: get gas prices for alternatives
+                //setupCarousel(item);
             }
 
             @Override

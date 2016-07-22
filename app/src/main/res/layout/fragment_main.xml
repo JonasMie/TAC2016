@@ -16,10 +16,10 @@
                 android:id="@+id/recommendationsWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="219dp"
-            android:weightSum="2"
+                android:weightSum="2"
                 android:orientation="horizontal"
-            android:padding="20dp"
-            android:layout_marginBottom="30dp">
+                android:padding="20dp"
+                android:layout_marginBottom="30dp">
 
             <!--Main recommendation-->
             <RelativeLayout
@@ -192,29 +192,38 @@
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_parking_img"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
+                                android:layout_height="wrap_content"
                                 android:minWidth="20dp"
                                 android:minHeight="20dp"
                                 android:src="@drawable/icon_parking_green"
-                                android:gravity="center_vertical|center_horizontal" />
+                                android:layout_alignParentLeft="true"
+                        />
                     </RelativeLayout>
 
                     <RelativeLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/default_margin"
-                            android:layout_marginStart="@dimen/default_margin">
+                            android:layout_marginStart="@dimen/default_margin"
+                            android:gravity="center_vertical|center_horizontal">
+
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_gas_img"
                                 android:layout_width="wrap_content"
-                                android:layout_height="40dp"
-                                android:minWidth="20dp"
-                                android:minHeight="20dp"
-                                android:src="@drawable/icon_gas_normal"
-                                android:gravity="center_vertical|center_horizontal"
+                                android:layout_height="wrap_content"
+                                android:minWidth="400dp"
+                                android:minHeight="400dp"
                                 android:layout_centerHorizontal="true"
                         />
+
+                        <TextView
+                                android:id="@+id/recommendations_main_misc_gas_price"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:layout_below="@id/recommendations_main_misc_gas_img"/>
+
                     </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>
@@ -223,15 +232,15 @@
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
                     android:layout_weight="0.82"
-                android:orientation="vertical"
-                >
+                    android:orientation="vertical"
+            >
                 <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Ihre Alternativen:"
-                    android:id="@+id/labelrecommondations_alternatives"
-                    android:paddingBottom="10dp" />
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Ihre Alternativen:"
+                        android:id="@+id/labelrecommondations_alternatives"
+                        android:paddingBottom="10dp"/>
                 <RelativeLayout
                         android:id="@+id/recommendations_alternatives_wrapper"
                         android:layout_width="wrap_content"
@@ -259,7 +268,7 @@
                     android:id="@+id/canvas"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_gravity="center_horizontal|center_vertical" />
+                    android:layout_gravity="center_horizontal|center_vertical"/>
 
         </FrameLayout>
     </LinearLayout>

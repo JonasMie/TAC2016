@@ -43,6 +43,7 @@ public class Break {
     private int nTry = 1;
     private ClusterLayer clusterLayer;
     private MapObject mainRoadhouseMarker;
+    private double meanGasPrice;
 
     public Break(int elapsedTime, int index, WheelEntry wheelEntry) {
         this.elapsedTime = elapsedTime;
@@ -217,5 +218,13 @@ public class Break {
 
     public void setMainRoadhouseMarker(MapObject mainRoadhouseMarker) {
         this.mainRoadhouseMarker = mainRoadhouseMarker;
+    }
+
+    public void setMeanGasPrice(double meanGasPrice) {
+        this.meanGasPrice = meanGasPrice;
+    }
+
+    public double getMeanGasPrice() {
+        return meanGasPrice;
     }
 }
