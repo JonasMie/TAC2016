@@ -913,6 +913,49 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             // update view
             setRecommendations(index);
+
+            // Update Route
+            Break pause = selectedEntry.getPause();
+            DispoInformation.DestinationPoint formerDestinationPoint = pause.getDestinationPoint();
+            pause.setDestinationPoint(new DispoInformation.DestinationPoint(GeoHelper.GeoCoordinateToLatLng(pause.getMainRoadhouse().getPlaceLink().getPosition()), 0));
+
+            progressDialog.setTitle(R.string.loading_journey_data_title);
+            progressDialog.setMessage(getString(R.string.updating_route_data_msg));
+            progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+            progressDialog.setCancelable(false);
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    progressDialog.show();
+                }
+            });
+
+            final Journey journey = MainActivity.getmCurrentJourney();
+            if (!journey.getDestinationPoints().contains(pause.getDestinationPoint())) {
+                journey.addDestinationPoint(pause.getDestinationPoint());
+                journey.removeDestinationPoint(formerDestinationPoint);
+            }
+            // UPDATE ROUTE!
+            RouteWrapper.getOrderedWaypoints(journey.getStartPoint(), journey.getDestinationPoints(), null, new AsyncResponse<ArrayList>() {
+                @Override
+                public void processFinish(ArrayList orderedDestinationPoints) {
+                    journey.setDestinationPoints(orderedDestinationPoints);
+                    activity.calculateRoute(journey.getStartPoint(), journey.getDestinationPoints(), progressDialog, new AsyncResponse<RouteWrapper>() {
+                        @Override
+                        public void processFinish(RouteWrapper routeWrapper) {
+                            updateEntryPositions(routeWrapper);
+                            setRecommendations(null);
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressDialog.dismiss();
+                                }
+                            });
+                            progressDialog.dismiss();
+                        }
+                    });
+                }
+            });
         }
     }
 
