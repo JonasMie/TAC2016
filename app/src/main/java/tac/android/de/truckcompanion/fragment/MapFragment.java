@@ -21,12 +21,10 @@ import com.here.android.mpa.common.GeoPosition;
 import com.here.android.mpa.common.Image;
 import com.here.android.mpa.common.OnEngineInitListener;
 import com.here.android.mpa.common.ViewObject;
-import com.here.android.mpa.guidance.NavigationManager;
+import com.here.android.mpa.guidance.*;
 import com.here.android.mpa.guidance.NavigationManager.NewInstructionEventListener;
+import com.here.android.mpa.mapping.*;
 import com.here.android.mpa.mapping.Map;
-import com.here.android.mpa.mapping.MapGesture;
-import com.here.android.mpa.mapping.MapMarker;
-import com.here.android.mpa.mapping.MapObject;
 import com.here.android.mpa.routing.Maneuver;
 import com.here.android.mpa.routing.Route;
 import com.here.android.mpa.search.PlaceLink;
@@ -74,6 +72,9 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private NewInstructionEventListener newInstructionEventListener;
     private NavigationManager.NavigationManagerEventListener navigationManagerEventListener;
     private NavigationManager.PositionListener positionListener;
+
+    private TrafficWarner.Listener trafficWarnerListener;
+
     private MainActivity activity;
     private PointF anchorPoint;
 
@@ -429,6 +430,31 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         NavigationWrapper.getInstance().getNavigationManager().addNewInstructionEventListener(new WeakReference<>(newInstructionEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
+
+
+        // Traffic stuff
+
+        trafficWarnerListener = new TrafficWarner.Listener() {
+            @Override
+            public void onTraffic(TrafficNotification trafficNotification) {
+                for (TrafficNotificationInfo info : trafficNotification.getInfoList()) {
+                    Log.d("test", "test");
+                }
+            }
+        };
+
+        NavigationWrapper.getInstance().getNavigationManager().getTrafficWarner().start();
+
+        NavigationWrapper.getInstance().getNavigationManager().getTrafficWarner().addListener(new WeakReference<>(trafficWarnerListener));
+        TrafficUpdater.getInstance().enableUpdate(true);
+        TrafficUpdater.getInstance().getEvents(MainActivity.getmCurrentJourney().getRouteWrapper().getRoute(), new TrafficUpdater.GetEventsListener() {
+            @Override
+            public void onComplete(List<TrafficEvent> list, TrafficUpdater.Error error) {
+                Log.d("tset", "test");
+            }
+        });
+
+
     }
 
     private class EntryRoadhouseStruct {

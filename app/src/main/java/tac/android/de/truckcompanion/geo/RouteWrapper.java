@@ -65,7 +65,6 @@ public class RouteWrapper {
         } catch (IOException e) {
             Log.e(TAG, "Marker image not found");
         }
-        //routeManager.setTrafficPenaltyMode(); TODO
         routePlan = new RoutePlan();
         RouteOptions routeOptions = new RouteOptions();
         routeOptions.setTransportMode(RouteOptions.TransportMode.TRUCK);

@@ -281,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 if (error != NavigationManager.Error.NONE) {
                     Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
                 }
+                NavigationWrapper.getInstance().getNavigationManager().getTrafficWarner().init();
                 break;
             case R.id.stop_navigation_menu_item:
                 NavigationWrapper.getInstance().getNavigationManager().stop();
