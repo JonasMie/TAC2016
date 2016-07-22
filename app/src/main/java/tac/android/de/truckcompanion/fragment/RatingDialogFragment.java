@@ -44,7 +44,7 @@ public class RatingDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View layout = inflater.inflate(R.layout.dialog_rate, null);
 
-        TextView textView = (TextView) layout.findViewById(R.id.rating_heading_text);
+        TextView textView = (TextView) layout.findViewById(R.id.rating_roadhouse_query_text);
         textView.setText(String.format(getResources().getString(R.string.roadhouse_query_text), roadhouse_title));
 
         ratingBar = (RatingBar) layout.findViewById(R.id.rating_rating);
