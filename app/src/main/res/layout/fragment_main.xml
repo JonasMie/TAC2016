@@ -106,7 +106,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="12.30"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
                                 android:textSize="25dp"/>
@@ -115,7 +114,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Ankunft"
+                                android:text="@string/ankunft"
                                 android:layout_below="@+id/recommendations_main_info_eta"
                                 android:layout_centerHorizontal="true"
                                 android:gravity="center_horizontal"/>
@@ -141,7 +140,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Entfernung"
+                                android:text="@string/entfernung"
                                 android:layout_below="@+id/recommendations_main_info_distance"
                                 android:layout_centerHorizontal="true"
                                 android:gravity="center_horizontal"/>
@@ -158,7 +157,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="20 min"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
                                 android:textSize="25dp"/>
@@ -167,7 +165,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Pause"
+                                android:text="@string/pausendauer"
                                 android:layout_below="@+id/recommendations_main_info_breaktime"
                                 android:layout_centerHorizontal="true"
                                 android:gravity="center_horizontal"/>
