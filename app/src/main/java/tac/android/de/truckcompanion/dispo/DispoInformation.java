@@ -85,7 +85,7 @@ public abstract class DispoInformation {
         @Override
         public boolean equals(Object obj) {
             DestinationPoint o = (DestinationPoint) obj;
-            return o.getCoordinate().latitude == this.getCoordinate().latitude && o.getCoordinate().longitude == this.getCoordinate().longitude;
+            return obj != null && o.getCoordinate().latitude == this.getCoordinate().latitude && o.getCoordinate().longitude == this.getCoordinate().longitude;
         }
     }
 

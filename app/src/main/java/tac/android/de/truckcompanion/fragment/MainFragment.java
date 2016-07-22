@@ -17,6 +17,7 @@ import android.view.animation.Animation;
 import android.view.animation.LinearInterpolator;
 import android.view.animation.RotateAnimation;
 import android.widget.*;
+import com.android.volley.VolleyError;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
@@ -34,9 +35,13 @@ import com.here.android.mpa.search.PlaceLink;
 import com.here.android.mpa.search.ResultListener;
 import com.synnapps.carouselview.CarouselView;
 import com.synnapps.carouselview.ViewListener;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import tac.android.de.truckcompanion.MainActivity;
 import tac.android.de.truckcompanion.R;
 import tac.android.de.truckcompanion.data.Break;
+import tac.android.de.truckcompanion.data.DataCollector;
 import tac.android.de.truckcompanion.data.Journey;
 import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.dispo.DispoInformation;
@@ -44,6 +49,7 @@ import tac.android.de.truckcompanion.geo.GeoHelper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
+import tac.android.de.truckcompanion.utils.ResponseCallback;
 import tac.android.de.truckcompanion.wheel.OnEntryGestureListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
@@ -102,6 +108,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     TimerTask entryDraggedTimerTask;
     TimerTask wheelMovedTimerTask;
     Handler refresh;
+    DataCollector dc;
 
     long ROUTE_RECALCULATION_DELAY = 2000;
     int NUMBER_OF_PAGES = 5;
@@ -147,7 +154,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         mChart = (PieChart) view.findViewById(R.id.chart);
 
-
+        dc = new DataCollector(getActivity());
         Display display = getActivity().getWindowManager().getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
@@ -812,24 +819,55 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.invalidate();
     }
 
-    private void setRecommendations(int index, Integer item) {
-        Break pause = ((WheelEntry) dataSet.getEntryForIndex(index)).getPause();
+    private void setRecommendations(int index, final Integer item) {
+        WheelEntry entry = (WheelEntry) dataSet.getEntryForIndex(index);
+        final Break pause = entry.getPause();
         if (pause.getMainRoadhouse() != null) {
             listener.onMainFragmentRoadhouseChanged((WheelEntry) dataSet.getEntryForIndex(index));
             PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
             mainRecTitle.setText(placeLink.getTitle());
             mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
-            mainRecDistance.setText("20 km"); // TODO
+            mainRecDistance.setText(String.format(Locale.GERMAN, "%.1f", pause.getMainRoadhouse().getDistanceFromStart() / 1000f));
             mainRecBreaktime.setText((int) (dataSet.getEntryForIndex(index).getVal() / 60) + " min");
             mainRecRating.setRating((float) placeLink.getAverageRating());
         }
+
+        final ArrayList<GeoCoordinate> waypoints = new ArrayList<>();
+        for (Roadhouse rh : pause.getAlternativeRoadhouses()) {
+            waypoints.add(rh.getPlaceLink().getPosition());
+        }
+
+        dc.getWaypointMatrix(GeoHelper.LatLngToGeoCoordinate(MainActivity.getmCurrentJourney().getStartPoint().getCoordinate()), waypoints, new ResponseCallback() {
+            @Override
+            public void onSuccess(JSONObject output) {
+
+                try {
+                    JSONArray entries = output.getJSONObject("response").getJSONArray("matrixEntry");
+                    for (int i = 0; i < entries.length(); i++) {
+                        int index = entries.getJSONObject(i).getInt("destinationIndex");
+                        pause.getAlternativeRoadhouses().get(index).setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                        pause.getAlternativeRoadhouses().get(index).setDistanceFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("distance"));
+                        pause.getAlternativeRoadhouses().get(index).setETA(new Date(System.currentTimeMillis() + entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime") * 1000));
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                setupCarousel(item);
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        });
+
         setupCarousel(item);
     }
 
-    private void setRecommendations(Integer item) {
+    private void setRecommendations(final Integer item) {
         if (selectedEntry != null) {
             listener.onMainFragmentRoadhouseChanged(selectedEntry);
-            Break pause = selectedEntry.getPause();
+            final Break pause = selectedEntry.getPause();
             if (pause.getMainRoadhouse() != null) {
                 PlaceLink placeLink = pause.getMainRoadhouse().getPlaceLink();
                 mainRecTitle.setText(placeLink.getTitle());
@@ -837,12 +875,47 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
 
                 } else {
-                    mainRecETA.setText("12:30");
+                    mainRecETA.setText("n/a");
                 }
-                mainRecDistance.setText("20 km"); // TODO
+                if (pause.getMainRoadhouse().getDistanceFromStart() != 0) {
+                    mainRecDistance.setText(String.format(Locale.GERMAN, "%.1f", pause.getMainRoadhouse().getDistanceFromStart() / 1000f));
+                } else {
+                    mainRecDistance.setText("n/a"); // TODO
+                }
                 mainRecBreaktime.setText((int) (selectedEntry.getVal() / 60) + " min");
                 mainRecRating.setRating((float) placeLink.getAverageRating());
             }
+
+
+            final ArrayList<GeoCoordinate> waypoints = new ArrayList<>();
+            for (Roadhouse rh : pause.getAlternativeRoadhouses()) {
+                waypoints.add(rh.getPlaceLink().getPosition());
+            }
+
+            dc.getWaypointMatrix(GeoHelper.LatLngToGeoCoordinate(MainActivity.getmCurrentJourney().getStartPoint().getCoordinate()), waypoints, new ResponseCallback() {
+                @Override
+                public void onSuccess(JSONObject output) {
+
+                    try {
+                        JSONArray entries = output.getJSONObject("response").getJSONArray("matrixEntry");
+                        for (int i = 0; i < entries.length(); i++) {
+                            int index = entries.getJSONObject(i).getInt("destinationIndex");
+                            pause.getAlternativeRoadhouses().get(index).setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                            pause.getAlternativeRoadhouses().get(index).setDistanceFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("distance"));
+                            pause.getAlternativeRoadhouses().get(index).setETA(new Date(System.currentTimeMillis() + entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime") * 1000));
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                    setupCarousel(item);
+                }
+
+                @Override
+                public void onError(VolleyError error) {
+
+                }
+            });
+
             setupCarousel(item);
         }
 
