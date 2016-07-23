@@ -38,6 +38,7 @@ import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
 import tac.android.de.truckcompanion.data.TruckStateEventListener;
 import tac.android.de.truckcompanion.geo.NavigationWrapper;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
@@ -453,6 +454,10 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         NavigationWrapper.getInstance().getNavigationManager().addNewInstructionEventListener(new WeakReference<>(newInstructionEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addNavigationManagerEventListener(new WeakReference<>(navigationManagerEventListener));
         NavigationWrapper.getInstance().getNavigationManager().addPositionListener(new WeakReference<>(positionListener));
+    }
+
+    public void onRouteChanged(RouteWrapper routeWrapper) {
+        NavigationWrapper.getInstance().getNavigationManager().setRoute(routeWrapper.getRoute());
     }
 
     private class EntryRoadhouseStruct {

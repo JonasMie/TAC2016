@@ -346,6 +346,11 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         ratingDialog.show(getFragmentManager(), "dialog");
     }
 
+    @Override
+    public void onRouteChanged(RouteWrapper routeWrapper) {
+        mapFragment.onRouteChanged(routeWrapper);
+    }
+
     public WheelEntry getNextBreak() {
         return mainFragment.getNextBreak();
     }

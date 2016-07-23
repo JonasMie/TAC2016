@@ -2,6 +2,7 @@ package tac.android.de.truckcompanion.utils;
 
 import tac.android.de.truckcompanion.data.Break;
 import tac.android.de.truckcompanion.data.Roadhouse;
+import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 /**
@@ -20,4 +21,6 @@ public interface OnRoadhouseSelectedListener {
     void onPauseDataChanged(WheelEntry entry);
 
     void onBreakFinished();
+
+    void onRouteChanged(RouteWrapper routeWrapper);
 }

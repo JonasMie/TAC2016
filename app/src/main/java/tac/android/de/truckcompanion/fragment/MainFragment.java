@@ -702,6 +702,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                                     progressDialog.dismiss();
                                                 }
                                             });
+                                            listener.onRouteChanged(routeWrapper);
                                             progressDialog.dismiss();
                                         }
                                     });
@@ -1163,6 +1164,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                                     progressDialog.dismiss();
                                 }
                             });
+                            listener.onRouteChanged(routeWrapper);
                             progressDialog.dismiss();
                         }
                     });
