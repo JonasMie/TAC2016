@@ -2,6 +2,7 @@ package tac.android.de.truckcompanion.geo;
 
 import android.app.ProgressDialog;
 import android.util.Log;
+import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.Image;
@@ -73,7 +74,7 @@ public class RouteWrapper {
         routePlan.setRouteOptions(routeOptions);
     }
 
-    public void requestRoute(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
+    public void requestRoute(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final Object textToUpdate, final AsyncResponse<RouteWrapper> callback) {
         this.callback = callback;
         calculationFinished = false;
         routePlan.removeAllWaypoints();
@@ -89,8 +90,12 @@ public class RouteWrapper {
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
             public void onProgress(int i) {
-                if (progressDialog != null) {
-                    progressDialog.setMessage(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                if (textToUpdate != null) {
+                    if (textToUpdate instanceof ProgressDialog) {
+                        ((ProgressDialog) textToUpdate).setMessage(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                    } else if (textToUpdate instanceof TextView) {
+                        ((TextView) textToUpdate).setText(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                    }
                 }
                 Log.d(TAG, "Routing calculation " + i + "% done");
             }
