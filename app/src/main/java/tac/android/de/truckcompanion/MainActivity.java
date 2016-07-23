@@ -16,6 +16,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.here.android.mpa.common.OnEngineInitListener;
 import com.here.android.mpa.guidance.NavigationManager;
@@ -47,7 +49,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     public static final double VELOCITY_FACTOR = 13.5;
 
     // View references
-    private ProgressDialog mProgressDialog;
     private TabLayout mTabLayout;
     private CustomViewPager mViewPager;
     public static ViewPagerAdapter mViewPagerAdapter;
@@ -56,6 +57,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private NavigationView mNavigationView;
     private ActionBarDrawerToggle mDrawerToggle;
     private Toolbar toolbar;
+    private RelativeLayout splashScreen;
+    private TextView splashScreenStatus;
 
     // Resources
     private CharSequence mDrawerTitle;
@@ -85,7 +88,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
-
+        splashScreen = (RelativeLayout) findViewById(R.id.splash_screen);
+        splashScreenStatus = (TextView) findViewById(R.id.splash_screen_status);
         fm = getFragmentManager();
         setSupportActionBar(toolbar);
 
@@ -186,24 +190,16 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         });
 
         // Setup/load journey data
-        mProgressDialog = new ProgressDialog(this);
-        mProgressDialog.setTitle(R.string.loading_journey_data_title);
-        mProgressDialog.setMessage(getString(R.string.loading_journey_data_msg));
-        mProgressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-        mProgressDialog.setCancelable(false);
-        mProgressDialog.show();
+        splashScreenStatus.setText(getString(R.string.loading_journey_data_msg));
         new Journey.LoadJourneyData(this, new AsyncResponse<Journey>() {
             @Override
             public void processFinish(Journey journey) {
                 if (journey == null) {
-                    mProgressDialog.dismiss();
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
                     mCurrentJourney = journey;
-
                     statsFragment = (StatsFragment) mViewPagerAdapter.getRegisteredFragment(2);
-
-                    mProgressDialog.setMessage(getString(R.string.loading_route_data_msg));
+                    splashScreenStatus.setText(getString(R.string.loading_route_data_msg));
                     mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
                         @Override
@@ -217,32 +213,26 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                                 mCurrentJourney.initRoute();
 
                                 // Calculate first route
-                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
                                     @Override
                                     public void processFinish(final RouteWrapper routeWrapper) {
                                         // Setup Main-Fragment (wheel)
                                         mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
-                                        mainFragment.setBreaks(routeWrapper, mProgressDialog, new AsyncResponse<ArrayList>() {
+                                        mainFragment.setBreaks(routeWrapper, splashScreenStatus, new AsyncResponse<ArrayList>() {
 
                                             @Override
                                             public void processFinish(ArrayList breaks) {
                                                 // Calculate second route (with breaks)
-                                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), mProgressDialog, new AsyncResponse<RouteWrapper>() {
+                                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
                                                     @Override
                                                     public void processFinish(RouteWrapper updatedRouteWrapper) {
                                                         if (updatedRouteWrapper == null) {
                                                             Toast.makeText(context, R.string.no_internet_connection, Toast.LENGTH_SHORT).show();
-                                                            if (mProgressDialog.isShowing()) {
-                                                                mProgressDialog.dismiss();
-                                                            }
                                                         } else {
                                                             // TODO: change this to a listener interface
                                                             onStartupTaskReady();
-                                                            mainFragment.onStartupTaskReady(updatedRouteWrapper);
+                                                            mainFragment.onStartupTaskReady(updatedRouteWrapper, splashScreen);
                                                             mapFragment.onStartupTaskReady();
-                                                            if (mProgressDialog.isShowing()) {
-                                                                mProgressDialog.dismiss();
-                                                            }
                                                         }
                                                     }
                                                 });
@@ -318,8 +308,8 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         return mCurrentJourney;
     }
 
-    public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
-        mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, progressDialog, callback);
+    public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final Object textToUpdate, final AsyncResponse<RouteWrapper> callback) {
+        mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, textToUpdate, callback);
     }
 
     @Override

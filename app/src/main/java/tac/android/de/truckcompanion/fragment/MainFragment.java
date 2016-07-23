@@ -265,8 +265,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.invalidate();
     }
 
-    public void setBreaks(final RouteWrapper routeWrapper, final ProgressDialog mProgressDialog, final AsyncResponse<ArrayList> callback) {
-        mProgressDialog.setMessage(getString(R.string.loading_pause_data_msg));
+    public void setBreaks(final RouteWrapper routeWrapper, final TextView splashScreenStatus, final AsyncResponse<ArrayList> callback) {
+        splashScreenStatus.setText(getString(R.string.loading_pause_data_msg));
         final ArrayList<Break> breaks = Break.getBreaks();
         totalBreaks = breaks.size();
         final ArrayList<DispoInformation.DestinationPoint> destinationPoints = MainActivity.getmCurrentJourney().getDestinationPoints();
@@ -1175,7 +1175,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     }
 
-    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper) {
+    public void onStartupTaskReady(RouteWrapper updatedRouteWrapper, RelativeLayout splashScreen) {
         this.updateEntryPositions(updatedRouteWrapper);
         setRecommendations(1, null);
         loadAllDetailInfosInBackground();
@@ -1199,6 +1199,9 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         a.setInterpolator(interpolator);
         a.setFillAfter(true);
         clock.startAnimation(a);
+
+        // remove "splash screen"
+        ((ViewGroup) splashScreen.getParent()).removeView(splashScreen);
     }
 
     private float getAngle() {
