@@ -22,7 +22,7 @@ public class Roadhouse {
     private String place_id;
     private String icon;
     private String name;
-    private String rating;
+    private double rating;
     private LatLng location;
     private ArrayList<String> types;
     private PlaceLink placeLink;
@@ -33,7 +33,7 @@ public class Roadhouse {
     private int distanceFromStart;
     private double gasPrice;
 
-    public Roadhouse(String id, String place_id, String icon, String name, String rating, LatLng location, ArrayList<String> types) {
+    public Roadhouse(String id, String place_id, String icon, String name, float rating, LatLng location, ArrayList<String> types) {
         this.id = id;
         this.place_id = place_id;
         this.icon = icon;
@@ -63,7 +63,7 @@ public class Roadhouse {
         return name;
     }
 
-    public String getRating() {
+    public double getRating() {
         return rating;
     }
 
@@ -133,5 +133,9 @@ public class Roadhouse {
 
     public double getGasPrice() {
         return gasPrice;
+    }
+
+    public void setRating(double rating) {
+        this.rating = rating;
     }
 }

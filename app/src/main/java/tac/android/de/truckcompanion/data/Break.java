@@ -104,9 +104,12 @@ public class Break {
                                                 Break.this.mainRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 Break.this.mainRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
                                                 Break.this.mainRoadhouse.setDistanceFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("distance"));
+                                                // here-maps actually delivers ratings, but they are all set to zero.. so we fake them
+                                                Break.this.mainRoadhouse.setRating(Math.random() * 5);
                                             } else {
                                                 Roadhouse altRoadhouse = new Roadhouse((PlaceLink) discoveryResultPage.getItems().get(entries.getJSONObject(i).getInt("destinationIndex")));
                                                 altRoadhouse.setDurationFromStart(entries.getJSONObject(i).getJSONObject("summary").getInt("travelTime"));
+                                                altRoadhouse.setRating(Math.random() * 5);
                                                 Break.this.alternativeRoadhouses.add(altRoadhouse);
                                             }
                                             Break.this.destinationPoint = new DispoInformation.DestinationPoint(new LatLng(Break.this.mainRoadhouse.getPlaceLink().getPosition().getLatitude(), Break.this.mainRoadhouse.getPlaceLink().getPosition().getLongitude()), 15);
@@ -133,23 +136,6 @@ public class Break {
         });
     }
 
-    private Roadhouse produceNewRoadhouse(JSONObject roadhouse) throws JSONException {
-        JSONObject location = roadhouse.getJSONObject("geometry").getJSONObject("location");
-        JSONArray jTypes = roadhouse.getJSONArray("types");
-        ArrayList<String> types = new ArrayList<>();
-        for (int j = 0; j < jTypes.length(); j++) {
-            types.add(jTypes.get(j).toString());
-        }
-        return new Roadhouse(
-                roadhouse.getString("id"),
-                roadhouse.getString("place_id"),
-                roadhouse.getString("icon"),
-                roadhouse.getString("name"),
-                roadhouse.has("rating") ? roadhouse.getString("rating") : null,
-                new LatLng(location.getDouble("lat"), location.getDouble("lng")),
-                types
-        );
-    }
 
     public static ArrayList<Break> getBreaks() {
         return breaks;

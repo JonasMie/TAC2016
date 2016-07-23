@@ -866,7 +866,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
             mainRecETA.setText(dateFormat.format(pause.getMainRoadhouse().getETA()));
             mainRecDistance.setText(String.format(Locale.GERMAN, "%.1f", pause.getMainRoadhouse().getDistanceFromStart() / 1000f));
             mainRecBreaktime.setText((int) (dataSet.getEntryForIndex(index).getVal() / 60) + " min");
-            mainRecRating.setRating((float) placeLink.getAverageRating());
+            mainRecRating.setRating((float) pause.getMainRoadhouse().getRating());
         }
 
         final ArrayList<GeoCoordinate> waypoints = new ArrayList<>();
@@ -956,7 +956,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                     mainRecDistance.setText("n/a"); // TODO
                 }
                 mainRecBreaktime.setText((int) (selectedEntry.getVal() / 60) + " min");
-                mainRecRating.setRating((float) placeLink.getAverageRating());
+                mainRecRating.setRating((float) pause.getMainRoadhouse().getRating());
             }
 
 
@@ -1048,7 +1048,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 if (rh.getDistanceFromStart() != 0) {
                     distance.setText(String.format(Locale.GERMAN, "%.1f", rh.getDistanceFromStart() / 1000f));
                 }
-                rating.setRating((float) pauseLink.getAverageRating());
+                rating.setRating((float) rh.getRating());
                 choose.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
