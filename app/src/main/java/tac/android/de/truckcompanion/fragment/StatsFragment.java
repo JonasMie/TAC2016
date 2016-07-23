@@ -86,7 +86,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(0).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorPrimary));
         headerCharts.elementAt(0).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(0).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
-        headerCharts.elementAt(0).setDescription("Wochenlenkzeit");
+        headerCharts.elementAt(0).setDescription("");
 
         entriesPie = new ArrayList<>();
         entriesPie.add(new Entry(0f, 0));
@@ -102,7 +102,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(1).setData(testDataPie);
         headerCharts.elementAt(1).setMinimumWidth(40);
         headerCharts.elementAt(1).setMinimumHeight(40);
-        headerCharts.elementAt(1).setDescription("Wochenruhezeit");
+        headerCharts.elementAt(1).setDescription("");
         headerCharts.elementAt(1).setCenterText(0 + " / " + 45);
         headerCharts.elementAt(1).setDrawSliceText(false);
         headerCharts.elementAt(1).setMaxAngle(0);
@@ -130,7 +130,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(2).setData(testDataPie);
         headerCharts.elementAt(2).setMinimumWidth(40);
         headerCharts.elementAt(2).setMinimumHeight(40);
-        headerCharts.elementAt(2).setDescription("Doppelwochenlenkzeit");
+        headerCharts.elementAt(2).setDescription("");
         headerCharts.elementAt(2).setCenterText((int) (logHelp.GetDriveTimeSum() + logHelp.GetCurrentDay().GetDriveTime()) / 60 + " / " + LogicHelper.MAX_DOUBLE_WEEK_DRIVE_MINUTES / 60);
         headerCharts.elementAt(2).setDrawSliceText(false);
         headerCharts.elementAt(2).setMaxAngle(degree);
