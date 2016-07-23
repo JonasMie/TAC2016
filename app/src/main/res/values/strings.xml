@@ -1,12 +1,12 @@
 ﻿<resources>
-    <string name="app_name">TruckCompanion</string>
+    <string name="app_name">Lorry</string>
     <string name="google_app_id">176842196711</string>
     <string name="drawer_open">Menü öffnen</string>
     <string name="drawer_close">Menü schließen</string>
-    <string name="main_view">Start</string>
+    <string name="main_view">Planung</string>
     <string name="settings">Einstellungen</string>
     <string name="profile">Profil</string>
-    <string name="map">Karte</string>
+    <string name="map">Route</string>
     <string name="stats">Statistiken</string>
     <string name="loading_journey_data_title">Laden der Fahrtendaten</string>
     <string name="no_journey_found_toast">Keine Touren gefunden.</string>
