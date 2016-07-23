@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical"
-            android:background="@color/windowBackground">
+            android:background="@color/colorPrimary">
 
         <LinearLayout
                 android:id="@+id/recommendationsWrapper"
@@ -183,10 +183,8 @@
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_parking_img"
-                                android:layout_width="wrap_content"
+                                android:layout_width="50dp"
                                 android:layout_height="wrap_content"
-                                android:minWidth="20dp"
-                                android:minHeight="20dp"
                                 android:src="@drawable/icon_parking_green"
                                 android:layout_alignParentLeft="true"/>
                     </RelativeLayout>
@@ -201,19 +199,19 @@
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_gas_img"
-                                android:layout_width="wrap_content"
+                                android:layout_width="50dp"
                                 android:layout_height="wrap_content"
-                                android:minWidth="400dp"
-                                android:minHeight="400dp"
-                                android:layout_centerHorizontal="true"
+                                android:layout_centerVertical="true"
                         />
 
                         <TextView
                                 android:id="@+id/recommendations_main_misc_gas_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:paddingLeft="@dimen/default_margin"
                                 android:textAppearance="?android:attr/textAppearanceLarge"
-                                android:layout_below="@id/recommendations_main_misc_gas_img"/>
+                                android:layout_toRightOf="@id/recommendations_main_misc_gas_img"
+                                android:layout_centerVertical="true"/>
 
                     </RelativeLayout>
                 </LinearLayout>

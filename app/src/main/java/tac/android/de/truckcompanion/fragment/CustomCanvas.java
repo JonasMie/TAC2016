@@ -53,8 +53,8 @@ public class CustomCanvas extends View {
 
         if (paint == null) {
             paint = new Paint();
-            paint.setColor(Color.parseColor("#5FBA7D"));
-            paint.setAlpha(128);
+            paint.setColor(Color.parseColor("#7f7f7f"));
+            paint.setAlpha(255);
             paint.setStyle(Paint.Style.STROKE);
             paint.setStrokeWidth((float) strokeWidth);
             paint.setAntiAlias(true);

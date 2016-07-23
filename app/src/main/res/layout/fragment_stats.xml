@@ -107,7 +107,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/scrollView"
-        android:background="@color/windowBackground">
+        android:background="@color/colorPrimary">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -118,7 +118,7 @@
                     android:layout_height="wrap_content"
                 android:orientation="horizontal"
                 android:id="@+id/day_0_layout"
-                android:background="@color/windowBackground">
+                android:background="@color/colorPrimary">
 
 
 
@@ -133,7 +133,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
 
                         <TextView
                         android:layout_width="wrap_content"
@@ -200,7 +200,7 @@
                     android:id="@+id/day_1_layout"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@+id/day_0_layout"
-                    android:background="@color/windowBackground" android:layout_alignParentRight="true">
+                    android:background="@color/colorPrimary" android:layout_alignParentRight="true">
 
                 <android.support.v7.widget.CardView
                         xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -215,7 +215,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -278,7 +278,7 @@
                     android:id="@+id/day_2_layout"
                     android:layout_alignParentEnd="true"
                     android:layout_below="@+id/day_1_layout"
-                    android:background="@color/windowBackground" android:layout_alignParentRight="true">
+                    android:background="@color/colorPrimary" android:layout_alignParentRight="true">
 
                 <android.support.v7.widget.CardView
                     xmlns:card_view="http://schemas.android.com/apk/res-auto"
@@ -292,7 +292,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -356,7 +356,7 @@
             android:orientation="horizontal"
             android:id="@+id/day_3_layout"
                 android:layout_below="@+id/day_2_layout"
-                android:background="@color/windowBackground">
+                android:background="@color/colorPrimary">
 
 
 
@@ -371,7 +371,7 @@
                     android:orientation="vertical"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:background="@color/windowBackground">
+                    android:background="@color/colorPrimary">
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -437,7 +437,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_4_layout"
                 android:layout_below="@+id/day_3_layout"
-                android:background="@color/windowBackground">
+                android:background="@color/colorPrimary">
 
 
 
@@ -452,7 +452,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -518,7 +518,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_5_layout"
                 android:layout_below="@+id/day_4_layout"
-                android:background="@color/windowBackground">
+                android:background="@color/colorPrimary">
 
 
 
@@ -533,7 +533,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -599,7 +599,7 @@
                 android:orientation="horizontal"
                 android:id="@+id/day_6_layout"
                 android:layout_below="@+id/day_5_layout"
-                android:background="@color/windowBackground">
+                android:background="@color/colorPrimary">
 
 
 
@@ -614,7 +614,7 @@
                         android:orientation="vertical"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:background="@color/windowBackground">
+                        android:background="@color/colorPrimary">
 
                         <TextView
                             android:layout_width="wrap_content"

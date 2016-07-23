@@ -192,7 +192,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
         // Layout + appearance
         mChart.setDrawHoleEnabled(true);
-        mChart.setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.windowBackground));
 
         mChart.setTransparentCircleColor(Color.TRANSPARENT);
         mChart.setTransparentCircleAlpha(110);
@@ -1018,6 +1017,8 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         altRecwrapper.removeAllViews();
         altRecwrapper.addView(getActivity().getLayoutInflater().inflate(R.layout.carousel, null));
         carouselView = (CarouselView) altRecwrapper.findViewById(R.id.carouselView);
+        carouselView.setStrokeColor(ContextCompat.getColor(activity, R.color.colorAccent));
+        carouselView.setFillColor(ContextCompat.getColor(activity, R.color.colorAccent));
         carouselView.setViewListener(carouselViewListener);
         carouselView.setPageCount(selectedEntry != null ? selectedEntry.getPause().getAlternativeRoadhouses().size() : 0);
         if (item != null) {
