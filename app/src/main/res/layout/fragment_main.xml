@@ -179,23 +179,15 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/default_margin"
-                            android:layout_marginStart="@dimen/default_margin"
-                            android:layout_centerVertical="true">
+                            android:layout_marginStart="@dimen/default_margin">
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_parking_img"
                                 android:layout_width="50dp"
                                 android:layout_height="wrap_content"
                                 android:src="@drawable/icon_parking_green"
-                                android:layout_alignParentLeft="true"/>
-                    </RelativeLayout>
-
-                    <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/default_margin"
-                            android:layout_marginStart="@dimen/default_margin"
-                            android:layout_centerVertical="true">
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"/>
 
 
                         <ImageView
@@ -203,13 +195,15 @@
                                 android:layout_width="50dp"
                                 android:layout_height="wrap_content"
                                 android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/default_margin"
+                                android:layout_toRightOf="@+id/recommendations_main_misc_parking_img"
                         />
 
                         <TextView
                                 android:id="@+id/recommendations_main_misc_gas_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:paddingLeft="@dimen/default_margin"
+                                android:layout_marginLeft="@dimen/default_margin"
                                 android:textAppearance="?android:attr/textAppearanceLarge"
                                 android:layout_toRightOf="@id/recommendations_main_misc_gas_img"
                                 android:layout_centerVertical="true"/>

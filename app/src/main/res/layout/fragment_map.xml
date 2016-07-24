@@ -200,41 +200,30 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_below="@+id/map_rec_info_wrapper"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:weightSum="2"
+                    android:layout_marginLeft="12dp"
                     android:layout_marginTop="@dimen/default_margin">
-                <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_centerVertical="true">
 
                     <ImageView
                             android:id="@+id/map_rec_img_parking"
-                            android:src="@drawable/icon_parking_green"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
+                            android:src="@drawable/icon_parking_green"
                             android:layout_centerVertical="true"
                             android:layout_alignParentLeft="true"/>
-                </RelativeLayout>
-
-                <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_centerVertical="true">
 
                     <ImageView
+                            android:id="@+id/map_rec_img_gas"
                             android:layout_width="50dp"
                             android:layout_height="wrap_content"
-                            android:id="@+id/map_rec_img_gas"
-                            android:layout_alignParentLeft="true"
+                            android:layout_toRightOf="@id/map_rec_img_parking"
+                            android:layout_marginLeft="@dimen/default_margin"
                             android:layout_centerVertical="true"
                     />
 
@@ -243,14 +232,12 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceLarge"
-                            android:paddingLeft="@dimen/default_margin"
+                            android:layout_marginLeft="@dimen/default_margin"
                             android:layout_toRightOf="@id/map_rec_img_gas"
                             android:layout_centerVertical="true"/>
 
-                </RelativeLayout>
 
-
-            </LinearLayout>
+            </RelativeLayout>
 
             <!--<TextView-->
             <!--android:layout_width="wrap_content"-->
