@@ -16,6 +16,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -59,6 +62,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private Toolbar toolbar;
     private RelativeLayout splashScreen;
     private TextView splashScreenStatus;
+    private ImageView splashScreenImage;
 
     // Resources
     private CharSequence mDrawerTitle;
@@ -80,6 +84,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        splashScreen = (RelativeLayout) findViewById(R.id.splash_screen);
+        splashScreenStatus = (TextView) findViewById(R.id.splash_screen_status);
+        splashScreenImage = (ImageView) findViewById(R.id.splash_screen_img);
+        Animation pulse = AnimationUtils.loadAnimation(this, R.anim.pulse);
+        splashScreenImage.startAnimation(pulse);
+
         context = getApplicationContext();
         dataCollector = new DataCollector(this);
 
@@ -88,8 +99,6 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
-        splashScreen = (RelativeLayout) findViewById(R.id.splash_screen);
-        splashScreenStatus = (TextView) findViewById(R.id.splash_screen_status);
         fm = getFragmentManager();
         setSupportActionBar(toolbar);
 
