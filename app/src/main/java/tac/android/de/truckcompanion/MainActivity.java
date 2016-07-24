@@ -126,6 +126,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         // Set tab text colors
         mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
         mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
+        mTabLayout.setSelectedTabIndicatorHeight(8);
 
         /*
         Drawer related stuff starts here
