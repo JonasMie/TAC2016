@@ -1242,13 +1242,13 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
     @Override
     public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
-        int minuteIndicatorSize = 15;
+        float minuteIndicatorRatio = 27f / 403f;
         double innerCircleRadius = mChart.getHoleRadius() * .01 * mChart.getRadius();
         double pieElementsWidth = mChart.getRadius() - innerCircleRadius;
         float radius = (float) (mChart.getRadius() - pieElementsWidth / 2);
 
-        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int) (2 * innerCircleRadius + 2 * minuteIndicatorSize), (int) (2 * innerCircleRadius + 2 * minuteIndicatorSize));
-        params.setMargins((int) (mChart.getCenter().x - innerCircleRadius - minuteIndicatorSize), (int) (mChart.getCenter().y - innerCircleRadius - minuteIndicatorSize), (int) (mChart.getCenter().x + innerCircleRadius + minuteIndicatorSize), (int) (mChart.getCenter().y + innerCircleRadius + minuteIndicatorSize));
+        FrameLayout.LayoutParams params = new FrameLayout.LayoutParams((int) (2 * innerCircleRadius + 2 * minuteIndicatorRatio * innerCircleRadius), (int) (2 * innerCircleRadius + 2 * minuteIndicatorRatio * innerCircleRadius));
+        params.setMargins((int) (mChart.getCenter().x - innerCircleRadius - (minuteIndicatorRatio * innerCircleRadius)), (int) (mChart.getCenter().y - innerCircleRadius - (minuteIndicatorRatio * innerCircleRadius)), (int) (mChart.getCenter().x + innerCircleRadius + (minuteIndicatorRatio * innerCircleRadius)), (int) (mChart.getCenter().y + innerCircleRadius + (minuteIndicatorRatio * innerCircleRadius)));
         clock.setLayoutParams(params);
         clock.setScaleType(ImageView.ScaleType.FIT_CENTER);
         canvas.setBoundingBox(new RectF(mChart.getCenter().x - radius, mChart.getCenter().y - radius, mChart.getCenter().x + radius, mChart.getCenter().y + radius));
