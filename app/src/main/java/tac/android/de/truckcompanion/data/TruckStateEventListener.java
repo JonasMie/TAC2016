@@ -9,7 +9,20 @@ package tac.android.de.truckcompanion.data;
  */
 public interface TruckStateEventListener {
 
+    /**
+     * On truck stationary state change (driving vs. pause)
+     *
+     * @param state the state
+     */
     void onTruckStationaryStateChange(int state);
+
+    /**
+     * On truck moved.
+     */
     void onTruckMoved();
+
+    /**
+     * On journey finished.
+     */
     void onJourneyFinished();
 }

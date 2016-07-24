@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @deprecated
+ *
  * Created by Jonas Miederer.
  * Date: 21.05.16
  * Time: 16:12

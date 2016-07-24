@@ -18,6 +18,11 @@ public class NavigationWrapper {
         navigationManager = NavigationManager.getInstance();
     }
 
+    /**
+     * Gets instance.
+     *
+     * @return the instance
+     */
     public static NavigationWrapper getInstance() {
         if (navigationWrapper == null) {
             navigationWrapper = new NavigationWrapper();
@@ -25,10 +30,20 @@ public class NavigationWrapper {
         return navigationWrapper;
     }
 
+    /**
+     * Gets navigation manager.
+     *
+     * @return the navigation manager
+     */
     public NavigationManager getNavigationManager() {
         return navigationManager;
     }
 
+    /**
+     * Sets navigation manager.
+     *
+     * @param navigationManager the navigation manager
+     */
     public void setNavigationManager(NavigationManager navigationManager) {
         this.navigationManager = navigationManager;
     }

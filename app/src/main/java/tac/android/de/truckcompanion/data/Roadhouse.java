@@ -18,13 +18,8 @@ import java.util.Date;
  */
 public class Roadhouse {
 
-    private String id;
-    private String place_id;
-    private String icon;
-    private String name;
+    // Members
     private double rating;
-    private LatLng location;
-    private ArrayList<String> types;
     private PlaceLink placeLink;
     private Place place;
     private Date ETA;
@@ -33,109 +28,157 @@ public class Roadhouse {
     private int distanceFromStart;
     private double gasPrice;
 
-    public Roadhouse(String id, String place_id, String icon, String name, float rating, LatLng location, ArrayList<String> types) {
-        this.id = id;
-        this.place_id = place_id;
-        this.icon = icon;
-        this.name = name;
-        this.rating = rating;
-        this.location = location;
-        this.types = types;
-    }
-
+    /**
+     * Instantiates a new Roadhouse.
+     *
+     * @param placeLink the place link
+     */
     public Roadhouse(PlaceLink placeLink) {
         this.placeLink = placeLink;
     }
 
-    public String getId() {
-        return id;
-    }
 
-    public String getPlace_id() {
-        return place_id;
-    }
-
-    public String getIcon() {
-        return icon;
-    }
-
-    public String getName() {
-        return name;
-    }
-
+    /**
+     * Gets rating.
+     *
+     * @return the rating
+     */
     public double getRating() {
         return rating;
     }
 
-    public LatLng getLocation() {
-        return location;
-    }
-
-    public ArrayList<String> getTypes() {
-        return types;
-    }
-
+    /**
+     * Gets the estimated time of arrival
+     *
+     * @return the eta
+     */
     public Date getETA() {
         return ETA;
     }
 
+    /**
+     * Sets the estimated time of arrival.
+     *
+     * @param ETA the eta
+     */
     public void setETA(Date ETA) {
         this.ETA = ETA;
     }
 
+    /**
+     * Gets place link.
+     *
+     * @return the place link
+     */
     public PlaceLink getPlaceLink() {
         return placeLink;
     }
 
+    /**
+     * Sets place link.
+     *
+     * @param placeLink the place link
+     */
     public void setPlaceLink(PlaceLink placeLink) {
         this.placeLink = placeLink;
     }
 
+    /**
+     * Gets duration from start.
+     *
+     * @return the duration from start
+     */
     public long getDurationFromStart() {
         return durationFromStart;
     }
 
+    /**
+     * Sets duration from start.
+     *
+     * @param durationFromStart the duration from start
+     */
     public void setDurationFromStart(long durationFromStart) {
         this.durationFromStart = durationFromStart;
     }
 
-    public Place getPlace() {
-        return place;
-    }
 
-    public void setPlace(Place place) {
-        this.place = place;
-    }
-
+    /**
+     * On details loaded.
+     */
     public void onDetailsLoaded() {
         detailsLoading = false;
     }
 
-    public boolean isDetailsLoading() {
-        return detailsLoading;
-    }
 
+    /**
+     * Sets details loading.
+     *
+     * @param detailsLoading the details loading
+     */
     public void setDetailsLoading(boolean detailsLoading) {
         this.detailsLoading = detailsLoading;
     }
 
+    /**
+     * Sets distance from start.
+     *
+     * @param distanceFromStart the distance from start
+     */
     public void setDistanceFromStart(int distanceFromStart) {
         this.distanceFromStart = distanceFromStart;
     }
 
+    /**
+     * Gets distance from start.
+     *
+     * @return the distance from start
+     */
     public int getDistanceFromStart() {
         return distanceFromStart;
     }
 
+    /**
+     * Sets gas price.
+     *
+     * @param gasPrice the gas price
+     */
     public void setGasPrice(double gasPrice) {
         this.gasPrice = gasPrice;
     }
 
+    /**
+     * Gets gas price.
+     *
+     * @return the gas price
+     */
     public double getGasPrice() {
         return gasPrice;
     }
 
+    /**
+     * Sets rating.
+     *
+     * @param rating the rating
+     */
     public void setRating(double rating) {
         this.rating = rating;
+    }
+
+    /**
+     * Sets place.
+     *
+     * @param place the place
+     */
+    public void setPlace(Place place) {
+        this.place = place;
+    }
+
+    /**
+     * Gets place.
+     *
+     * @return the place
+     */
+    public Place getPlace() {
+        return place;
     }
 }

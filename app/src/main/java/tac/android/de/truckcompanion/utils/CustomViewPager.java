@@ -15,11 +15,22 @@ import android.view.MotionEvent;
 public class CustomViewPager extends ViewPager {
     private boolean enabled;
 
+    /**
+     * Instantiates a new Custom view pager.
+     *
+     * @param context the context
+     */
     public CustomViewPager(Context context) {
         super(context);
         this.enabled = true;
     }
 
+    /**
+     * Instantiates a new Custom view pager.
+     *
+     * @param context the context
+     * @param attrs   the attrs
+     */
     public CustomViewPager(Context context, AttributeSet attrs) {
         super(context, attrs);
         this.enabled = true;
@@ -35,10 +46,20 @@ public class CustomViewPager extends ViewPager {
         return enabled && super.onInterceptTouchEvent(event);
     }
 
+    /**
+     * Sets paging enabled.
+     *
+     * @param enabled the enabled
+     */
     public void setPagingEnabled(boolean enabled) {
         this.enabled = enabled;
     }
 
+    /**
+     * Is paging enabled boolean.
+     *
+     * @return the boolean
+     */
     public boolean isPagingEnabled() {
         return enabled;
     }

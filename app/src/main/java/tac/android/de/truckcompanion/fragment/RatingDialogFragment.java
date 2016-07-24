@@ -1,11 +1,9 @@
 package tac.android.de.truckcompanion.fragment;
 
-import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,6 +25,13 @@ public class RatingDialogFragment extends DialogFragment {
     private AlertDialog dialog;
     private RatingBar ratingBar;
 
+    /**
+     * Instanciate the rating dialog fragment.
+     *
+     * @param title           the title
+     * @param roadhouse_title the roadhouse title
+     * @return the rating dialog fragment
+     */
     public static RatingDialogFragment newInstance(int title, String roadhouse_title) {
         RatingDialogFragment fragment = new RatingDialogFragment();
         Bundle args = new Bundle();
@@ -48,6 +53,8 @@ public class RatingDialogFragment extends DialogFragment {
         textView.setText(String.format(getResources().getString(R.string.roadhouse_query_text), roadhouse_title));
 
         ratingBar = (RatingBar) layout.findViewById(R.id.rating_rating);
+
+        // Create the dialog
         dialog = new AlertDialog.Builder(getActivity())
                 .setTitle(title)
                 .setView(layout)

@@ -10,6 +10,18 @@ import android.view.MotionEvent;
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
 public interface OnEntryGestureListener {
+    /**
+     * On entry dragged.
+     *
+     * @param me        the me
+     * @param diffAngle the diff angle
+     */
     void onEntryDragged(MotionEvent me, float diffAngle);
+
+    /**
+     * On entry resized.
+     *
+     * @param me the me
+     */
     void onEntryResized(MotionEvent me);
 }

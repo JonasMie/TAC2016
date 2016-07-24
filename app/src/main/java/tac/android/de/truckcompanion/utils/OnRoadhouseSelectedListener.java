@@ -14,13 +14,37 @@ import tac.android.de.truckcompanion.wheel.WheelEntry;
  */
 public interface OnRoadhouseSelectedListener {
 
+    /**
+     * On main fragment roadhouse changed.
+     *
+     * @param entry the entry
+     */
     void onMainFragmentRoadhouseChanged(WheelEntry entry);
 
+    /**
+     * On map fragment roadhouse changed.
+     *
+     * @param entry     the entry
+     * @param roadhouse the roadhouse
+     */
     void onMapFragmentRoadhouseChanged(WheelEntry entry, Roadhouse roadhouse);
 
+    /**
+     * On pause data changed.
+     *
+     * @param entry the entry
+     */
     void onPauseDataChanged(WheelEntry entry);
 
+    /**
+     * On break finished.
+     */
     void onBreakFinished();
 
+    /**
+     * On route changed.
+     *
+     * @param routeWrapper the route wrapper
+     */
     void onRouteChanged(RouteWrapper routeWrapper);
 }

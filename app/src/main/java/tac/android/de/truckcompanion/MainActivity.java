@@ -2,7 +2,6 @@ package tac.android.de.truckcompanion;
 
 import android.app.DialogFragment;
 import android.app.FragmentManager;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -35,42 +34,50 @@ import tac.android.de.truckcompanion.geo.NavigationWrapper;
 import tac.android.de.truckcompanion.geo.RouteWrapper;
 import tac.android.de.truckcompanion.utils.AsyncResponse;
 import tac.android.de.truckcompanion.utils.CustomViewPager;
+import tac.android.de.truckcompanion.utils.CustomViewPager;
 import tac.android.de.truckcompanion.utils.OnRoadhouseSelectedListener;
 import tac.android.de.truckcompanion.wheel.WheelEntry;
 
 import java.util.ArrayList;
 
+/**
+ * The type Main activity.
+ */
 public class MainActivity extends AppCompatActivity implements TruckStateEventListener, OnRoadhouseSelectedListener {
 
-    private static final String TAG = MainActivity.class.getSimpleName();
+    /**
+     * The constant context.
+     */
+// View references
+    public static Context context;
+    /**
+     * The constant fm.
+     */
     public static FragmentManager fm;
+    private TabLayout tabLayout;
+    private CustomViewPager viewPager;
+    /**
+     * The constant viewPagerAdapter.
+     */
+    public static ViewPagerAdapter viewPagerAdapter;
 
-    private static final int DRIVER_ID = 1;
-    private static final int TOUR_ID = 1;
-    private static final int TRUCK_ID = 1;
-    public static final double NAVIGATION_DRIVING_SPEED = 22.222;
-    public static final double VELOCITY_FACTOR = 13.5;
-
-    // View references
-    private TabLayout mTabLayout;
-    private CustomViewPager mViewPager;
-    public static ViewPagerAdapter mViewPagerAdapter;
-
-    private DrawerLayout mDrawerLayout;
-    private NavigationView mNavigationView;
-    private ActionBarDrawerToggle mDrawerToggle;
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private ActionBarDrawerToggle drawerToggle;
     private Toolbar toolbar;
     private RelativeLayout splashScreen;
     private TextView splashScreenStatus;
     private ImageView splashScreenImage;
 
     // Resources
-    private CharSequence mDrawerTitle;
-    private CharSequence mTitle;
+    private CharSequence drawerTitle;
+
 
     // Data
-    private static Journey mCurrentJourney;
-    private TruckState mCurrentTruckState;
+    private static Journey currentJourney;
+    /**
+     * The Data collector.
+     */
     public DataCollector dataCollector;
 
     // Fragments
@@ -78,7 +85,21 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
     private MapFragment mapFragment;
     private StatsFragment statsFragment;
 
-    public static Context context;
+    // Constants
+    private static final String TAG = MainActivity.class.getSimpleName();
+    private static final int DRIVER_ID = 1;
+    private static final int TOUR_ID = 1;
+    private static final int TRUCK_ID = 1;
+
+    /**
+     * The constant NAVIGATION_DRIVING_SPEED. Defines the default driving speed of the truck in m/s
+     */
+    public static final double NAVIGATION_DRIVING_SPEED = 22.222;
+    /**
+     * The constant VELOCITY_FACTOR. The factor of which the simulation is speeded up.
+     */
+    public static final double VELOCITY_FACTOR = 13.5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,30 +116,30 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         dataCollector = new DataCollector(this);
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        mTabLayout = (TabLayout) findViewById(R.id.tabs);
-        mViewPager = (CustomViewPager) findViewById(R.id.viewpager);
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        mNavigationView = (NavigationView) findViewById(R.id.left_drawer);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
+        viewPager = (CustomViewPager) findViewById(R.id.viewpager);
+        drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        navigationView = (NavigationView) findViewById(R.id.left_drawer);
         fm = getFragmentManager();
         setSupportActionBar(toolbar);
 
-        mViewPager.setPagingEnabled(false);
-        mViewPager.setOffscreenPageLimit(2);
+        viewPager.setPagingEnabled(false);
+        viewPager.setOffscreenPageLimit(2);
 
-        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.main_view));
-        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.map));
-        mTabLayout.addTab(mTabLayout.newTab().setText(R.string.stats));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.main_view));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.map));
+        tabLayout.addTab(tabLayout.newTab().setText(R.string.stats));
 
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
         // Creating adapter and setting that adapter to the viewPager
-        mViewPagerAdapter = new ViewPagerAdapter(fm);
-        mViewPager.setAdapter(mViewPagerAdapter);
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        viewPagerAdapter = new ViewPagerAdapter(fm);
+        viewPager.setAdapter(viewPagerAdapter);
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
+                viewPager.setCurrentItem(tab.getPosition());
             }
 
             @Override
@@ -133,23 +154,21 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         });
 
         // Set tab text colors
-        mTabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
-        mTabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
-        mTabLayout.setSelectedTabIndicatorHeight(8);
+        tabLayout.setTabTextColors(ContextCompat.getColorStateList(this, R.color.tab_selector));
+        tabLayout.setSelectedTabIndicatorColor(ContextCompat.getColor(this, R.color.indicator));
+        tabLayout.setSelectedTabIndicatorHeight(8);
 
         /*
         Drawer related stuff starts here
          */
-        mTitle = mDrawerTitle = getTitle();
-
         // Set drawer toggle
-        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.drawer_open, R.string.drawer_close) {
 
             // Called when a drawer has settled in a completely open state
             @Override
             public void onDrawerOpened(View drawerView) {
                 super.onDrawerOpened(drawerView);
-                getSupportActionBar().setTitle(mDrawerTitle);
+                getSupportActionBar().setTitle(drawerTitle);
                 invalidateOptionsMenu();
             }
 
@@ -157,17 +176,17 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
             @Override
             public void onDrawerClosed(View view) {
                 super.onDrawerClosed(view);
-                getSupportActionBar().setTitle(mDrawerTitle);
+                getSupportActionBar().setTitle(drawerTitle);
                 invalidateOptionsMenu();
             }
         };
 
         // Set the drawer toggle as the DrawerListener
-        mDrawerLayout.addDrawerListener(mDrawerToggle);
-        mDrawerToggle.syncState();
+        drawerLayout.addDrawerListener(drawerToggle);
+        drawerToggle.syncState();
 
         // Set the navigation's list click listener
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+        navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
                 //Checking if the item is in checked state or not, if not make it in checked state
@@ -178,17 +197,13 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 }
 
                 //Closing drawer on item click
-                mDrawerLayout.closeDrawers();
+                drawerLayout.closeDrawers();
 
                 //Check to see which item was being clicked and perform appropriate action
                 switch (menuItem.getItemId()) {
                     //Replacing the main content with ContentFragment Which is our Inbox View;
                     case R.id.main_view:
                         Toast.makeText(getApplicationContext(), "Main View Selected", Toast.LENGTH_SHORT).show();
-                        //                        ContentFragment fragment = new ContentFragment();
-                        //                        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-                        //                        fragmentTransaction.replace(R.id.frame, fragment);
-                        //                        fragmentTransaction.commit();
                         return true;
 
                     // For rest of the options we just show a toast on click
@@ -207,10 +222,10 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
                 if (journey == null) {
                     Toast.makeText(getApplicationContext(), R.string.no_journey_found_toast, Toast.LENGTH_SHORT).show();
                 } else {
-                    mCurrentJourney = journey;
-                    statsFragment = (StatsFragment) mViewPagerAdapter.getRegisteredFragment(2);
+                    currentJourney = journey;
+                    statsFragment = (StatsFragment) viewPagerAdapter.getRegisteredFragment(2);
                     splashScreenStatus.setText(getString(R.string.loading_route_data_msg));
-                    mapFragment = (MapFragment) mViewPagerAdapter.getRegisteredFragment(1);
+                    mapFragment = (MapFragment) viewPagerAdapter.getRegisteredFragment(1);
                     mapFragment.init(new OnEngineInitListener() {
                         @Override
                         public void onEngineInitializationCompleted(Error error) {
@@ -220,20 +235,20 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
                                 // set the map for navigation
                                 NavigationWrapper.getInstance().getNavigationManager().setMap(mapFragment.getMap());
-                                mCurrentJourney.initRoute();
+                                currentJourney.initRoute();
 
                                 // Calculate first route
-                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
+                                calculateRoute(currentJourney.getStartPoint(), currentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
                                     @Override
                                     public void processFinish(final RouteWrapper routeWrapper) {
                                         // Setup Main-Fragment (wheel)
-                                        mainFragment = (MainFragment) mViewPagerAdapter.getRegisteredFragment(0);
+                                        mainFragment = (MainFragment) viewPagerAdapter.getRegisteredFragment(0);
                                         mainFragment.setBreaks(routeWrapper, splashScreenStatus, new AsyncResponse<ArrayList>() {
 
                                             @Override
                                             public void processFinish(ArrayList breaks) {
                                                 // Calculate second route (with breaks)
-                                                calculateRoute(mCurrentJourney.getStartPoint(), mCurrentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
+                                                calculateRoute(currentJourney.getStartPoint(), currentJourney.getDestinationPoints(), splashScreenStatus, new AsyncResponse<RouteWrapper>() {
                                                     @Override
                                                     public void processFinish(RouteWrapper updatedRouteWrapper) {
                                                         if (updatedRouteWrapper == null) {
@@ -264,6 +279,15 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mapFragment.addTruckStateEventListener(this);
     }
 
+    /**
+     * Gets the current journey.
+     *
+     * @return the current journey
+     */
+    public static Journey getCurrentJourney() {
+        return currentJourney;
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu. This adds items to the action bar if it is present
@@ -277,7 +301,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         switch (item.getItemId()) {
             case R.id.start_navigation_menu_item:
                 // start navigation
-                NavigationManager.Error error = NavigationWrapper.getInstance().getNavigationManager().simulate(mCurrentJourney.getRouteWrapper().getRoute(), (long) (NAVIGATION_DRIVING_SPEED * VELOCITY_FACTOR));
+                NavigationManager.Error error = NavigationWrapper.getInstance().getNavigationManager().simulate(currentJourney.getRouteWrapper().getRoute(), (long) (NAVIGATION_DRIVING_SPEED * VELOCITY_FACTOR));
                 if (error != NavigationManager.Error.NONE) {
                     Toast.makeText(this, error.toString(), Toast.LENGTH_SHORT).show();
                 }
@@ -293,7 +317,7 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        menu.getItem(0).setEnabled(mCurrentJourney != null && mCurrentJourney.getRouteWrapper() != null && mCurrentJourney.getRouteWrapper().getCalculationFinished() && mCurrentJourney.getRouteWrapper().getRoute() != null);
+        menu.getItem(0).setEnabled(currentJourney != null && currentJourney.getRouteWrapper() != null && currentJourney.getRouteWrapper().getCalculationFinished() && currentJourney.getRouteWrapper().getRoute() != null);
         return true;
     }
 
@@ -314,12 +338,16 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
 
     }
 
-    public static Journey getmCurrentJourney() {
-        return mCurrentJourney;
-    }
-
+    /**
+     * Wrapper for route calculation.
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param textToUpdate      The text to show during updating/calculating the route
+     * @param callback          the callback to be executed after route calculation finished
+     */
     public void calculateRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final Object textToUpdate, final AsyncResponse<RouteWrapper> callback) {
-        mCurrentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, textToUpdate, callback);
+        currentJourney.getRouteWrapper().requestRoute(startPoint, destinationPoints, textToUpdate, callback);
     }
 
     @Override
@@ -351,16 +379,30 @@ public class MainActivity extends AppCompatActivity implements TruckStateEventLi
         mapFragment.onRouteChanged(routeWrapper);
     }
 
+    /**
+     * Gets next break according to the route.
+     *
+     * @return the next break
+     */
     public WheelEntry getNextBreak() {
         return mainFragment.getNextBreak();
     }
 
+    /**
+     * User clicked "OK" in rating dialog.
+     */
     public void doPositiveClick() {
     }
 
+    /**
+     * User clicked "Cancel" in rating dialog.
+     */
     public void doNegativeClick() {
     }
 
+    /**
+     * User clicked "Rate More" in rating dialog.
+     */
     public void doRateMore() {
     }
 }

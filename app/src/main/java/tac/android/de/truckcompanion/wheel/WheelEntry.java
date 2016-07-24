@@ -18,14 +18,28 @@ import java.util.ArrayList;
  * Project: MAD
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
-
 public class WheelEntry extends Entry {
 
+    /**
+     * The constant DRIVE_ENTRY.
+     */
     public static final int DRIVE_ENTRY = 0;
+    /**
+     * The constant PAUSE_ENTRY.
+     */
     public static final int PAUSE_ENTRY = 1;
+    /**
+     * The constant RECOVERY_ENTRY.
+     */
     public static final int RECOVERY_ENTRY = 2;
+    /**
+     * The constant BUFFER_ENTRY.
+     */
     public static final int BUFFER_ENTRY = 3;
 
+    /**
+     * The constant COLORS.
+     */
     public static final ArrayList<Integer> COLORS = new ArrayList<Integer>() {
         {
             add(ContextCompat.getColor(MainActivity.context, R.color.wheelDriveEntry));
@@ -35,17 +49,31 @@ public class WheelEntry extends Entry {
         }
     };
 
+    private static WheelEntry activeEntry;
+    private Break pause;
     private int entryType;
     private boolean editModeActive;
-    private static WheelEntry activeEntry;
     private float stepAngle;
 
-    private Break pause;
-
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param val    the val
+     * @param xIndex the x index
+     */
     public WheelEntry(float val, int xIndex) {
         super(val, xIndex);
     }
 
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param val         the val
+     * @param xIndex      the x index
+     * @param entryType   the entry type
+     * @param elapsedTime the elapsed time
+     * @param pauseIndex  the pause index
+     */
     public WheelEntry(float val, int xIndex, int entryType, int elapsedTime, int pauseIndex) {
         super(val, xIndex);
         this.entryType = entryType;
@@ -55,6 +83,16 @@ public class WheelEntry extends Entry {
         }
     }
 
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param val         the val
+     * @param xIndex      the x index
+     * @param entryType   the entry type
+     * @param elapsedTime the elapsed time
+     * @param pauseIndex  the pause index
+     * @param addBreak    the add break
+     */
     public WheelEntry(float val, int xIndex, int entryType, int elapsedTime, int pauseIndex, boolean addBreak) {
         super(val, xIndex);
         this.entryType = entryType;
@@ -64,20 +102,43 @@ public class WheelEntry extends Entry {
         }
     }
 
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param val         the val
+     * @param xIndex      the x index
+     * @param entryType   the entry type
+     * @param elapsedTime the elapsed time
+     */
     public WheelEntry(float val, int xIndex, int entryType, int elapsedTime) {
         super(val, xIndex);
         this.entryType = entryType;
         this.editModeActive = false;
     }
 
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param val    the val
+     * @param xIndex the x index
+     * @param data   the data
+     */
     public WheelEntry(float val, int xIndex, Object data) {
         super(val, xIndex, data);
     }
 
+    /**
+     * Instantiates a new Wheel entry.
+     *
+     * @param in the in
+     */
     protected WheelEntry(Parcel in) {
         super(in);
     }
 
+    /**
+     * The constant CREATOR.
+     */
     public static final Parcelable.Creator<WheelEntry> CREATOR = new Parcelable.Creator<WheelEntry>() {
         public WheelEntry createFromParcel(Parcel source) {
             return new WheelEntry(source);
@@ -88,6 +149,11 @@ public class WheelEntry extends Entry {
         }
     };
 
+    /**
+     * Gets predefined default entries.
+     *
+     * @return the entries
+     */
     public static ArrayList<Entry> getEntries() {
         return new ArrayList<Entry>() {
             {
@@ -101,6 +167,12 @@ public class WheelEntry extends Entry {
         };
     }
 
+    /**
+     * Gets colors for the entries.
+     *
+     * @param entries the entries
+     * @return the colors
+     */
     public static ArrayList<Integer> getColors(ArrayList<Entry> entries) {
 
         ArrayList<Integer> colors = new ArrayList<>();
@@ -110,18 +182,38 @@ public class WheelEntry extends Entry {
         return colors;
     }
 
+    /**
+     * Gets active entry.
+     *
+     * @return the active entry
+     */
     public static WheelEntry getActiveEntry() {
         return activeEntry;
     }
 
+    /**
+     * Gets entry type.
+     *
+     * @return the entry type
+     */
     public int getEntryType() {
         return entryType;
     }
 
+    /**
+     * Is edit mode active boolean.
+     *
+     * @return the boolean
+     */
     public boolean isEditModeActive() {
         return editModeActive;
     }
 
+    /**
+     * Sets edit mode active.
+     *
+     * @param editModeActive the edit mode active
+     */
     public void setEditModeActive(boolean editModeActive) {
         if (this.getEntryType() == PAUSE_ENTRY) {
             this.editModeActive = editModeActive;
@@ -129,19 +221,39 @@ public class WheelEntry extends Entry {
         }
     }
 
+    /**
+     * Gets pause.
+     *
+     * @return the pause
+     */
     public Break getPause() {
         return pause;
     }
 
+    /**
+     * Sets pause.
+     *
+     * @param pause the pause
+     */
     public void setPause(Break pause) {
         this.pause = pause;
     }
 
 
+    /**
+     * Gets step angle.
+     *
+     * @return the step angle
+     */
     public float getStepAngle() {
         return stepAngle;
     }
 
+    /**
+     * Sets step angle.
+     *
+     * @param stepAngle the step angle
+     */
     public void setStepAngle(float stepAngle) {
         this.stepAngle = stepAngle;
     }
