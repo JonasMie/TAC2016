@@ -179,7 +179,8 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/default_margin"
-                            android:layout_marginStart="@dimen/default_margin">
+                            android:layout_marginStart="@dimen/default_margin"
+                            android:layout_centerVertical="true">
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_parking_img"
@@ -194,7 +195,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="@dimen/default_margin"
                             android:layout_marginStart="@dimen/default_margin"
-                            android:gravity="center_vertical|center_horizontal">
+                            android:layout_centerVertical="true">
 
 
                         <ImageView

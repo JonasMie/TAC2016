@@ -24,7 +24,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/lorry_icon"/>
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/rast"/>
 
             <android.support.design.widget.FloatingActionButton
                     android:id="@+id/map_rec_choose"
@@ -211,7 +212,8 @@
                 <RelativeLayout
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1">
+                        android:layout_weight="1"
+                        android:layout_centerVertical="true">
 
                     <ImageView
                             android:id="@+id/map_rec_img_parking"
@@ -435,13 +437,12 @@
 
         <ImageView
                 android:id="@+id/map_relocate"
-                android:layout_width="50px"
-                android:layout_height="50px"
+                android:layout_width="60px"
+                android:layout_height="60px"
                 android:layout_marginBottom="20dp"
                 android:layout_marginRight="@dimen/default_margin"
                 android:layout_gravity="bottom|right"
-
-                android:src="@drawable/locate"/>
+                android:src="@drawable/ic_adjust_black_24dp"/>
     </FrameLayout>
 
 
