@@ -255,12 +255,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         mChart.highlightValue(1, 0);
         selectedEntry = (WheelEntry) dataSet.getEntryForIndex(1);
 
-//        RotateAnimation a = new RotateAnimation(-2, 2, Animation.RELATIVE_TO_SELF, .5f, Animation.RELATIVE_TO_SELF, .5f);
-//        a.setDuration(10);
-//        a.setRepeatCount(Animation.INFINITE);
-//        a.setRepeatMode(Animation.REVERSE);
-//        mChart.startAnimation(a);
-
         mChart.notifyDataSetChanged();
         mChart.invalidate();
     }
@@ -338,17 +332,6 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
 
             timer.schedule(wheelMovedTimerTask, AUTO_UPDATE_WHEEL_MOVED_DELAY);
         }
-        // un-highlight values after the gesture is finished and no single-tap
-//        if (lastPerformedGesture != ChartTouchListener.ChartGesture.SINGLE_TAP && lastPerformedGesture != ChartTouchListener.ChartGesture.LONG_PRESS) {
-//            if (!mChart.isEditModeEnabled()) {
-//                mChart.highlightValues(null);
-//                mChart.setRotationEnabled(true);
-//                if (selectedEntry != null) {
-//                    selectedEntry.setEditModeActive(false);
-//                    selectedEntry = null;
-//                }
-//            }
-//        }
     }
 
     public void onTruckMoved() {
