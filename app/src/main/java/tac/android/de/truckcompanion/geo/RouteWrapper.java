@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion.geo;
 
 import android.app.ProgressDialog;
+import android.graphics.PointF;
 import android.util.Log;
 import android.widget.TextView;
 import com.android.volley.VolleyError;
@@ -50,7 +51,12 @@ public class RouteWrapper {
     private Map map;
     private MapRoute mapRoute;
     private tac.android.de.truckcompanion.fragment.MapFragment mapFragment;
-    private Image marker;
+    private Image marker_start_img;
+    private MapMarker marker_start;
+    private PointF anchor_point_start;
+    private Image marker_finish_img;
+    private MapMarker marker_finish;
+    private PointF anchor_point_finish;
     private int duration;
     private int distance;
     private boolean calculationFinished = false;
@@ -60,9 +66,13 @@ public class RouteWrapper {
     public RouteWrapper() {
         mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.mViewPagerAdapter.getRegisteredFragment(1);
         map = mapFragment.getMap();
-        marker = new Image();
+        marker_start_img = new Image();
+        marker_finish_img = new Image();
         try {
-            marker.setImageResource(R.drawable.marker_main);
+            marker_start_img.setImageResource(R.drawable.marker_main);
+            anchor_point_start = new PointF(marker_start_img.getWidth() / 2, marker_start_img.getHeight());
+            marker_finish_img.setImageResource(R.drawable.ic_flag_black_32dp);
+            anchor_point_finish = new PointF(marker_finish_img.getWidth() / 2, marker_finish_img.getHeight());
         } catch (IOException e) {
             Log.e(TAG, "Marker image not found");
         }
@@ -111,8 +121,16 @@ public class RouteWrapper {
                         MainActivity.getmCurrentJourney().getRouteWrapper().setRoute(route);
                         departureTime = new Date();
                         map.removeMapObject(mapRoute);
+                        map.removeMapObject(marker_start);
+                        map.removeMapObject(marker_finish);
+
                         mapRoute = new MapRoute(route);
                         map.addMapObject(mapRoute);
+
+                        marker_start = new MapMarker(route.getStart(), marker_start_img);
+                        marker_finish = new MapMarker(route.getDestination(), marker_finish_img);
+                        map.addMapObject(marker_start);
+                        map.addMapObject(marker_finish);
                         map.setCenter(route.getStart(), Map.Animation.BOW);
                         calculationFinished = true;
                         callback.processFinish(RouteWrapper.this);

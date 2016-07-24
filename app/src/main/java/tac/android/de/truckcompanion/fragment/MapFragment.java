@@ -92,6 +92,9 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
 
     private Image icon_main;
     private Image icon_alt;
+    private Image icon_pos;
+    private Image icon_start;
+    private Image icon_finish;
 
     // this may be the ugliest thing i've ever written
     private HashMap<MapMarker, EntryRoadhouseStruct> markerWheelEntryMap;
@@ -476,12 +479,18 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     }
 
     private void prepareImages() {
-        if (icon_main == null || icon_alt == null) {
+        if (icon_main == null || icon_alt == null || icon_pos == null || icon_start == null || icon_finish == null) {
             icon_main = new Image();
             icon_alt = new Image();
+            icon_pos = new Image();
+            icon_start = new Image();
+            icon_finish = new Image();
             try {
-                icon_main.setImageResource(R.drawable.marker_main);
-                icon_alt.setImageResource(R.drawable.marker_alt);
+                icon_main.setImageResource(R.drawable.marker_alt);
+                icon_alt.setImageResource(R.drawable.marker_unselected);
+                icon_pos.setImageResource(R.drawable.marker_truck);
+                icon_start.setImageResource(R.drawable.marker_main);
+                icon_finish.setImageResource(R.drawable.ic_flag_black_32dp);
                 anchorPoint = new PointF(icon_main.getWidth() / 2, icon_main.getHeight());
             } catch (IOException e) {
                 Log.e(TAG, "Marker image not found");
