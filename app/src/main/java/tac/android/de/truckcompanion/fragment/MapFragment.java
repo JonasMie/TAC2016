@@ -183,7 +183,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         map.setCenter(placeLink.getPosition(), Map.Animation.BOW);
         rh_title.setText(placeLink.getTitle());
         rh_address.setText(placeLink.getVicinity().replace("<br/>", "\n"));
-        rh_rating.setRating((float) placeLink.getAverageRating());
+        rh_rating.setRating((float) roadhouse.getRating());
         if (roadhouse.getETA() != null) {
             rh_eta.setText(dateFormat.format(roadhouse.getETA()));
         } else {
