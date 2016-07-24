@@ -134,7 +134,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     public static final int RECALCULATION_STEP = 5;
     public static final int MAX_DRIVER_TOLERANCE = 10 * 60;
     private static final long AUTO_UPDATE_WHEEL_MOVED_DELAY = 2000;
-    private static final int CHART_ANGLE_OFFSET = 45;
+    private static final int CHART_ANGLE_OFFSET = 55;
     private WheelEntry previousBreakEntry;
 
 
