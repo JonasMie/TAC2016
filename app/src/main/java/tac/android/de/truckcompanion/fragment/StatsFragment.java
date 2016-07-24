@@ -83,7 +83,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(0).getLegend().setEnabled(false);
         headerCharts.elementAt(0).setTouchEnabled(false);
         headerCharts.elementAt(0).setTransparentCircleAlpha(0);
-        headerCharts.elementAt(0).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorPrimary));
+        headerCharts.elementAt(0).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.innerCircleColor));
         headerCharts.elementAt(0).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(0).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(0).setDescription("");
@@ -109,7 +109,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(1).getLegend().setEnabled(false);
         headerCharts.elementAt(1).setTouchEnabled(false);
         headerCharts.elementAt(1).setTransparentCircleAlpha(0);
-        headerCharts.elementAt(1).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorPrimary));
+        headerCharts.elementAt(1).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.innerCircleColorPause));
         headerCharts.elementAt(1).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(1).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
 
@@ -137,7 +137,7 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(2).getLegend().setEnabled(false);
         headerCharts.elementAt(2).setTouchEnabled(false);
         headerCharts.elementAt(2).setTransparentCircleAlpha(0);
-        headerCharts.elementAt(2).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.colorPrimary));
+        headerCharts.elementAt(2).setHoleColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.innerCircleColor));
         headerCharts.elementAt(2).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(2).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
     }

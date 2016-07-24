@@ -2,7 +2,6 @@
 <resources>
     <color name="colorPrimary">#ffffff</color>
     <color name="colorPrimaryDark">#262626</color>
-    <color name="colorAlternatives">#D6D1B1</color>
     <color name="textColorPrimary">#262626</color>
     <color name="textColorSecondary">#ffffff</color>
     <color name="navigationBarColor">#000000</color>
@@ -10,6 +9,8 @@
     <color name="indicator">@color/wheelDriveEntry</color>
     <color name="tabInactive">#D1C9C9</color>
 
+    <color name="innerCircleColor">#7152c9a8</color>
+    <color name="innerCircleColorPause">#7131859d</color>
     <color name="wheelDriveEntry">#52c9a8</color>
     <color name="wheelPauseEntry">@color/colorAccent</color>
     <color name="wheelRecoveryEntry">@color/colorPrimary</color>
