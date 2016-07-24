@@ -82,6 +82,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private NavigationManager.PositionListener positionListener;
     private MainActivity activity;
     private PointF anchorPoint;
+    private PointF anchorPointPos;
 
     private List<TruckStateEventListener> listeners = new ArrayList<>();
 
@@ -357,8 +358,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         prepareImages();
 
         currentPositionMarker = new MapMarker();
-        currentPositionMarker.setIcon(icon_main);
-        currentPositionMarker.setAnchorPoint(anchorPoint);
+        currentPositionMarker.setIcon(icon_pos);
+        currentPositionMarker.setAnchorPoint(anchorPointPos);
         map.addMapObject(currentPositionMarker);
 
         newInstructionEventListener = new NewInstructionEventListener() {
@@ -492,6 +493,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
                 icon_start.setImageResource(R.drawable.marker_main);
                 icon_finish.setImageResource(R.drawable.ic_flag_black_32dp);
                 anchorPoint = new PointF(icon_main.getWidth() / 2, icon_main.getHeight());
+                anchorPointPos = new PointF(icon_pos.getWidth() / 2, icon_pos.getHeight());
             } catch (IOException e) {
                 Log.e(TAG, "Marker image not found");
             }

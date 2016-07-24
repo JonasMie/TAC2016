@@ -128,7 +128,9 @@ public class RouteWrapper {
                         map.addMapObject(mapRoute);
 
                         marker_start = new MapMarker(route.getStart(), marker_start_img);
+                        marker_start.setAnchorPoint(anchor_point_start);
                         marker_finish = new MapMarker(route.getDestination(), marker_finish_img);
+                        marker_finish.setAnchorPoint(anchor_point_finish);
                         map.addMapObject(marker_start);
                         map.addMapObject(marker_finish);
                         map.setCenter(route.getStart(), Map.Animation.BOW);
