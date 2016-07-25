@@ -53,6 +53,9 @@ public class StatsFragment extends Fragment {
         return view;
     }
 
+    /**
+     * initialises the pie charts of the statistics screen
+     */
     void InitHeaderCharts() {
         headerCharts = new Vector<>();
         headerCharts.add((PieChart) view.findViewById(R.id.week_stats_drivetime));
@@ -141,7 +144,9 @@ public class StatsFragment extends Fragment {
         headerCharts.elementAt(2).setCenterTextColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
         headerCharts.elementAt(2).setDescriptionColor(ContextCompat.getColor(getActivity().getApplicationContext(), R.color.textColorPrimary));
     }
-
+    /**
+     * initialises charts of current day
+     */
     void InitCurrentDayChart() {
 
         ArrayList<BarEntry> entries = new ArrayList<>();
@@ -250,7 +255,9 @@ public class StatsFragment extends Fragment {
 
 
     }
-
+    /**
+     * initialises charts drive time charts for the last 6 days
+     */
     void InitWorkTimeCharts() {
         worktimeCharts = new Vector<HorizontalBarChart>();
         worktimeCharts.add((HorizontalBarChart) view.findViewById(R.id.day_stats_card_0_worktime));
@@ -326,7 +333,9 @@ public class StatsFragment extends Fragment {
 
 
     }
-
+    /**
+     * initialises rest time charts for the last 6 days
+     */
     void InitRestTimeCharts() {
         restTimeCharts = new Vector<HorizontalBarChart>();
         restTimeCharts.add((HorizontalBarChart) view.findViewById(R.id.day_stats_card_0_resttime));
@@ -408,7 +417,9 @@ public class StatsFragment extends Fragment {
         logHelp.onTruckStationaryStateChange(state);
     }
 
-
+    /**
+     * updates all chart data
+     */
     public void onTruckMoved() {
         if (currUpdateCycle >= updateCycle) {
             //update header charts

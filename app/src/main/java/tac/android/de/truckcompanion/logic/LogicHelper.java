@@ -76,6 +76,9 @@ public class LogicHelper {
 
         }
 
+        /**
+         * Clears day values.
+         */
         public void Clear() {
             maxSessionDriveMinutes = MAX_SESSION_DRIVE_MINUTES;
             minSessionRestTime = MIN_SESSION_REST_MINUTES;
@@ -94,6 +97,13 @@ public class LogicHelper {
 
         }
 
+        /**
+         * Sets day values.
+         *
+         * @param driveTime drive time of the day
+         * @param restTime rest time of the day
+         * @param driveMinutesEx set true if the drive time is longer than 9 hours
+         */
         public void SetDayValues(float driveTime, float restTime, boolean driveMinutesEx)
         {
             maxDriveMinutes = MAX_DAY_DRIVE_MINUTES - driveTime;
@@ -101,27 +111,49 @@ public class LogicHelper {
             driveMinutesException = driveMinutesEx;
         }
 
+        /**
+         * returns the current drive time of the day
+         * @return the drive time
+         */
         public float GetDriveTime()
         {
             return driveMinutesException ? MAX_DAY_DRIVE_MINUTES_EXCEPTION - maxDriveMinutes : MAX_DAY_DRIVE_MINUTES - maxDriveMinutes;
         }
-
+        /**
+         * returns the current rest time of the day
+         * @return the rest time
+         */
         public float GetRestTime()
         {
             return MIN_DAY_REST_MINUTES - minRestMinutes;
         }
 
+        /**
+         * checks if there is drive time exception for that day
+         * @return returns true if drive time is longer than 9 hours
+         */
         public boolean HasDriveTimeException()
         {return driveMinutesException;}
 
+        /**
+         * sets a new driver activity
+         * @@param newActivity  the new activity
+         */
         public void SetActivity(DriverActivity newActivity) {
             currActivity = newActivity;
         }
-
+        /**
+         * checks if the current day is over
+         * @return true if day is over
+         */
         public boolean IsDayOver() {
             return dayTime <= 0;
         }
 
+        /**
+         * updates all times
+         * @param elapsedTime the elpased time since the last call
+         */
         public void UpdateActivity(float elapsedTime) {
 
             if (lastActivity != currActivity) {
@@ -196,6 +228,11 @@ public class LogicHelper {
 
         }
 
+
+        /**
+         * updates the day time
+         * @param elapsedTime the elpased time since the last call
+         */
         void UpdateDayTime(float elapsedTime) {
             dayTime -= elapsedTime;
 
@@ -204,6 +241,10 @@ public class LogicHelper {
             }
         }
 
+        /**
+         * updates the drive time
+         * @param elapsedTime the elpased time since the last call
+         */
         void UpdateDrivingTime(float elapsedTime) {
             maxSessionDriveMinutes -= elapsedTime;
             maxDriveMinutes -= elapsedTime;
@@ -227,10 +268,18 @@ public class LogicHelper {
             }
         }
 
-        public void UpdateWorkingTime(float elapsedTime) {
+        /**
+         * updates the working time
+         * @param elapsedTime the elpased time since the last call
+         */
+        void UpdateWorkingTime(float elapsedTime) {
             maxWorkMinutes -= elapsedTime;
         }
 
+        /**
+         * updates the resting time
+         * @param elapsedTime the elpased time since the last call
+         */
         void UpdateRestingTime(float elapsedTime) {
 
             if ((minSessionRestTime <= 0 && minSessionRestTime > -2) || (minRestMinutes <= 0 && minRestMinutes > -2)) {
@@ -282,9 +331,17 @@ public class LogicHelper {
 
     }
 
+    /**
+     * returns the current day object
+     * @return the current day object
+     */
     public Day GetCurrentDay()
     {return currDay;}
 
+    /**
+     * calculates sum of the drive time of each stored day
+     * @return drive time sum
+     */
     public float GetDriveTimeSum()
     { float driveTime = 0;
         for(Day day : workingDays)
@@ -293,6 +350,10 @@ public class LogicHelper {
         }
         return driveTime;}
 
+    /**
+     * calculates sum of the rest time of each stored day
+     * @return rest time sum
+     */
     public float GetRestTimeSum()
     { float driveTime = 0;
         for(Day day : workingDays)
@@ -301,6 +362,10 @@ public class LogicHelper {
         }
         return driveTime;}
 
+    /**
+     * calculates the number of drive time exceptions
+     * @return number of drive time exceptions
+     */
     public int GetDriveTimeExNum()
     {
         int exNum = 0;
@@ -312,7 +377,10 @@ public class LogicHelper {
         return exNum;
     }
 
-
+    /**
+     * calls update function on current day objecz
+     * @param elapsedTime  time since the last call
+     */
     void UpdateElapsedTime(float elapsedTime)
     {
         currDay.UpdateActivity(elapsedTime);
@@ -324,6 +392,9 @@ public class LogicHelper {
         }
     }
 
+    /**
+     * calls update function on current day objecz, fixed time step of one minute
+     */
     void UpdateElapsedTime()
     {
         currDay.UpdateActivity(1);
@@ -334,6 +405,11 @@ public class LogicHelper {
             currDay.Clear();
         }
     }
+
+    /**
+     * sets new activity for current day
+     * @param newActivity the new activity
+     */
     void SetActivity(DriverActivity newActivity)
     {
         currDay.SetActivity(newActivity);
