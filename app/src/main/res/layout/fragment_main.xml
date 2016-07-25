@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
              android:id="@+id/content_frame"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
@@ -10,21 +9,24 @@
     <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:background="@color/colorPrimary">
 
         <LinearLayout
                 android:id="@+id/recommendationsWrapper"
                 android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
+                android:layout_height="219dp"
                 android:weightSum="2"
-                android:orientation="horizontal">
+                android:orientation="horizontal"
+                android:padding="20dp"
+                android:background="@drawable/border_oneside"
+                android:layout_marginBottom="@dimen/default_margin">
 
             <!--Main recommendation-->
             <RelativeLayout
                     android:id="@+id/recommendations_main_wrapper"
                     android:layout_width="0dp"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_weight="1">
 
 
@@ -32,7 +34,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textAppearance="?android:attr/textAppearanceLarge"
-                        android:text="Shell Autohof Sittensen"
                         android:id="@+id/recommendations_main_title"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentLeft="true"
@@ -40,7 +41,9 @@
                         android:textSize="25sp"
                         android:textIsSelectable="false"
                         android:layout_marginStart="30dp"
-                        android:layout_marginLeft="30dp"/>
+                        android:layout_marginLeft="30dp"
+                        android:singleLine="true"
+                        android:textColor="@color/textColorPrimary"/>
 
                 <RatingBar
                         android:layout_width="wrap_content"
@@ -66,19 +69,6 @@
                 <!--android:layout_alignBottom="@+id/ratingBar2"-->
                 <!--android:gravity="center_vertical"/>-->
 
-                <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:textAppearance="?android:attr/textAppearanceSmall"
-                        android:text="(256 Bewertungen)"
-                        android:id="@+id/recommendations_main_rating_label"
-                        android:layout_below="@+id/recommendations_main_rating"
-                        android:layout_alignParentLeft="true"
-                        android:layout_alignParentStart="true"
-                        android:layout_alignRight="@+id/recommendations_main_rating"
-                        android:layout_alignEnd="@+id/recommendations_main_rating"
-                        android:layout_marginLeft="@dimen/default_margin"
-                        android:layout_marginStart="@dimen/default_margin"/>
                 <!--<LinearLayout-->
                 <!--android:layout_below="@+id/recommendations_main_rating"-->
                 <!--android:layout_width="wrap_content"-->
@@ -93,7 +83,7 @@
                         android:layout_alignParentStart="true"
                         android:layout_below="@+id/recommendations_main_rating"
                         android:id="@+id/recommendations_main_info_wrapper"
-                        android:layout_marginTop="17dp"
+                        android:layout_marginTop="28dp"
                 >
                     <RelativeLayout
                             android:layout_width="wrap_content"
@@ -106,7 +96,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="12.30"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
                                 android:textSize="25dp"/>
@@ -115,10 +104,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Ankunft"
+                                android:text="@string/ankunft"
                                 android:layout_below="@+id/recommendations_main_info_eta"
                                 android:layout_centerHorizontal="true"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/textColorPrimary"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -132,19 +122,20 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="80"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
-                                android:textSize="25dp"/>
+                                android:textSize="25dp"
+                                android:textColor="@color/textColorPrimary"/>
                         <TextView
                                 android:id="@+id/recommendations_main_info_distance_label"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Entfernung"
+                                android:text="@string/entfernung"
                                 android:layout_below="@+id/recommendations_main_info_distance"
                                 android:layout_centerHorizontal="true"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/textColorPrimary"/>
                     </RelativeLayout>
 
                     <RelativeLayout
@@ -158,7 +149,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceMedium"
-                                android:text="20 min"
                                 android:gravity="center_vertical|center_horizontal"
                                 android:layout_centerHorizontal="true"
                                 android:textSize="25dp"/>
@@ -167,10 +157,11 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:textAppearance="?android:attr/textAppearanceSmall"
-                                android:text="Pause"
+                                android:text="@string/pausendauer"
                                 android:layout_below="@+id/recommendations_main_info_breaktime"
                                 android:layout_centerHorizontal="true"
-                                android:gravity="center_horizontal"/>
+                                android:gravity="center_horizontal"
+                                android:textColor="@color/textColorPrimary"/>
                     </RelativeLayout>
                 </LinearLayout>
 
@@ -192,32 +183,31 @@
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_parking_img"
-                                android:layout_width="wrap_content"
+                                android:layout_width="50dp"
                                 android:layout_height="wrap_content"
-                                android:minWidth="20dp"
-                                android:minHeight="20dp"
-                                android:src="@drawable/parking_true"
-                                android:gravity="center_vertical|center_horizontal"
-                                android:layout_centerHorizontal="true"
-                                 />
-                    </RelativeLayout>
+                                android:src="@drawable/icon_parking_green"
+                                android:layout_alignParentLeft="true"
+                                android:layout_centerVertical="true"/>
 
-                    <RelativeLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_marginLeft="@dimen/default_margin"
-                            android:layout_marginStart="@dimen/default_margin">
 
                         <ImageView
                                 android:id="@+id/recommendations_main_misc_gas_img"
+                                android:layout_width="50dp"
+                                android:layout_height="wrap_content"
+                                android:layout_centerVertical="true"
+                                android:layout_marginLeft="@dimen/default_margin"
+                                android:layout_toRightOf="@+id/recommendations_main_misc_parking_img"
+                        />
+
+                        <TextView
+                                android:id="@+id/recommendations_main_misc_gas_price"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:minWidth="20dp"
-                                android:minHeight="20dp"
-                                android:src="@drawable/gas_grey"
-                                android:gravity="center_vertical|center_horizontal"
-                                android:layout_centerHorizontal="true"
-                        />
+                                android:layout_marginLeft="@dimen/default_margin"
+                                android:textAppearance="?android:attr/textAppearanceLarge"
+                                android:layout_toRightOf="@id/recommendations_main_misc_gas_img"
+                                android:layout_centerVertical="true"/>
+
                     </RelativeLayout>
                 </LinearLayout>
             </RelativeLayout>
@@ -225,18 +215,38 @@
             <LinearLayout
                     android:layout_width="0dp"
                     android:layout_height="match_parent"
-                    android:layout_weight="1">
+                    android:layout_weight="0.82"
+                    android:orientation="vertical"
+            >
+
+                <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Ihre Alternativen:"
+                        android:id="@+id/labelrecommondations_alternatives"
+                        android:paddingBottom="10dp"
+                        android:layout_marginTop="0dp"
+                        android:paddingRight="0dp"
+                        android:paddingLeft="0dp"
+                        android:paddingTop="0dp"
+                        android:translationZ="0dp"
+                        android:shadowColor="@color/colorAccent"
+                        android:shadowDx="1"
+                        android:singleLine="false"
+                        android:textColor="@color/textColorPrimary"/>
+
                 <RelativeLayout
                         android:id="@+id/recommendations_alternatives_wrapper"
                         android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/alternatives_shadow">
                 </RelativeLayout>
+
             </LinearLayout>
         </LinearLayout>
 
-        <RelativeLayout
+        <FrameLayout
                 android:id="@+id/chartWrapper"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
@@ -246,11 +256,23 @@
                     android:id="@+id/chart"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
                     android:layout_marginTop="0dp"
             />
 
-        </RelativeLayout>
+
+            <tac.android.de.truckcompanion.fragment.CustomCanvas
+                    android:id="@+id/canvas"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_horizontal|center_vertical"/>
+
+            <ImageView
+                    android:layout_gravity="center_horizontal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/clock"
+                    android:src="@drawable/clock"/>
+        </FrameLayout>
     </LinearLayout>
 
 </FrameLayout>

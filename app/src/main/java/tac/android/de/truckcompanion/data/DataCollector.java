@@ -23,11 +23,29 @@ import java.util.ArrayList;
  */
 public class DataCollector {
 
+    /**
+     * The constant ORDER_BY_DISTANCE_ASC.
+     */
     public static final int ORDER_BY_DISTANCE_ASC = 0;
+    /**
+     * The constant ORDER_BY_DISTANCE_DESC.
+     */
     public static final int ORDER_BY_DISTANCE_DESC = 1;
+    /**
+     * The constant ORDER_BY_PRICE_ASC.
+     */
     public static final int ORDER_BY_PRICE_ASC = 2;
+    /**
+     * The constant ORDER_BY_PRICE_DESC.
+     */
     public static final int ORDER_BY_PRICE_DESC = 3;
+    /**
+     * The constant ORDER_BY_ETA_ASC.
+     */
     public static final int ORDER_BY_ETA_ASC = 4;
+    /**
+     * The constant ORDER_BY_ETA_DESC.
+     */
     public static final int ORDER_BY_ETA_DESC = 5;
 
     private static final String GAS_API_BASE_URL = "https://creativecommons.tankerkoenig.de/json/";
@@ -45,15 +63,39 @@ public class DataCollector {
 
     private RequestQueue queue;
 
+    /**
+     * Instantiates a new Data collector.
+     *
+     * @param context the context
+     */
     public DataCollector(Context context) {
         queue = Volley.newRequestQueue(context);
     }
 
 
+    /**
+     * Gets resting place.
+     * @deprecated
+     *
+     * @param lat        the lat
+     * @param lng        the lng
+     * @param within     the within
+     * @param ordered_by the ordered by
+     * @param limit      the limit
+     */
     public void getRestingPlace(float lat, float lng, int within, int ordered_by, int limit) {
 
     }
 
+    /**
+     * Gets gas station within the radius.
+     *
+     * @param lat        the lat
+     * @param lng        the lng
+     * @param within     the within
+     * @param ordered_by the ordered by
+     * @param limit      the limit
+     */
     public void getGasStation(float lat, float lng, int within, int ordered_by, int limit) {
 
     }
@@ -138,6 +180,14 @@ public class DataCollector {
 
     }
 
+    /**
+     * Gets weather.
+     *
+     * @param lat      the lat
+     * @param lng      the lng
+     * @param time     the time
+     * @param callback the callback
+     */
     public void getWeather(double lat, double lng, int time, final ResponseCallback callback) {
         String url = WEATHER_API_BASE_URL +
                 "?lat=" + lat +
@@ -160,6 +210,15 @@ public class DataCollector {
 
     }
 
+    /**
+     * Gets places nearby.
+     * @deprecated
+     *
+     * @param lat      the lat
+     * @param lng      the lng
+     * @param within   the within
+     * @param callback the callback
+     */
     public void getPlacesNearby(double lat, double lng, int within, final ResponseCallback callback) {
         // Google proccesses radius in meters
         // TODO handle negative radius
@@ -186,6 +245,14 @@ public class DataCollector {
         queue.add(req);
     }
 
+    /**
+     * Gets route.
+     * @deprecated
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param callback          the callback
+     */
     public void getRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ResponseCallback callback) {
         String waypointsString = "";
         DispoInformation.DestinationPoint destinationPoint = destinationPoints.remove(destinationPoints.size() - 1);
@@ -217,6 +284,13 @@ public class DataCollector {
         queue.add(req);
     }
 
+    /**
+     * Gets waypoint matrix.
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param callback          the callback
+     */
     public void getWaypointMatrix(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ResponseCallback callback) {
         String url = HERE_MATRIX_API_BASE_URL +
                 "?app_id=" + HERE_APP_ID +
@@ -249,6 +323,13 @@ public class DataCollector {
         queue.add(req);
     }
 
+    /**
+     * Gets waypoint matrix.
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param callback          the callback
+     */
     public void getWaypointMatrix(GeoCoordinate startPoint, ArrayList<GeoCoordinate> destinationPoints, final ResponseCallback callback) {
         String url = HERE_MATRIX_API_BASE_URL +
                 "?app_id=" + HERE_APP_ID +

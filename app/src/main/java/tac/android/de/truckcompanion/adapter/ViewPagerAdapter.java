@@ -1,8 +1,8 @@
 package tac.android.de.truckcompanion.adapter;
 
-import android.support.v13.app.FragmentStatePagerAdapter;
 import android.app.Fragment;
 import android.app.FragmentManager;
+import android.support.v13.app.FragmentStatePagerAdapter;
 import android.util.SparseArray;
 import android.view.ViewGroup;
 import tac.android.de.truckcompanion.fragment.MainFragment;
@@ -19,9 +19,14 @@ import tac.android.de.truckcompanion.fragment.StatsFragment;
  */
 public class ViewPagerAdapter extends FragmentStatePagerAdapter {
 
-    SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
+    private SparseArray<Fragment> registeredFragments = new SparseArray<Fragment>();
 
 
+    /**
+     * Instantiates a new View pager adapter.
+     *
+     * @param supportFragmentManager the support fragment manager
+     */
     public ViewPagerAdapter(FragmentManager supportFragmentManager) {
         super(supportFragmentManager);
     }
@@ -58,6 +63,12 @@ public class ViewPagerAdapter extends FragmentStatePagerAdapter {
         super.destroyItem(container, position, object);
     }
 
+    /**
+     * Gets the registered fragment references.
+     *
+     * @param position the position
+     * @return the registered fragment
+     */
     public Fragment getRegisteredFragment(int position) {
         return registeredFragments.get(position);
     }

@@ -3,6 +3,8 @@ package tac.android.de.truckcompanion.simulator;
 import org.json.JSONObject;
 
 /**
+ * @deprecated
+ *
  * Created by Jonas Miederer.
  * Date: 11.05.16
  * Time: 15:43

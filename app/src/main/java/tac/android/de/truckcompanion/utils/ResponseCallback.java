@@ -11,7 +11,17 @@ import org.json.JSONObject;
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
 public interface ResponseCallback {
+    /**
+     * On success.
+     *
+     * @param result the result
+     */
     void onSuccess(JSONObject result);
 
+    /**
+     * On error.
+     *
+     * @param error the error
+     */
     void onError(VolleyError error);
 }

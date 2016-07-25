@@ -12,6 +12,14 @@ import com.here.android.mpa.common.GeoCoordinate;
  */
 public class GeoHelper {
 
+    /**
+     * Gets location.
+     *
+     * @param title the title
+     * @param lat   the lat
+     * @param lng   the lng
+     * @return the location
+     */
     public static Location getLocation(String title, double lat, double lng) {
         Location loc = new Location(title);
         loc.setLatitude(lat);
@@ -20,10 +28,22 @@ public class GeoHelper {
         return loc;
     }
 
+    /**
+     * Lat lng to geo coordinate converter
+     *
+     * @param coord the coord
+     * @return the geo coordinate
+     */
     public static GeoCoordinate LatLngToGeoCoordinate(LatLng coord) {
         return new GeoCoordinate(coord.latitude, coord.longitude);
     }
 
+    /**
+     * Geo coordinate to lat lng converter
+     *
+     * @param coord the coord
+     * @return the lat lng
+     */
     public static LatLng GeoCoordinateToLatLng(GeoCoordinate coord) {
         return new LatLng(coord.getLatitude(), coord.getLongitude());
     }

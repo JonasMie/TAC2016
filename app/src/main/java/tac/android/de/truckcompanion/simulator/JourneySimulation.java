@@ -13,6 +13,8 @@ import java.util.List;
 import static tac.android.de.truckcompanion.utils.Helper.getJsonStringFromAssets;
 
 /**
+ * @deprecated
+ *
  * Created by Jonas Miederer.
  * Date: 11.05.16
  * Time: 10:47

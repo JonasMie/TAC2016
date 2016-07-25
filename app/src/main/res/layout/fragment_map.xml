@@ -1,427 +1,436 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="match_parent">
-    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:fillViewport="false">
-    <RelativeLayout
+<LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imgRaststaette"
-            android:src="@drawable/rast"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fab"
-            android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@android:color/white"
+        android:weightSum="7">
+    <ScrollView
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            android:id="@+id/map_rec_sidebar"
+            android:layout_width="0dp"
+            android:layout_weight="2"
             android:layout_height="match_parent"
-            android:clickable="true"
-
-
-            android:layout_above="@+id/textView28"
-            android:layout_alignRight="@+id/imgRaststaette"
-            android:layout_alignEnd="@+id/imgRaststaette"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="-50dp"></android.support.design.widget.FloatingActionButton>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:text="Rastplatz Beisipel"
-            android:id="@+id/titleRastplatz"
-            android:layout_below="@+id/imgRaststaette"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="11dp"
-            android:layout_marginTop="8dp" />
-
-        <RatingBar
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/ratingBar4"
-            android:layout_below="@+id/titleRastplatz"
-            style="@style/Base.Widget.AppCompat.RatingBar.Small"
-            android:numStars="5"
-            android:rating="5"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="4 von 5"
-            android:id="@+id/textView27"
-            android:layout_alignBottom="@+id/ratingBar4"
-            android:layout_toRightOf="@+id/ratingBar4"
-            android:layout_toEndOf="@+id/ratingBar4"
-            android:layout_marginLeft="10dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="(122 Bewertungen)"
-            android:id="@+id/textView28"
-            android:layout_below="@+id/ratingBar4"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="A1 Ausfahrt 47"
-            android:id="@+id/textView29"
-            android:layout_below="@+id/textView28"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="25dp"
-            android:paddingLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Hansestr. 4"
-            android:id="@+id/textView30"
-            android:layout_below="@+id/textView29"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="2234 Sittensen"
-            android:id="@+id/textView31"
-            android:layout_below="@+id/textView30"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Niedersachsen"
-            android:id="@+id/textView32"
-            android:layout_below="@+id/textView31"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:paddingLeft="11dp" />
-
-        <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView32"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="24dp"
-            android:id="@+id/linearLayout5"
-            android:layout_alignRight="@+id/linearLayout6"
-            android:layout_alignEnd="@+id/linearLayout6">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="12.30"
-                android:id="@+id/textView33"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="80km"
-                android:id="@+id/textView34"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceLarge"
-                android:text="20min"
-                android:id="@+id/textView35"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/linearLayout5"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/linearLayout6"
-            android:layout_alignRight="@+id/imgRaststaette"
-            android:layout_alignEnd="@+id/imgRaststaette">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Ankunft"
-                android:id="@+id/textView36"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Entfernung"
-                android:id="@+id/textView37"
-                android:layout_weight="1"
-                android:gravity="center" />
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Pausendauer"
-                android:id="@+id/textView38"
-                android:layout_weight="1"
-                android:gravity="center" />
-        </LinearLayout>
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView7"
-            android:layout_below="@+id/linearLayout6"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="26dp"
-            android:src="@drawable/parking_true"
-            android:paddingLeft="11dp" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="frei"
-            android:id="@+id/textView39"
-            android:layout_alignTop="@+id/imageView7"
-            android:layout_toRightOf="@+id/imageView7"
-            android:layout_toEndOf="@+id/imageView7"
-            android:layout_alignBottom="@+id/imageView7"
-            android:gravity="center" />
-
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/imageView8"
-            android:layout_alignTop="@+id/textView39"
-            android:layout_toRightOf="@+id/textView28"
-            android:layout_toEndOf="@+id/textView28"
-            android:src="@drawable/gas_grey" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="1,22 €"
-            android:id="@+id/textView40"
-            android:layout_alignTop="@+id/imageView8"
-            android:layout_toRightOf="@+id/imageView8"
-            android:layout_toEndOf="@+id/imageView8"
-            android:layout_alignBottom="@+id/imageView8"
-            android:gravity="center" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Detailbewertung"
-            android:id="@+id/textView41"
-            android:layout_below="@+id/imageView7"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="25dp"
-            android:textStyle="bold"
-            android:paddingLeft="11dp" />
-
-        <TableLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/textView41"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:id="@+id/tableLayout">
-
-            <TableRow
+            android:fillViewport="false">
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
-                <TextView
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Service"
-                    android:id="@+id/textView42"
-                    android:layout_column="0"
-                    android:paddingLeft="11dp" />
+            <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/map_rec_img"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/rast"/>
 
-                <RatingBar
+            <android.support.design.widget.FloatingActionButton
+                    android:id="@+id/map_rec_choose"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
-                    android:id="@+id/ratingBar5"
-                    android:layout_column="1"
-                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
+                    android:clickable="true"
+                    android:layout_above="@+id/map_rec_title"
+                    android:layout_alignRight="@+id/map_rec_img"
+                    android:layout_alignEnd="@+id/map_rec_img"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_add_location_white_24dp">
+            </android.support.design.widget.FloatingActionButton>
+
+            <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceLarge"
+                    android:id="@+id/map_rec_title"
+                    android:layout_below="@+id/map_rec_img"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="12dp"/>
+
+            <RatingBar
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/map_rec_rating"
+                    android:layout_below="@+id/map_rec_title"
+                    style="@style/Base.Widget.AppCompat.RatingBar.Indicator"
                     android:numStars="5"
-                    android:rating="5"
-                    android:layout_gravity="center_vertical" />
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="12dp"/>
 
-                <TextView
+            <TextView
                     android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="5 von 5"
-                    android:id="@+id/textView45"
-                    android:layout_column="2"
-                    android:layout_gravity="center_vertical" />
-            </TableRow>
+                    android:id="@+id/map_rec_rating_label"
+                    android:layout_alignBottom="@+id/map_rec_rating"
+                    android:layout_toRightOf="@+id/map_rec_rating"
+                    android:layout_toEndOf="@+id/map_rec_rating"
+                    android:layout_marginLeft="12dp"/>
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
 
-                <TextView
+            <TextView
+                    android:id="@+id/map_rec_address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Sauberkeit"
-                    android:id="@+id/textView43"
-                    android:layout_column="0"
-                    android:paddingLeft="11dp" />
+                    android:layout_below="@+id/map_rec_rating_label"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginLeft="12dp"/>
 
-                <RatingBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/ratingBar6"
-                    android:layout_column="1"
-                    android:numStars="5"
-                    android:rating="4"
-                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
-                    android:layout_gravity="center_vertical" />
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Hansestr. 4"-->
+            <!--android:id="@+id/textView30"-->
+            <!--android:layout_below="@+id/textView29"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:paddingLeft="11dp"/>-->
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="4 von 5"
-                    android:id="@+id/textView46"
-                    android:layout_column="2"
-                    android:layout_gravity="center_vertical" />
-            </TableRow>
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="2234 Sittensen"-->
+            <!--android:id="@+id/textView31"-->
+            <!--android:layout_below="@+id/textView30"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:paddingLeft="11dp"/>-->
 
-            <TableRow
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Niedersachsen"-->
+            <!--android:id="@+id/textView32"-->
+            <!--android:layout_below="@+id/textView31"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:paddingLeft="11dp"/>-->
 
-                <TextView
-                    android:textAppearance="?android:attr/textAppearanceMedium"
-                    android:text="Preise"
-                    android:id="@+id/textView44"
-                    android:layout_column="0"
-                    android:paddingLeft="11dp" />
+            <LinearLayout
+                    android:id="@+id/map_rec_info_wrapper"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/map_rec_address"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginTop="24dp"
+                    android:weightSum="3">
 
-                <RatingBar
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:id="@+id/ratingBar7"
-                    android:layout_column="1"
-                    style="@style/Base.Widget.AppCompat.RatingBar.Small"
-                    android:numStars="5"
-                    android:rating="1"
-                    android:layout_gravity="center_vertical" />
+                <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:text="1 von 5"
-                    android:id="@+id/textView47"
-                    android:layout_column="2"
-                    android:layout_gravity="center_vertical" />
-            </TableRow>
-        </TableLayout>
+                    <TextView
+                            android:id="@+id/map_rec_info_eta"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_centerHorizontal="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Leistungen"
-            android:id="@+id/textView48"
-            android:layout_below="@+id/tableLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_marginTop="28dp"
-            android:textStyle="bold"
-            android:paddingLeft="11dp"
-            android:layout_gravity="center_vertical" />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/eta"
+                            android:id="@+id/map_rec_info_eta_label"
+                            android:layout_below="@id/map_rec_info_eta"
+                            android:gravity="center"
+                            android:layout_centerHorizontal="true"/>
 
-        <ImageView
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:id="@+id/imageView129"
-            android:layout_below="@+id/textView48"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:src="@drawable/icon_gastro"
-            android:layout_marginTop="12dp" />
+                </RelativeLayout>
+                <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Gastronomie"
-            android:id="@+id/textView49"
-            android:layout_alignTop="@+id/imageView129"
-            android:layout_toRightOf="@+id/imageView129"
-            android:layout_toEndOf="@+id/imageView129" />
+                    <TextView
+                            android:id="@+id/map_rec_info_distance"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_centerHorizontal="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Burgerking"
-            android:id="@+id/textView50"
-            android:layout_below="@+id/textView49"
-            android:layout_toRightOf="@+id/imageView129"
-            android:layout_toEndOf="@+id/imageView129" />
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/distance"
+                            android:id="@+id/map_rec_info_distance_label"
+                            android:layout_below="@id/map_rec_info_distance"
+                            android:gravity="center"
+                            android:layout_centerHorizontal="true"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Burgerking"
-            android:id="@+id/textView51"
-            android:layout_below="@+id/textView50"
-            android:layout_toRightOf="@+id/imageView129"
-            android:layout_toEndOf="@+id/imageView129" />
+                </RelativeLayout>
+                <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1">
 
-    </RelativeLayout>
+                    <TextView
+                            android:id="@+id/map_rec_info_breaktime"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:gravity="center"
+                            android:layout_width="wrap_content"
+                            android:layout_centerHorizontal="true"/>
+
+                    <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceSmall"
+                            android:text="@string/breaktime"
+                            android:id="@+id/map_rec_info_breaktime_label"
+                            android:layout_below="@id/map_rec_info_breaktime"
+                            android:gravity="center"
+                            android:layout_centerHorizontal="true"/>
+
+                </RelativeLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_below="@+id/map_rec_info_wrapper"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentStart="true"
+                    android:layout_marginLeft="12dp"
+                    android:layout_marginTop="@dimen/default_margin">
+
+                    <ImageView
+                            android:id="@+id/map_rec_img_parking"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:src="@drawable/icon_parking_green"
+                            android:layout_centerVertical="true"
+                            android:layout_alignParentLeft="true"/>
+
+                    <ImageView
+                            android:id="@+id/map_rec_img_gas"
+                            android:layout_width="50dp"
+                            android:layout_height="wrap_content"
+                            android:layout_toRightOf="@id/map_rec_img_parking"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_centerVertical="true"
+                    />
+
+                    <TextView
+                            android:id="@+id/map_rec_price_gas"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textAppearance="?android:attr/textAppearanceLarge"
+                            android:layout_marginLeft="@dimen/default_margin"
+                            android:layout_toRightOf="@id/map_rec_img_gas"
+                            android:layout_centerVertical="true"/>
+
+
+            </RelativeLayout>
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Detailbewertung"-->
+            <!--android:id="@+id/textView41"-->
+            <!--android:layout_below="@+id/imageView7"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_marginTop="25dp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:paddingLeft="11dp"/>-->
+
+            <!--<TableLayout-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_below="@+id/textView41"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:id="@+id/tableLayout">-->
+
+            <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Service"-->
+            <!--android:id="@+id/textView42"-->
+            <!--android:layout_column="0"-->
+            <!--android:paddingLeft="11dp"/>-->
+
+            <!--<RatingBar-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/ratingBar5"-->
+            <!--android:layout_column="1"-->
+            <!--style="@style/Base.Widget.AppCompat.RatingBar.Small"-->
+            <!--android:numStars="5"-->
+            <!--android:rating="5"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:text="5 von 5"-->
+            <!--android:id="@+id/textView45"-->
+            <!--android:layout_column="2"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Sauberkeit"-->
+            <!--android:id="@+id/textView43"-->
+            <!--android:layout_column="0"-->
+            <!--android:paddingLeft="11dp"/>-->
+
+            <!--<RatingBar-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/ratingBar6"-->
+            <!--android:layout_column="1"-->
+            <!--android:numStars="5"-->
+            <!--android:rating="4"-->
+            <!--style="@style/Base.Widget.AppCompat.RatingBar.Small"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:text="4 von 5"-->
+            <!--android:id="@+id/textView46"-->
+            <!--android:layout_column="2"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+            <!--</TableRow>-->
+
+            <!--<TableRow-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent">-->
+
+            <!--<TextView-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Preise"-->
+            <!--android:id="@+id/textView44"-->
+            <!--android:layout_column="0"-->
+            <!--android:paddingLeft="11dp"/>-->
+
+            <!--<RatingBar-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:id="@+id/ratingBar7"-->
+            <!--android:layout_column="1"-->
+            <!--style="@style/Base.Widget.AppCompat.RatingBar.Small"-->
+            <!--android:numStars="5"-->
+            <!--android:rating="1"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="match_parent"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:text="1 von 5"-->
+            <!--android:id="@+id/textView47"-->
+            <!--android:layout_column="2"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+            <!--</TableRow>-->
+            <!--</TableLayout>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Leistungen"-->
+            <!--android:id="@+id/textView48"-->
+            <!--android:layout_below="@+id/tableLayout"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:layout_marginTop="28dp"-->
+            <!--android:textStyle="bold"-->
+            <!--android:paddingLeft="11dp"-->
+            <!--android:layout_gravity="center_vertical"/>-->
+
+            <!--<ImageView-->
+            <!--android:layout_width="60dp"-->
+            <!--android:layout_height="60dp"-->
+            <!--android:id="@+id/imageView129"-->
+            <!--android:layout_below="@+id/textView48"-->
+            <!--android:layout_alignParentLeft="true"-->
+            <!--android:layout_alignParentStart="true"-->
+            <!--android:src="@drawable/icon_gastro"-->
+            <!--android:layout_marginTop="12dp"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceMedium"-->
+            <!--android:text="Gastronomie"-->
+            <!--android:id="@+id/textView49"-->
+            <!--android:layout_alignTop="@+id/imageView129"-->
+            <!--android:layout_toRightOf="@+id/imageView129"-->
+            <!--android:layout_toEndOf="@+id/imageView129"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:text="Burgerking"-->
+            <!--android:id="@+id/textView50"-->
+            <!--android:layout_below="@+id/textView49"-->
+            <!--android:layout_toRightOf="@+id/imageView129"-->
+            <!--android:layout_toEndOf="@+id/imageView129"/>-->
+
+            <!--<TextView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:textAppearance="?android:attr/textAppearanceSmall"-->
+            <!--android:text="Burgerking"-->
+            <!--android:id="@+id/textView51"-->
+            <!--android:layout_below="@+id/textView50"-->
+            <!--android:layout_toRightOf="@+id/imageView129"-->
+            <!--android:layout_toEndOf="@+id/imageView129"/>-->
+
+        </RelativeLayout>
     </ScrollView>
 
-    <fragment
-            android:layout_width="fill_parent"
+    <FrameLayout
+            android:layout_width="0dp"
             android:layout_height="fill_parent"
-            class="com.here.android.mpa.mapping.MapFragment"
-            android:id="@+id/map"/>
+            android:layout_weight="5">
+
+        <fragment
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                class="com.here.android.mpa.mapping.MapFragment"
+                android:id="@+id/map"/>
+
+        <ImageView
+                android:id="@+id/map_relocate"
+                android:layout_width="60px"
+                android:layout_height="60px"
+                android:layout_marginBottom="20dp"
+                android:layout_marginRight="@dimen/default_margin"
+                android:layout_gravity="bottom|right"
+                android:src="@drawable/ic_adjust_black_24dp"/>
+    </FrameLayout>
 
 
 </LinearLayout>

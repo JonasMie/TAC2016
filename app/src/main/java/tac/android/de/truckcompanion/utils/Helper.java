@@ -14,10 +14,25 @@ import java.io.InputStream;
  * We're even wrong about which mistakes we're making. // Carl Winfield
  */
 public class Helper {
+    /**
+     * Clip an int value to a defined range.
+     *
+     * @param value the value
+     * @param lower the lower
+     * @param upper the upper
+     * @return the int
+     */
     public static int clip(int value, int lower, int upper) {
         return Math.max(lower, Math.min(upper, value));
     }
 
+    /**
+     * Gets json string from assets.
+     *
+     * @param context  the context
+     * @param filename the filename
+     * @return the json string from assets
+     */
     @Nullable
     public static String getJsonStringFromAssets(Context context, String filename) {
         String json = null;

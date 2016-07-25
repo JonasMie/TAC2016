@@ -1,7 +1,9 @@
 package tac.android.de.truckcompanion.geo;
 
 import android.app.ProgressDialog;
+import android.graphics.PointF;
 import android.util.Log;
+import android.widget.TextView;
 import com.android.volley.VolleyError;
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.Image;
@@ -37,34 +39,49 @@ import java.util.List;
  */
 public class RouteWrapper {
 
-    public static final int DISTANCE_INTERVAL = 10;
-    private static final String TAG = "TAC";
-    private static CoreRouter routeManager = new CoreRouter();
-    private RoutePlan routePlan;
-    private RouteOptions routeOptions;
-    private RouteResult routeResult;
-    private AsyncResponse<RouteWrapper> callback;
+    // Routing related stuff
     private Route route;
-    private Date departureTime;
+    private RoutePlan routePlan;
+    private static CoreRouter routeManager = new CoreRouter();
+
+    // Map related stuff
     private Map map;
     private MapRoute mapRoute;
     private tac.android.de.truckcompanion.fragment.MapFragment mapFragment;
-    private Image marker;
-    private int duration;
-    private int distance;
+    private Image marker_start_img;
+    private MapMarker marker_start;
+    private PointF anchor_point_start;
+    private Image marker_finish_img;
+    private MapMarker marker_finish;
+    private PointF anchor_point_finish;
 
-    private ArrayList<ArrayList> legs = new ArrayList<>();
+    // Misc
+    private Date departureTime;
+    private boolean calculationFinished = false;
 
+    // Constants
+    private static final String TAG = "TAC";
+
+    /**
+     * Instantiates a new Route wrapper.
+     */
     public RouteWrapper() {
-        mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.mViewPagerAdapter.getRegisteredFragment(1);
+        mapFragment = (tac.android.de.truckcompanion.fragment.MapFragment) MainActivity.viewPagerAdapter.getRegisteredFragment(1);
         map = mapFragment.getMap();
-        marker = new Image();
+
+        // set map marker for start and destination
+        marker_start_img = new Image();
+        marker_finish_img = new Image();
         try {
-            marker.setImageResource(R.drawable.marker);
+            marker_start_img.setImageResource(R.drawable.marker_main);
+            anchor_point_start = new PointF(marker_start_img.getWidth() / 2, marker_start_img.getHeight());
+            marker_finish_img.setImageResource(R.drawable.ic_flag_black_32dp);
+            anchor_point_finish = new PointF(marker_finish_img.getWidth() / 2, marker_finish_img.getHeight());
         } catch (IOException e) {
             Log.e(TAG, "Marker image not found");
         }
-        //routeManager.setTrafficPenaltyMode(); TODO
+
+        // set route related stuff
         routePlan = new RoutePlan();
         RouteOptions routeOptions = new RouteOptions();
         routeOptions.setTransportMode(RouteOptions.TransportMode.TRUCK);
@@ -72,22 +89,33 @@ public class RouteWrapper {
         routePlan.setRouteOptions(routeOptions);
     }
 
-    public void requestRoute(DispoInformation.StartPoint startPoint, ArrayList<DispoInformation.DestinationPoint> destinationPoints, final ProgressDialog progressDialog, final AsyncResponse<RouteWrapper> callback) {
-        this.callback = callback;
+    /**
+     * Request route from HERE Maps.
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param textToUpdate      the text to update
+     * @param callback          the callback
+     */
+    public void requestRoute(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, final Object textToUpdate, final AsyncResponse<RouteWrapper> callback) {
+        calculationFinished = false;
         routePlan.removeAllWaypoints();
-        final List<MapObject> markers = new ArrayList<>();
         routePlan.addWaypoint(new RouteWaypoint(new GeoCoordinate(startPoint.getCoordinate().latitude, startPoint.getCoordinate().longitude)));
+
         for (DispoInformation.DestinationPoint destinationPoint :
                 destinationPoints) {
             GeoCoordinate coordinate = new GeoCoordinate(destinationPoint.getCoordinate().latitude, destinationPoint.getCoordinate().longitude);
             routePlan.addWaypoint(new RouteWaypoint(coordinate));
-            markers.add(new MapMarker(coordinate, marker));
         }
         routeManager.calculateRoute(routePlan, new CoreRouter.Listener() {
             @Override
             public void onProgress(int i) {
-                if (progressDialog != null) {
-                    progressDialog.setMessage(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                if (textToUpdate != null) {
+                    if (textToUpdate instanceof ProgressDialog) {
+                        ((ProgressDialog) textToUpdate).setMessage(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                    } else if (textToUpdate instanceof TextView) {
+                        ((TextView) textToUpdate).setText(MainActivity.context.getString(R.string.loading_route_data_msg) + " (" + i + "%)");
+                    }
                 }
                 Log.d(TAG, "Routing calculation " + i + "% done");
             }
@@ -100,11 +128,26 @@ public class RouteWrapper {
                     } else {
                         Log.i(TAG, "Routing successful");
                         route = routeResults.get(0).getRoute();
+                        MainActivity.getCurrentJourney().getRouteWrapper().setRoute(route);
                         departureTime = new Date();
                         map.removeMapObject(mapRoute);
+                        map.removeMapObject(marker_start);
+                        map.removeMapObject(marker_finish);
+
                         mapRoute = new MapRoute(route);
+
+                        // Set marker, route, ... in map
                         map.addMapObject(mapRoute);
-                        map.addMapObjects(markers);
+                        marker_start = new MapMarker(route.getStart(), marker_start_img);
+                        marker_start.setAnchorPoint(anchor_point_start);
+                        marker_finish = new MapMarker(route.getDestination(), marker_finish_img);
+                        marker_finish.setAnchorPoint(anchor_point_finish);
+                        map.addMapObject(marker_start);
+                        map.addMapObject(marker_finish);
+                        map.setCenter(route.getStart(), Map.Animation.BOW);
+
+                        calculationFinished = true;
+
                         callback.processFinish(RouteWrapper.this);
                     }
                 } else {
@@ -119,26 +162,31 @@ public class RouteWrapper {
 
     }
 
-    public int getDuration() {
-        return duration;
-    }
-
-    public int getDistance() {
-        return distance;
-    }
-
-    public ArrayList<ArrayList> getLegs() {
-        return legs;
-    }
-
+    /**
+     * Gets route.
+     *
+     * @return the route
+     */
     public Route getRoute() {
         return route;
     }
 
+    /**
+     * Sets route.
+     *
+     * @param route the route
+     */
     public void setRoute(Route route) {
         this.route = route;
     }
 
+    /**
+     * Run HERE Maps search.
+     *
+     * @param loc            the loc
+     * @param searchTerm     the search term
+     * @param resultListener the result listener
+     */
     public void runSearch(GeoCoordinate loc, String searchTerm, ResultListener resultListener) {
         DiscoveryRequest request = new SearchRequest(searchTerm).setSearchCenter(loc);
 
@@ -147,6 +195,14 @@ public class RouteWrapper {
         request.execute(resultListener);
     }
 
+    /**
+     * Gets ordered waypoints.
+     *
+     * @param startPoint        the start point
+     * @param destinationPoints the destination points
+     * @param _key              the key
+     * @param callback          the callback
+     */
     public static void getOrderedWaypoints(DispoInformation.StartPoint startPoint, final ArrayList<DispoInformation.DestinationPoint> destinationPoints, String _key, final AsyncResponse<ArrayList> callback) {
         final String key;
         if (_key == null) {
@@ -199,6 +255,14 @@ public class RouteWrapper {
         });
     }
 
+    /**
+     * Gets ordered waypoints.
+     *
+     * @param startPoint the start point
+     * @param points     the points
+     * @param _key       the key
+     * @param callback   the callback
+     */
     public static void getOrderedWaypoints(GeoCoordinate startPoint, final ArrayList<DiscoveryResult> points, String _key, final AsyncResponse<ArrayList> callback) {
         final String key;
         if (_key == null) {
@@ -258,6 +322,13 @@ public class RouteWrapper {
         });
     }
 
+    /**
+     * Gets waypoint matrix.
+     *
+     * @param startPoint the start point
+     * @param points     the points
+     * @param callback   the callback
+     */
     public static void getWaypointMatrix(GeoCoordinate startPoint, final ArrayList<DiscoveryResult> points, final AsyncResponse<JSONObject> callback) {
         DataCollector dc = new DataCollector(MainActivity.context);
         final ArrayList<DiscoveryResult> orderedDestPoints = new ArrayList<>();
@@ -281,11 +352,39 @@ public class RouteWrapper {
         });
     }
 
+    /**
+     * Gets departure time.
+     *
+     * @return the departure time
+     */
     public Date getDepartureTime() {
         return departureTime;
     }
 
+    /**
+     * Sets departure time.
+     *
+     * @param departureTime the departure time
+     */
     public void setDepartureTime(Date departureTime) {
         this.departureTime = departureTime;
+    }
+
+    /**
+     * Gets calculation finished.
+     *
+     * @return the calculation finished
+     */
+    public boolean getCalculationFinished() {
+        return calculationFinished;
+    }
+
+    /**
+     * Sets calculation finished.
+     *
+     * @param calculationFinished the calculation finished
+     */
+    public void setCalculationFinished(boolean calculationFinished) {
+        this.calculationFinished = calculationFinished;
     }
 }
