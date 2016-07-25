@@ -1,6 +1,7 @@
 package tac.android.de.truckcompanion.fragment;
 
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
@@ -98,6 +99,7 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
     private static final String TAG = MapFragment.class.getSimpleName();
     private static final long SIMULATION_RATIO = 15;
 
+    @TargetApi(Build.VERSION_CODES.JELLY_BEAN_MR1)
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
@@ -121,10 +123,8 @@ public class MapFragment extends Fragment implements MapGesture.OnGestureListene
         markerWheelEntryMap = new HashMap<>();
         timer = new Timer();
 
-        // get map fragment
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
-        } else {
+        mapFragment = (com.here.android.mpa.mapping.MapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        if (mapFragment == null) {
             mapFragment = (com.here.android.mpa.mapping.MapFragment) getFragmentManager().findFragmentById(R.id.map);
         }
 
