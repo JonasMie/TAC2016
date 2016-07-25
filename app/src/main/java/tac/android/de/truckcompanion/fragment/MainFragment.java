@@ -85,6 +85,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
     // View-realted members
     private MainActivity activity;
     private ProgressDialog progressDialog;
+    private LinearLayout recWrapper;
     private RelativeLayout mainRecWrapper;
     private RelativeLayout altRecwrapper;
     private TextView mainRecTitle;
@@ -169,6 +170,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get all view references
+        recWrapper = (LinearLayout) view.findViewById(R.id.recommendationsWrapper);
         mainRecWrapper = (RelativeLayout) view.findViewById(R.id.recommendations_main_wrapper);
         altRecwrapper = (RelativeLayout) view.findViewById(R.id.recommendations_alternatives_wrapper);
 
@@ -210,7 +212,7 @@ public class MainFragment extends Fragment implements OnChartGestureListener, On
                 (int) (height * 1.5)
         );
 
-        mainRecWrapper.setLayoutParams(params1);
+        recWrapper.setLayoutParams(params1);
         chartWrapper.setLayoutParams(params2);
 
         // set progress dialog , vibrator , looper & interpolator (for animations)
